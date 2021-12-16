@@ -1,0 +1,116 @@
+/*  Large, sans-serifed font is the default  DO NOT specify font color */	
+body { font-family: sans-serif;  }
+
+/* Center first three headers */
+h1, h2, h3 {text-align:center; font-weight: bold }
+
+.subtitle { font-size:small }
+
+/*  Put a little extra vertical space before chapter breaks  */
+h3.chapter { padding-top: 2em; margin-bottom: 1em; page-break-before: always; font-size: larger }
+
+/* if the chapter title follows a subtitle, don't add the extra space  */
+h3.subtitle h3.chapter { padding-top: 0 }
+ 
+/*  Indent paragraphs, no space between them, ragged-right text  */
+p { text-indent: 2em; text-align: left; margin-top:0; margin-bottom:0 }
+
+/*  Paragraphs in blockquotes are not indented, and are double spaced  */
+blockquote p { margin: .5em; margin-left: 0em; text-indent: 0em; }
+
+/*  Class used for the first paragraph of each chapter.  */
+/*  The first letter is over-sized . . .  */
+p.first:first-letter { font-size: 150%; font-weight: bold; }
+
+/*  and the first line is all caps  */
+p.first:first-line { text-transform: uppercase }
+
+/*  Class used for paragraphs with hanging indents  */
+p.hanging { margin-left: 2em; text-indent: -2em }
+p.hanging:first-line{ margin-left: -2em; text-indent: 0em }
+
+p.continuation, p.continue { text-indent: 0 }
+
+div { margin-bottom: 1em }
+
+/*  Class used to recreate typed letters, newsprint or other documents. */
+/*  <tt > . . . </tt> is probably a better alternative, but this covers  */
+/*  other documents where <tt /> is not used.  */
+div.print, div.print p { font-family: Courier, monospace }
+
+/*  A few browsers have not implemented <tt /> according to spec recommendations  */
+tt { font-family: Courier, monospace }
+
+/*  Class used to indicate address and signature blocks in correspondance  */
+.headfoot, .opener { margin-left: 50% }
+.salute { margin-left: 0; text-indent: 0 }
+.closer { margin-left: 60% }
+
+/*  Don't indent "paragraphs" inside signature blocks  */
+div.headfoot p { text-indent: 0em }
+
+/* use to recreate handwriting */
+.write { font-family: cursive; font-style: italic }
+
+/* reverse italics if inside a handwritten block */
+div.write i em { font-style: normal }
+
+/* start chapters on a new page */
+div.chapter { page-break-before: always; border-bottom: 2 solid black; padding-bottom: 1em }
+
+div.chapterHead { display: block; }
+
+/* 'author' is the G@HWG standard class, some texts use 'authors-name' */
+span.authors-name, span.author { font-size: 75%; }
+
+h1.authors-name, h1.author { font-size: 150%; font-style: italic }
+h1.subtitle { font-style: italic }
+
+/* horizontal rules which represent text breaks need not be very wide */
+hr.dingbat { margin-right:auto; margin-left:auto; width: 10em }
+
+span.smallCaps { text-transform: uppercase; font-size:small; }
+
+/* poems commonly appear in books  */
+.poem { font-style: italic; font-family: monospace; white-space: pre; margin-top: 1em }
+/* a collection of lines in a poem is a verse  */
+div.verse {}
+span.line, span.linegroup { margin-left:3em; display:block }
+span.linegroup { margin-left:10% }
+
+/* wrappers for illustrations  */
+.illustration { text-align: center; margin-right:auto; margin-left:auto; text-indent: 0 }
+.caption { font-size: small }
+
+.dedication { text-align: center }
+
+.permissions { font-size: xx-small }
+
+.acknowledgements, .notes { font-size: small }
+
+/*  used for lists of characters  */
+dt.person { margin-top: 1em }
+
+/* inline quotations are displayed as blocks, even if a span inside a paragraph  */
+.inlineQuote { display: block; margin-right:5em; }
+
+/* I'm not interested in seeing copyright information  */
+div.copyright { display:none }
+
+/* Cool reader doesn't seem to be displaying ordered lists correctly; force it */
+ol {list-style-type: decimal}
+cite { display:inline; font-style:italic }
+tt { font-family: Terminal, "Droid Sans Mono", monospace }
+code {font-family: Terminal, Fixedsys, "Lucida Sans Unicode", "Droid Sans Mono", monospace }
+
+/* structural components that have no special formatting */
+div.appendix { display: block }
+div.cover { display: block; margin-right:auto; margin-left:auto; text-align:center }
+div.preface { display: block }
+div.titlepage { display: block }
+div.notes { display: block }
+h1.title { display:block }
+h3.subtitle { display:block }
+
+/* must be encapsulated in a "notes" division  */
+div.note {}
