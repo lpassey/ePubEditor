@@ -245,6 +245,8 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
                         {
                             adobe = (Element) metas.item( 0 );
                             adobe.removeAttribute( "xml:lang" );    // confuses my XSL script
+                            adobe.setAttribute( "xmlns:epub", "http://www.idpf.org/2007/ops" );
+
                         }
                         // Transform then pretty print the html document.
                         if (null != defaultXSLT)
@@ -361,6 +363,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
                 link.setAttribute( "type", "text/css" );
                 head.insertBefore( link, null );
             }
+            // TODO: save the opf file with the new manifested usercss
         }
     }
 }

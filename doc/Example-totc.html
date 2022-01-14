@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>Creating an ePub file from a Project Gutenberg HTML file</title>
+    </head>
+<body>
+<h1>Creating an ePub file from a Project Gutenberg HTML file</h1>
+    <ol>
+        <li>Format PG doc to make it easier to work with. Remove internal styles. Add link 
+            to ebook.css (<code>&lt;link href="ebook.css" rel="stylesheet" type="text/css" /&gt;</code>).&nbsp; Convert '<code>&lt;a name="... </code>' to '<code>&lt;a 
+            id="...</code>' (the "name" 
+            attribute for &lt;a&gt; elements has been deprecated in favor of the "id" attribute, 
+            and ePub does not allow "name" attributes here). Change any "id" attributes 
+            which begin with a digit to begin with the characters "id" (in XHTML identifiers must begin 
+            with alphabetic charaters). Save as UTF-8.<br />
+            <br />
+        </li>
+        <li>Create new document in ePubEditor. (File->New, select base folder.) The base 
+            folder will be displayed on the properties tab.<br />
+            <br />
+            <img alt="Base folder dialog" 
+                src="BaseFolder.png" /><br />
+            <br />
+            <img alt="View of new publication" 
+                src="NewPub.png" /><br />
+            <br />
+        </li>
+        <li>Edit Authors and Properties.
+            <br />
+            <br />
+            <img alt="AuthorsTab" 
+                src="NewAuthors.png" /><br />
+            <br />
+            <img alt="Completed Authors tab" 
+                src="Authors.png" /><br />
+            <br />
+            <img alt="Properties tab" 
+                src="NewProps.png" /><br />
+            <br />
+            <img alt="Completed Properties tab" 
+                src="Properties.png" /><br />
+            <br />
+        </li>
+        <li>Add formatted document to Manifest.
+            <br />
+            <br />
+            <img alt="Add File dialog" 
+                src="AddFile.png" /><br />
+            <br />
+            <img alt="Manifest with one file" 
+                src="Manifest.png" /><br />
+            <br />
+        </li>
+        <li>Change id and media-type (advised, not required).
+            <br />
+            <br />
+            <img alt="Changed ID and media-type" class="style5" 
+                src="ChangeID.png" /><br />
+            <br />
+</li>
+        <li>Items in manifest can be changed by selecting the "browse" ("...") button:
+            <br />
+            <br />
+            <img alt="Manifest with browse button" class="style5" 
+                src="ChangeFile.png" /><br />
+            <br />
+            Files can be renamed by selecting "...", renaming the file in the browse window, 
+            then selecting the renamed file.<br />
+            <br />
+            <img alt="Renaming a file" class="style6" 
+                src="Rename.png" /><br />
+            <br />
+            <img alt="Manifest after renaming" class="style5" 
+                src="Renamed.png" /><br />
+            <br />
+            <br />
+</li>
+        <li>Add new item to content; add button places first alphabetical file from manifest 
+            that is not already in the spine&#8212;can be changed by selecting id dropdown.
+            <br />
+            <br />
+            <img alt="Item added to spine" class="style5" 
+                src="AddSpine.png" /><br />
+            <br />
+</li>
+        <li>Replace &lt;h2&gt; elements with &lt;h3 class="chapter"&gt;<br />
+            <br />
+            <img alt="Find and Replace dialog for h2 -&gt; h3" class="style10" 
+                src="FindH2.png" /><br />
+            <br />
+            <img alt="Replacements OK" class="style8" 
+                src="ReplacementsOK.png" /><br />
+            <br />
+</li>
+        <li>From Manifest pane, split large file. Use &lt;h3 class="chapter&gt; as delimiter (Split button is not 
+            enabled unless existing HTML file is selected).<br />
+            <br />
+           <img alt="Manifest after renaming" class="style5" 
+                src="Renamed.png" /><br />
+            <br />
+            <img alt="Split HTML dialog" class="style7" 
+                src="Split.png" /><br />
+            <br />
+            <img alt="Split OK confirmation" class="style8" 
+                src="SplitOK.png" /><br />
+            <br />
+            New Manifest tab:<br />
+            <br />
+            <img alt="Manifest after split" 
+                src="AfterSplit.png" /><br />
+            <br />
+            New content tab. Main file must be part of content for split files to be added 
+            to content.<br />
+            <br />
+            <img alt="Spine after split" 
+                src="SpineAfterSplit.png" /><br />
+            <br />
+</li>
+        <li>Using "Edit" button on Manifest tab, discover that "totc_00" is the title page, 
+            and "totc_01" is the table of contents. Change the id for "totc_00" to "title_page" 
+            and remove the item reference for "totc_01" (the Table of Contents will be
+            automatically generated later.<br />
+            <br />
+            <img alt="Remove TOC" 
+                src="RemoveTOC.png" /><br />
+            <br />
+</li>
+        <li>Move to Content tab and see that id values have been automatically updated, but 
+            document order remains unchanged. Move "title_page" up to be before the Table of 
+            Contents.<br />
+            <br />
+            <img alt="Before moving TOC"
+                src="MoveTOC.png" /><br />
+            <br />
+</li>
+    </ol>
+    <p>At this point, if I select "File-&gt;Save As", browsing to the desired file folder 
+    and specifying a file name that ends in ".epub", I will get an error, because a 
+    cover image and Table of Contents are listed in the manifest, but do not 
+    reference files in the file system.</p>
+    <p>
+    <img alt="Files do not exist error dialog" class="style2" 
+        src="NoFileErr.png" /></p>
+    <p>It is possible at this point to create a valid ePub without a Table of Contents or cover 
+    image; simply remove the non-existent items indicated by the "stop"
+    <img alt="No file" class="style4" 
+        src="stop.gif" /> icon ("_toc" and
+    _"cover") and the ePub file can be created.</p>
+
+    <h3>How to add a cover image</h3>
+        <ol>
+            <li>Find a cover image you like from Open Library or search Google for "a tale of two 
+            cities cover art", and save it in your base 
+            publication folder as "cover.jpg". Please select an image which is not encumbered
+            by copyright claims. When the Manifest panel is redrawn, you will see that
+            the red image next to cover.jpg has been changed to a green check mark.<br />
+                <br /></li>
+            <li>Sometimes you may want to include the cover image at the beginning of the 
+                content. According to the ePub 2.x specification, images may not be included in 
+                the content, but must be wrapped in an XHTML document. To add a cover image to 
+                the publication content:<br />
+&nbsp;<ol style="list-style-type:lower-alpha"><li>Ensure that your cover image is in the manifest.</li>
+                    <li>Ensure that there is an entry in the Guide tab with the type of &quot;cover&quot;, and 
+                        that the &quot;cover&quot; entry references the cover image from the manifest.</li>
+                    <li>Select <code>Edit-&gt;Build Cover</code>. A new file will be created wrapping the image file. 
+                        The new file will be added to the Manifest, and will be placed at the beginning 
+                        of the Content list.</li></ol></li>
+    </ol>
+    <h3>How to create a Tables of Contents</h3>
+    <ol>
+        <li>Edit totc_02, totc_09, and totc_34; change <code>&lt;h3 class="chapter"&gt;</code> to
+            <code>&lt;h2 class="part"&gt;</code> and <code>&lt;div class="chapter"&gt;</code> to 
+            <code>&lt;div class="part"&gt;</code>.<br /><br/>
+        </li>
+        <li>Switch to the "Guide" tab and ensure that the "toc" line references "_toc.html" 
+            (this is the table of content file inserted into the manifest when we started a 
+            new publication). If the "toc" entry refers to a file other than "_toc.html" 
+            remove it.<br />
+            <br />
+        </li>
+        <li>Select "<code>Edit-&gt;Build TOC</code>". ePubEditor will scan every file in the Content, in 
+            the order they appear in the Content list, for header elements (e.g., 
+            <code>&lt;h2&gt;, &lt;h3&gt;, h4&gt;</code>, etc.) First level headers (<code>&lt;h1&gt;</code>) are presumed to be used for 
+            publication titles, and are skipped. If an entry existed on the "Guide" tab for 
+            "toc" that file will be overwritten, otherwise a new file will be added the manifest with the id 
+            "toc". If not already present, add the file to the content if you want it to be part of the normal 
+            reading order of the document (not required). Use "Move Up" and "Move Down" to 
+            place the file where you want it in the reading order (For example, the English standard is 
+            before other content, the French standard is after).<br />
+            <br />
+            </li>
+        <li>Generated Tables of Contents use "Unordered Lists" <code>&lt;ul&gt;</code> by default. The table of 
+            Contents for <cite>A Tale of Two Cities</cite> has nested lists as for a Table of Contents; 
+            the outer list was constructed from &lt;h2&gt; headers and refers to the three "books" that make up the publication; 
+            the three inner lists were constructed from &lt;h3&gt; headers, and each refers to the chapters within each book. 
+            Lists constructed from &lt;h2&gt; headers appear as &lt;ul class="h2"&gt; and lists 
+            constructed from &lt;h3&gt; headers appear as &lt;ul class="h3"&gt;. For A Tale of Two 
+            Cities, the items in &lt;ul class="h3"&gt; should be numbered (an "Ordered List") with 
+            roman numerals. To perform this conversion in ePubEditor, select <code>Edit-&gt;Replace</code> 
+            from the main menu. Search for all &lt;ul&gt; elements having the "class" 'h3', and 
+            replace them with an &lt;ol&gt; element with the "style" of 
+            'list-style-type:upper-roman'.<br />
+            <br />
+            <img src="FindReplace.png" /><br />
+            <br />
+            This type of list will occur only in the Table of Contents, 
+            so only 3 replacements will be made.<br />
+            <br />
+        </li>
+        <li>Highlight the TOC file on the "Manifest" tab, and select the Edit button to 
+            refine the Table of Contents. Because the list display style now automatically 
+            adds the roman numbering, the hard coded chapter numbers can now be removed.<br />
+            <br />
+        </li>
+        <li>Make any other changes to the Table of Contents desired to satisfy your tastes, 
+            but remember that if the publication will be shared with others style changes 
+            should remain minimal. Don't forget to save the Table of Contents document 
+            before returning to ePubEditor.<br />
+            <br />
+        </li>
+        <li>ePub version 2 uses an internal navigation document designed by the Daisy 
+            consortium for Digital Talking Books. This internal navigation document is 
+            commonly know as an "NCX" file, short for "Navigation Control file for XML." 
+            ePub Editor can automatically derive an .ncx file from an HTML Table of Contents 
+            file.<br />
+            <br />
+            To generate an NCX file for your ePub, select <code>Edit-&gt;Build NCX</code>.
+            ePubEditor starts by looking on the Guide tab for the first entry with the type 
+            of "toc" which it assumes to be the HTML Table of Contents. If a &quot;toc&quot; entry is 
+            not found, ePubEditor will first attempt to build an HTML table of contents as 
+            outlined above. The new NCX file will be added to the manifest and the correct 
+            reference will be added to the internal content properties.<br />
+            <br />
+        </li>
+        <li>Select <code>File-&gt;Compile To ePub</code> to save your completed ePub.<br />
+        </li>
+    </ol>
+
+</body>
+</html>
