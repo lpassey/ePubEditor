@@ -1010,16 +1010,12 @@ public class EPubEditor extends JFrame implements Observer
     }
 
     /**
-     * Creates a new instance of JFrame1 with the given title.
+     * Creates a new instance of the ePub editor with the given title.
      * 
      * @param sTitle
      *            the title for the new frame.
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @see #JFrame1()
      */
-    public EPubEditor( String args[], String sTitle )
+    public EPubEditor( String[] args, String sTitle )
             throws ParserConfigurationException, IOException, SAXException
     {
         this( args );
@@ -1148,6 +1144,12 @@ public class EPubEditor extends JFrame implements Observer
             getContentPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
             File f = fc.getSelectedFile();
             openFile( f );
+            // Assume that if we want to export the ePub later we will want to put it where it came from
+            prefs.node( PREFS_PATHS ).put( PREFS_PATHS_SAVE_EPUB, f.getCanonicalPath() );
+        }
+        catch( IOException e )
+        {
+            e.printStackTrace();
         }
         finally
         {
@@ -1491,7 +1493,8 @@ public class EPubEditor extends JFrame implements Observer
         // we weren't rooted, so one of these two things must be present.
         String savePath = new File( _epubModel.getEpubRootPath() ).getParent();
         
-        // Get the last save path, but use the .opf parent path as a default
+        // Get the last save path, but use the .opf parent path as a default. Note that if an ePub
+        // was imported, the previous save path will be replaced with the location of the import.
         String saveAsPath = prefs.node( PREFS_PATHS ).get( PREFS_PATHS_SAVE_EPUB, savePath );
         String rootName =  FileUtil.getFileName( new File( _epubModel.getEpubRootPath() ));
         
