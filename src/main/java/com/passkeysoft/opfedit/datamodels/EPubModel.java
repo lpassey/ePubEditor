@@ -751,7 +751,7 @@ public class EPubModel extends Observable
                     Parser parser = new Parser();
                     parser.setFeature( Parser.defaultAttributesFeature, false );
                     
-                    parser.setFeature( Parser.namespacesFeature, false );
+                    parser.setFeature( Parser.namespacesFeature, true );
                     parser.setProperty( Parser.autoDetectorProperty, new EncodingReader( "UTF-8" ) );
                     
                     SAX2DOM domMaker = new SAX2DOM( false );
