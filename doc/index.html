@@ -118,12 +118,72 @@
 
 <p>When you start the program some of the menu items are disabled, because
  no publication has been selected. At this point, the current tab will be
- the Manifest table. If you select File&#8209;&gt;New, <b>ePubEditor</b>
- will start a new publication in the directory/folder you specify.</p>
+ the Manifest table.</p>
+
+<p>Before attempting to edit any ePub file, you may want to set up your tool
+preferences. At the bottom of the Manifest tab there are 5 buttons, one of which
+is the "Edit" button. When you select a file on the Manifest tab and press the
+"Edit" button it will launch an editor to allow you to edit the file.</p>
+
+<p>The selection of an HTML editor is a very personal one. So how does
+ <b>ePubEditor</b> know what your preferred editors are? The answer is that
+ you tell it. When you select the Tools&#8209;&gt;Editors from the menu bar,
+ you will be presented with a dialog box that lists media-types and the
+ executables that are used to edit them. To add an editor to this list you must
+ know where on your computer the executable file resides. This can sometimes be
+ challenging on Windows platforms because Microsoft makes a concerted effort to
+ hide this information from you. If you don't know where an executable file is
+ found on Windows, find the shortcut you use to launch the application.
+ Right&#8209;click on the icon or the program listing in the start menu and select
+ "properties". The "Target" value will be the location of the executable. If you
+ are a Mac user I can't tell you how to find the location of the executable.
+ If someone could help me out I would appreciate it. If you're a Linux user,
+ you already know how to find an executable's location.</p>
+
+<p>In the Tools&#8209;>Editors dialog, press the "Add" button. Yet another dialog
+ box will open where you can select a media-type that this editor will handle. Press
+ the "Browse" button and a file system browser will open that will let you navigate
+ to the executable's location in the file system. Select the executable in the
+ browser dialog, and press "Select". The path to the executable will be set in
+ "Add" dialog. Lastly, edit the command line options, if necessary. "%s" will
+ be replaced with the name of the file to be edited; usually this is sufficient,
+ but if more command-line options are required you can set them here.</p>
+
+<p>On my system I have set IntelliJ IDEA as my editor for XMTL, HTML, and CSS
+ files. Microsoft's Visual Studio Community Edition with the HTML11 extension
+ is a good choice as it allows a live preview of your HTML files as you are
+ editing them. Older versions of Microsoft Word can work if you are careful to
+ only use semantic styles when editing your files. Avoid Adobe InDesign and
+ most other WYSIWYG editors as they tend to focus on presentation and not
+ semantics.
+</p>
+
+<p>Editors are not limited to text files like HTML. On my system I have set up
+ GIMP as my image editor but any image editor that accepts a command-line file
+ name could work. I have used IrfanView in the past and it worked well. If you
+ have the money you could even use Photoshop or PaintShop Pro.</p>
+
+<p>While you are setting up your editing tools you should also set up other
+ preferences. Tools&#8209;>Preferences allows you to set local paths for your
+temporary files folder, and your xsl file folder. The purpose of the xsl file
+folder will be explained later when we discuss editing existing ePub files. Here
+you can also specify the default CSS file that will automatically be added to
+all new ePub publications.</p>
+
+<p>Editor and path preferences are stored using the Java Preferences class.
+ The backing store for this class is operating system dependent, which means
+ the actual mechanism may differ based on the OS <b>ePubEditor</b> is running
+ on. On Windows preferences are stored in the Registry, whereas on Linux
+ preferences are stored in a file in the user's home directory. The upshot
+ of this decision is that the preferences will have to be set for every
+ machine that <b>ePubEditor</b> runs on.
+</p>
 
 <h4>Creating a new publication</h4>
 
-<p>The "Manifest" table will show a list of all the files that will be included
+<p> If you select File&#8209;&gt;New, <b>ePubEditor</b>
+ will start a new publication in the directory/folder you specify.
+The "Manifest" table will show a list of all the files that will be included
  in the publication. When you start a new ePub, you should see three files,
  ebook.css, toc.html, and cover.jpg. "toc.html" and "cover.jpg" should be marked
  with a red "stop" symbol, indicating that while they are listed in the manifest
@@ -147,17 +207,29 @@
  XML-compliant it should have a media-type of "application/xhtml+xml"; otherwise,
  it probably has a media-type of "text/html".</p>
 
+<p>The Manifest shows all files that will become part of the publication, but
+ only files listed in the "Content" will be presented to the reader. Order is
+ unimportant in the Manifest, but items in the Content will be presented in the
+ order they are listed. Therefore, on the Content tab there are buttons to move
+ file references up and down.</p>
 
-<p>The association between Media-types and editors are stored in the properties file
-associated with the program, ePubEditor.ini. On my computer, text and text/css point to TextPad 5, 
-image/jpeg points to IrfanView, and application/xhtml+xml, text/html, and text/x-oeb1-document
-all point to Microsoft's Visual Web Developer Express (that's the free one). By default, 
-the only editor included in the properties file is
-"C:\Program Files(x86)\Windows NT\Accessories\wordpad.exe". The Manifest shows all files that 
-will become part of the publication, but only files listed in the "Content" will be presented 
-to the reader. Order is unimportant in the Manifest, but items in the Content will be presented 
-in the order they are listed. Therefore, on the Content tab there are buttons to move content 
-up and down.</p>
+<p>It is possible that you may be creating an ePub from one large HTML file, for
+ example the HTML version of a Project Gutenberg file. In this case you may want
+ to split the one large file into smaller files for better maintenance, for example,
+ one file per chapter. <b>ePubEditor</b> allows you to split up an HTML file into
+ multiple files by specifying an HTML element which is a split point.
+</p>
+
+<p>For example, the Project Gutenberg version of <i>A Tale of Two Cities</i>, by
+ Charles Dickens has each chapter sectioned into a &lt;div class="chapter"&gt;
+ element. Suppose I add the PG file to my ePub, set the media-type correctly, and
+ select the file and press the "Split" button. I will end up with 49 new HTML files
+ numbered consecutively. If the original file was part of the content, each of the
+ new files will be added to the content as well. Each new file will have the same
+ &lt;head&gt; section (and thus all the same style data) but the body will contain
+ only the text after and including the split point element. The original file will
+ not be deleted from the file system, but it will be removed from the ePub
+ Manifest.</p>
 
 <p>Metadata about the book can be entered or edited on the "Authors and Contributors"
  tab, or on the "Properties" tab. Every ePub must have at least one identifier which is
