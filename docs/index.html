@@ -1,296 +1,605 @@
 <html>
 <head>
 <title>ePubEditor</title>
-<meta http-equiv="Content-Type" content="text/html;"/>
+<meta http-equiv="Content-Type" content="text/html;" lang="en"/>
 </head>
-<body><h4>The history of the ePub file format</h4>
-<p>The ePub file format had its genesis in 1999 with the publication of the
- <a href="http://web.archive.org/web/20101212183516/http://idpf.org/oebps/oebps1.0/download/oeb1-oebps.htm">Open
- eBook Publication Structure 1.0 (OEBPS)</a> by the Open eBook Forum, a consortium
- of individuals representing publishers, reading system vendors, software
- developers and experts in relevant web standards. A maintenance release of the
- specification was released in July of 2001 to clarify some parts of the original
- specification, but without substantive changes.</p>
+<body>
+    <h1>ePubEditor User Documentation</h1>
+    <p>
+        An basic understanding of HTML, XML, XHTML and CSS would be helpful in order to
+        understand this document. Wikipedia is a great place to learn more about these
+        technologies.
+    </p>
 
-<p>Over-simplifying, OEB defined a collection of files that together would comprise
- an e-book, together with a newly invented OEB package file which specifies the OEB
- documents, images, and other files that make up the OEB publication and how they
- relate to each other. According to the specification:</p>
-<blockquote>
- <p>"A publication conforming to this specification must include
-  exactly one OEB package file, which specifies the OEB documents, images, and other
-  objects that make up the OEB publication and how they relate to each other.</p>
-  <p>
-  It is recommended that all package files use extension ".opf", in order to make
-   them readily identifiable within the group of files making up a publication."</p>
-</blockquote>
-<p>Note
- that the acronym "OPF" originally signified "OEB Package File", and not "Open
- Packaging Format" as the <a href="http://idpf.org/"></a>International Digital
- Publishers Forum (IDPF) subsequently rebranded it.</p>
+    <h4>The history of the ePub file format</h4>
 
-<p>The Open eBook Forum envisioned that the primary file format in an OEBPS
-publication would be HTML (at the time, HTML 4 was the most current version of
-HTML).</p>
-<p><i>Add argument in favor of XHTML here</i></p>
+    <p>
+        The ePub file format had its genesis in 1999 with the publication of the
+        <a href="http://web.archive.org/web/20101212183516/http://idpf.org/oebps/oebps1.0/download/oeb1-oebps.htm">
+            Open
+            eBook Publication Structure 1.0 (OEBPS)
+        </a> by the Open eBook Forum, a consortium
+        of individuals representing publishers, reading system vendors, software
+        developers and experts in relevant web standards. A maintenance release of the
+        specification was released in July of 2001 to clarify some parts of the original
+        specification, but without substantive changes.
+    </p>
 
-<p>One of the major shortcomings of the OEBPS was that it did not propose any
- sort of single file publication structure, explicitly stating that "This
- specification does not define means for physically bundling files together
- to make one data transfer object (such as using zip or tar)."</p>
+    <p>
+        Over-simplifying, OEB defined a collection of files that together would comprise
+        an e-book, together with a newly invented OEB package file which specifies the OEB
+        documents, images, and other files that make up the OEB publication and how they
+        relate to each other. According to the specification:
+    </p>
+    <blockquote>
+        <p>
+            "A publication conforming to this specification must include exactly
+            one OEB package file, which specifies the OEB documents, images, and
+            other objects that make up the OEB publication and how they relate
+            to each other.
+        </p>
+        <p>
+            It is recommended that all package files use extension ".opf", in
+            order to make them readily identifiable within the group of files
+            making up a publication."
+        </p>
+    </blockquote>
+    <p>
+        Note that the acronym "OPF" originally signified "OEB Package File", and 
+        not "Open Packaging Format" as the <a href="http://idpf.org/">International 
+        Digital Publishers Forum</a> (IDPF) subsequently rebranded it.
+    </p>
 
-<p>In 2004 I approached Jon Noring, one of the original participants in the Open
- eBook Forum with an idea for an OEBPS container based on the ZIP file format.
- My idea was a fairly simply one similar to that used by the Java Archive (JAR)
- format: as well as including all the OEBPS files in a ZIP archive, it would also
- include a required META-INF folder containing a single file which must be named
- "container.xml" and which would point to the ".opf" file which defined the rest
- of the publication. Potentially, the container.xml file could contain references
- to multiple ".opf" files which would allow multiple publications to exist in
- a single file, but in practice I have never observed that usage.</p>
+    <h5>OEB Content Documents</h5>
 
-<p>The purpose of the "container.xml" file was to morph the container file from
- a "data transfer object" into a single file that could be used by ebook reading
- software, as the required "container.xml" file could be used as a known entry
- point into the publication as a whole. To promote this new format, and to develop
- a prototype ebook reading system, Jon and I, together with a few like-minded
- individuals formed the <a href="https://en.wikipedia.org/wiki/OpenReader_Consortium">Open
- Reader Consortium</a>, created a couple of Yahoo discussion groups, and sent
- <a href="https://groups.google.com/g/rec.arts.books/c/3MHa0lh5ea8/m/ETKaE2Nln9IJ">invitations</a>
- to the nascent ebook community to join us.</p>
+    <p>
+        The Open eBook Forum envisioned that the primary file format in an OEBPS
+        publication would be HTML (at the time, HTML 4 was the most current 
+        version of HTML). The decision by the Open eBook Forum to make HTML the
+        exclusive document format of the OEBPS was an excellent one, for a number
+        of reasons. (Other types of files could be included in the publication
+        structure, but only to support the HTML content files.)
+    </p>
 
-<p>Unfortunately, the Open Reader Consortium never gained much traction and has
- since been placed in "<a href="http://jonnoring.net/OpenReader/index.html">cold storage</a>."
- It did, however, have a
- <a href="https://web.archive.org/web/20170118033049/http://blogs.adobe.com/billmccoy/2007/01/openreader_vict.html">significant
- impact</a> on the later development of the "ePub" format. The IDPF's specification
- for the "<a href="http://idpf.org/epub/20/spec/OCF_2.0.1_draft.doc">Open
- Container Format</a>" (in which I participated as an "Invited Expert") is,
- in practice, virtually identical to the format I proposed to Jon Noring.
- (The actual specification permits additional but purely optional XML files to
- be added to the META-INF folder. In my somewhat limited experience I have never
- seen a publication that contains more than the required "container.xml" file.)</p>
+    <p>
+        In the first place, HTML was, and still is, the most open document format
+        around. It is a plain text format, which means that HTML can be edited
+        and viewed by the most simple of editors. The markup is comprised of
+        elements surrounded by angle braces (&lt;&gt;); character entities are
+        provided if a literal angle brace needs to be represented (&amp;lt; and
+        &amp;gt;). It is relatively easy to understand and master (at least as
+        compared to other document formats) and there is a lot of free and 
+        open-source software (FOSS) available to manipulate and display HTML files.
+    </p>
 
-<p>In January of 2017 the IDPF was <a href="https://www.w3.org/2017/01/pressrelease-idpf-w3c-combination.html.en">merged
- into the W3C</a>, and itself went into cold storage.</p>
+    <p>
+        Secondly, HTML is a semantic language not a presentational one. This means
+        that the marked-up text is defined by what it is, not by how it looks.
+        Example of semantic mark-up in HTML include the paragraph (&lt;p&gt;)
+        the list, ordered and unordered (&lt;ol&gt; and &lt;ul&gt;), header and
+        footer groups (&lt;header&gt; and &lt;footer&gt;) as well as header
+        lines at various levels of significance (&lt;h1&gt;...&lt;h6&gt;). A
+        table (&lt;table&gt;) is a document structure containing rows
+        (&lt;tr&gt;) and columns (&lt;td&gt;). There are over 100 semantic
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">elements</a>
+        in HTML.
+    </p>
 
-<p>In 2011 I started work on this project, <b>ePubEditor</b>, a Java-based project
- using Swing for its user-interface code and designed to edit ePub files in their
- native form. The source code was originally published at
- <a href="https://sourceforge.net/projects/epubeditor/">SourceForge</a>, and more
- recently revived and copied to <a href="https://github.com/lpassey/ePubEditor">GitHub</a>.
- It is my intention moving forward to upgrade the project to JavaFX and add
- whatever additional functionality may be required to support the newest version
- of <a href="https://en.wikipedia.org/wiki/EPUB">ePub</a> (currently 3.2).</p>
+    <p>
+        The greatest advantage to semantic mark-up, in my opinion, is that it
+        makes a document highly adaptable to the user agent displaying it, and to
+        the reader reading it. ("User agent" is the technical term for software
+        that displays a document for an end user.) According to Oxford languages,
+        a paragraph is "a distinct section of a piece of writing, usually dealing
+        with a single theme and indicated by a new line, indentation, or numbering."
+        If a section of text is marked as a &lt;p&gt;aragraph, the user agent
+        displaying it can choose whether to display it as an intendented section,
+        a block section (unindented but separated from other paragrphs by a blank
+        line), a numbered section, or even a section beginning with a paragraph
+        character (&para;). Usually the default presentation of a semantic element
+        can be set by the end user running the user agent.
+    </p>
 
-<h4><b>ePubEditor</b> purpose and goals</h4>
+    <p>
+        The adaptability is important because an eBook is intended to be read
+        on a wide variety of devices, from cell phones to desktop web browsers,
+        and what is desirable presentation on one device may not be desirable
+        on another. Take, for example, line justification. Justified lines (where
+        every line begins and ends at the same margin on the screen) can give a
+        highly professional look on a wide screen, but on a narrow screen (such
+        as a cell phone) they can look quite odd as the individual words are
+        padded with a lot of white space to make the lines even. In this case,
+        "ragged-right" text can be both more pleasing and more understandable.
+    </p>
 
-<p>I have two target audiences for <b>ePubEditor</b>: people who have created
- an e-book in HTML format, and now want a quick and easy way to turn it into an
- ePub, and people who have ePubs that do not display well on their devices because
- of "over-styling" by publishers and who want to clean up those ePubs for their
- own purposes.</p>
+    <p>
+        The adaptablity of HTML allows one to create documents that are 
+        "reflowable", that is one where line length changes depending on
+        the width of the screen. Anyone who has tried to read a PDF file
+        on a cell phone understands just how annoying it can be to be
+        required to scroll the text from side to side to read a document.
+        Because HTML is adaptive, a user agent can decide which segments
+        of text are appropriate to reflow (e.g paragraphs) and which are
+        not (e.g. tables).
+    </p>
 
-<p><b>ePubEditor</b> is designed to be a fairly literal interface into the OEB
- Package File (.opf) which is a required part of every ePub. The package file
- is an XML file that contains sections to describe various parts of an ebook.
- The &lt;manifest&gt; section of the file contains a list of all the files that
- make up the publication, not only XHTML content, but referenced images, CSS
- style sheets, font files, and anything else required to make a complete publication.</p>
+    <h5>The OEBPS Container File</h5>
 
-<p>The &lt;spine&gt; section of the package file contains links to items in the
- &lt;manifest&gt; which form the primary reading order of the publication. It
- does <em>not</em> contain links to all the items in the manifest, only to those
- which are designed to be presented directly to the reader. These spine items
- can be thought of as "chapters" of the publication. <strong>Order is important
- here</strong>; when an ePub is opened, the content files will be presented to
- the reader in exactly the same order as they appear in this section.</p>
+    <p>
+        One of the major shortcomings of the OEBPS was that it did not propose any
+        sort of single file publication structure, explicitly stating that "This
+        specification does not define means for physically bundling files together
+        to make one data transfer object (such as using zip or tar)."
+    </p>
 
-<p>The next section of the package file is the &lt;metadata&gt; section. This
- section contains details <em>about</em> the publication which are not part of
- publication itself, such as the names of the author and contributors, the title
- of the publication, the publisher identity, ISBN numbers and other identifiers.
- The &lt;metadata&gt; section was originally intended to contain only metadata
- defined by the <a href="https://dublincore.org/">Dublin Core Metadata
- Initiative</a> but it has since been expanded to include any arbitrary metadata
- by using the &lt;meta&gt; tag.</p>
+    <p>
+        In 2004 I approached Jon Noring, one of the original participants in the Open
+        eBook Forum with an idea for an OEBPS container based on the ZIP file format.
+        My idea was a fairly simple one similar to that used by the Java Archive (JAR)
+        format: as well as including all the OEBPS files in a ZIP archive, it would also
+        include a required META-INF folder containing a single file which must be named
+        "container.xml" and which would point to the ".opf" file which defined the rest
+        of the publication.
+    </p>
 
-<p>Lastly, the package file contains a &lt;guide&gt; section. This section is
- designed to provide links to various significant parts of the publication such
- as the cover image, the start of the text, and any copyright notice. This
- section is intended for the benefit of reading system software, not the reader,
- but I'm not aware of any software (other than perhaps Adobe Digital Editions)
- which takes advantage of this data.</p>
+    <p>
+        The purpose of the "container.xml" file stored in a known location was to morph
+        the container file from a "data transfer object" into a single file that could
+        be used by ebook reading software to reconstruct the publication as a whole.
+        To promote this new format, and to develop a prototype ebook reading system,
+        Jon and I, together with a few like-minded individuals formed the
+        <a href="https://en.wikipedia.org/wiki/OpenReader_Consortium">Open
+        Reader Consortium</a>, created a couple of Yahoo discussion groups, and sent
+        <a href="https://groups.google.com/g/rec.arts.books/c/3MHa0lh5ea8/m/ETKaE2Nln9IJ">invitations</a>
+        to the nascent ebook community to join us.
+    </p>
 
-<h4>ePubEditor operation</h4>
+    <p>
+        Unfortunately, the Open Reader Consortium never gained much traction and has
+        since been placed in "<a href="http://jonnoring.net/OpenReader/index.html">cold storage</a>."
+        It did, however, have a
+        <a href="https://web.archive.org/web/20170118033049/http://blogs.adobe.com/billmccoy/2007/01/openreader_vict.html">significant
+        impact</a> on the later development of the "ePub" format. The IDPF's
+        specification for the
+        "<a href="http://idpf.org/epub/20/spec/OCF_2.0.1_draft.doc">Open
+        Container Format</a>" (the development of which I participated in as an
+        "Invited Expert") is, in practice, virtually identical to the format I
+        originally proposed to Jon Noring.
+    </p>
+    <aside>
+        (The actual IDPF specification permits additional but purely optional and
+        no doubt proprietary XML files to be added to the META-INF folder.
+        Additionally, the container.xml file could contain references to multiple
+        ".opf" files which would a single container file to hold multiple publications.
+        In my somewhat limited experience I have never seen a publication that
+        contains more than the required "container.xml" file, or more that a
+        single publication referenced in that file.)
+    </aside>
 
-<p>When you start the program <b>ePubEditor</b>'s opening screen will have 5
- tabs, roughly corresponding to the publication sections of the .opf file.
- At this point, the current tab will be the Manifest table.</p>
+    <p>
+        In January of 2017 the IDPF was
+        <a href="https://www.w3.org/2017/01/pressrelease-idpf-w3c-combination.html.en">merged
+        into the W3C</a>, and itself went into "cold storage."
+    </p>
 
-<p>Before attempting to edit any ePub file, you may want to set up your tool
-preferences. At the bottom of the Manifest tab there are 5 buttons, one of which
-is the "Edit" button. When you select a file on the Manifest tab and press the
-"Edit" button it will launch an editor to allow you to edit the file.</p>
+    <h4><b>ePubEditor</b> purpose and goals</h4>
 
-<p id="Editor">The selection of an HTML editor is a very personal one. So how does
- <b>ePubEditor</b> know what your preferred editors are? The answer is that
- you tell it. When you select the Tools&#8209;&gt;Editors from the menu bar,
- you will be presented with a dialog box that lists media-types and the
- executables that are used to edit them.</p>
+    <p>
+        In 2011 I started work on this project, <b>ePubEditor</b>, a Java&#8209;based
+        project which was designed to edit ePub files in their native form, and
+        which used Java Swing for its user-interface code. The source code was
+        originally hosted at
+        <a href="https://sourceforge.net/projects/epubeditor/">SourceForge</a>,
+        and more recently revived and copied to 
+        <a href="https://github.com/lpassey/ePubEditor">GitHub</a>.
+        It is my intention moving forward to upgrade the project to JavaFX and 
+        add whatever additional functionality may be required to support the
+        newest version of <a href="https://en.wikipedia.org/wiki/EPUB">ePub</a>
+        (currently 3.2).
+    </p>
 
-<img src="Editors.png" style="max-width: 95vw" />
+    <p>
+        I have two target audiences for <b>ePubEditor</b>: people who have created
+        an e-book in HTML format (or a format easily converted to HTML), and now
+        want a quick and easy way to turn it into an ePub; and people who have
+        ePubs that do not display well on their devices because of "over-styling"
+        by publishers and who want to clean up those ePubs for their own purposes.
+    </p>
 
-<p>To add an editor to this list you must
- know where on your computer the executable file resides. This can sometimes be
- challenging on Windows platforms because Microsoft makes a concerted effort to
- hide this information from you. If you don't know where an executable file is
- found on Windows, find the shortcut you use to launch the application.
- Right&#8209;click on the icon or the program listing in the start menu and select
- "properties". The "Target" value will be the location of the executable. If you
- are a Mac user I can't tell you how to find the location of the executable.
- If someone could help me out I would appreciate it. If you're a Linux user,
- you already know how to find an executable's location.</p>
+    <p>
+        <b>ePubEditor</b> is designed to be a fairly literal interpretation of the OEB
+        Package File (.opf) which is a required part of every ePub. The package file
+        is an XML file that contains sections to describe various parts of an ebook.
+        The &lt;manifest&gt; section of the file contains a list of all the files that
+        make up the publication, not only XHTML content, but referenced images, CSS
+        style sheets, font files, and anything else required to make a complete publication.
+    </p>
 
-<p>In the Tools&#8209;>Editors dialog, press the "Add" button. Yet another dialog
- box will open where you can select a media-type that this editor will handle. Press
- the "Browse" button and a file system browser will open that will let you navigate
- to the executable's location in the file system. Select the executable in the
- browser dialog, and press "Select". The path to the executable will be set in
- "Add" dialog. Lastly, edit the command line options, if necessary. "%s" will
- be replaced with the name of the file to be edited; usually this is sufficient,
- but if more command-line options are required you can set them here.</p>
+    <p>
+        The &lt;spine&gt; section of the package file contains references to
+        items in the &lt;manifest&gt; which form the primary reading order of
+        the publication. It does <em>not</em> contain references to <em>all</em>
+        of the items in the manifest, only to those which are designed to be
+        presented directly to the reader. These spine items can be thought of
+        as the "chapters" of the publication. <strong> Order is important 
+        here</strong>; when an ePub is opened, the content files will be presented
+        to the human reader in exactly the same order as they appear in this section.
+    </p>
 
-<p>On my system I have set Microsoft's Visual Studio Community Edition with the
- HTML11 extension as my editor for XHTML, IntelliJ IDEA as my editor for HTML,
- and TextPad 5 as my editor for CSS files. These assignments are not exclusive;
- you may use a single application as an editor for all media types, although
- an entry needs to be added for each media-type. Older versions of Microsoft
- Word can work as an HTML editor if you are careful to only use semantic styles
- when editing your files. Avoid Adobe InDesign and most other WYSIWYG editors
- as they tend to focus on presentation and not semantics.</p>
+    <p>
+        The &lt;metadata&gt; section contains details <em>about</em> the publication
+        but which are not part of publication itself, such as the names of the author
+        and contributors, the title of the publication, the publisher identity, ISBN
+        numbers and other identifiers. The &lt;metadata&gt; section was originally
+        intended to contain only metadata defined by the
+        <a href="https://dublincore.org/">Dublin Core Metadata Initiative</a>
+        but it has since been expanded to include any arbitrary metadata
+        via the use of the &lt;meta&gt; tag.
+    </p>
 
-<p>Editors are not limited to text files like HTML. On my system I have set up
- GIMP as my image editor but any image editor that accepts a command-line file
- name could work. I have used IrfanView in the past and it worked well. Microsoft
- Paint is an acceptable alternative. If you have the money you could even use
- Photoshop or PaintShop Pro.</p>
+    <p>
+        Lastly, the package file contains a &lt;guide&gt; section. This section
+        is designed to provide references to various significant parts of the
+        publication such as the cover image, the table of contents, and the start
+        of the actual content. This section is intended to be used by reading
+        system software, not the human reader, but I'm not aware of any software
+        (other than perhaps Adobe Digita Editions) which takes advantage of this data.
+    </p>
 
-<p>To change an editor selection, remove the old editor listing then add a new
-editor selection for that media-type. You cannot edit your selections of the
-Tools&#8209;&gt;Editors screen</p>
+    <h4>ePubEditor operation</h4>
 
-<p>While you are setting up your editing tools you should also set up other
- preferences. Tools&#8209;>Preferences allows you to set local paths for your
-temporary files folder, and your xsl file folder. The purpose of the xsl file
-folder will be explained later when we discuss editing existing ePub files. Here
-you can also specify the default CSS file that will automatically be added to
-all new ePub publications.</p>
+    <p>
+        When you start the program <b>ePubEditor</b>'s opening screen will have 5
+        tabs, roughly corresponding to the publication sections of the .opf file.
+        At this point, the current tab will be the Manifest table.
+    </p>
 
-<p>Editor and path preferences are stored using the Java Preferences class.
- The backing store for this class is operating system dependent, which means
- the actual mechanism may differ based on the Operating System <b>ePubEditor</b>
- is running on. On Windows preferences are stored in the System Registry,
- whereas on Linux preferences are stored in a file in the user's home directory.
- The upshot of this decision is that the preferences will have to be set for
- every machine that <b>ePubEditor</b> runs on.</p>
+    <p>
+        Before attempting to edit any ePub file, you may want to set up your tool
+        preferences. At the bottom of the Manifest tab there are 5 buttons, one of which
+        is the "Edit" button. When you select a file on the Manifest tab and press the
+        "Edit" button it will launch an editor to allow you to edit the file.
+    </p>
 
-<h4>Creating a new publication</h4>
+    <p id="Editor">
+        The selection of an HTML editor is a very personal one. So how does
+        <b>ePubEditor</b> know what your preferred editors are? The answer is that
+        you tell it. When you select the Tools&#8209;&gt;Editors from the menu bar,
+        you will be presented with a dialog box that lists media-types and the
+        executables that are used to edit them.
+    </p>
 
-<p>When you select
- File&#8209;&gt;New, <b>ePubEditor</b> will start a new publication in the working
- directory/folder you select.</p>
+    <img src="Editors.png" style="max-width: 95vw" />
 
- <p>The "Manifest" table will show a list of all the files that will be included
- in the publication. When you start a new ePub, you should see three files in the
- manifest: ebook.css, toc.html, and cover.jpg. "toc.html" and "cover.jpg" should
- be marked with a red "stop" symbol, indicating that while they are listed in the
- the manifest they do not exist on the file system. You can remove them from the
- manifest, or better yet you can create them. Once the files exist (and the window
- is refreshed) the red "stop" will turn to a green "check."</p>
+    <p>
+        To add an editor to this list you must
+        know where on your computer the executable file resides. This can sometimes be
+        challenging on Windows platforms because Microsoft makes a concerted effort to
+        hide this information from you. If you don't know where an executable file is
+        found on Windows, find the shortcut you use to launch the application.
+        Right&#8209;click on the icon or the program listing in the start menu and select
+        "properties". The "Target" value will be the location of the executable. If you
+        are a Mac user I can't tell you how to find the location of the executable.
+        If someone could help me out I would appreciate it. If you're a Linux user,
+        you already know how to find an executable's location.
+    </p>
 
-<img src="./newEPub.png" style="max-width:95vw"/>
+    <p>
+        In the Tools&#8209;>Editors dialog, press the "Add" button. Yet another dialog
+        box will open where you can select a media-type that this editor will handle. Press
+        the "Browse" button and a file system browser will open that will let you navigate
+        to the executable's location in the file system. Select the executable in the
+        browser dialog, and press "Select". The path to the executable will be set in
+        "Add" dialog. Lastly, edit the command line options, if necessary. "%s" will
+        be replaced with the name of the file to be edited; usually this is sufficient,
+        but if more command-line options are required you can set them here.
+    </p>
 
-<h5>Add</h5>
+    <p>
+        On my system I have set Microsoft's Visual Studio Community Edition with the
+        HTML11 extension as my editor for XHTML, IntelliJ IDEA as my editor for HTML,
+        and TextPad 5 as my editor for CSS files. These assignments are not exclusive;
+        you may use a single application as an editor for all media types, although
+        an entry needs to be added for each media-type you wish to edit. On the other
+        hand, you cannot select multiple editors for a single media-time; if you
+        attempt to do so the previous editor selected for that media-type will be
+        overwritten. Older versions of Microsoft Word can work as an HTML editor
+        if you are careful to only use semantic styles when editing your files.
+        Avoid Adobe InDesign and most other WYSIWYG editors as they tend to focus
+        on presentation and not semantics.
+    </p>
 
-<p>On this tab there is an "Add" button. When you press this button,
- a file system browser will appear and allow you to add any file to the
- publication. When a file is added to the publication it is copied to the
- publication's working folder.</p>
+    <p>
+        Editors are not limited to text files like HTML or CSS. On my system I
+        have set up GIMP as my image editor but any image editor that accepts
+        a command-line file name could work. I have used IrfanView in the past
+        and it worked well. Microsoft Paint is an acceptable alternative. If
+        you have the money you could even use Photoshop or PaintShop Pro.
+    </p>
 
-<p>When you add a file to the publication, <b>ePubEditor</b> attempts to
- "intuit" its media-type based on the file extension. It then presents a dialog
- box asking if you want to add the file to the content list. If you say yes,
- the file will be flagged as being part of the content, a reference to it will
- be added to the "Content" table, and it will eventually become part of the ePub's
- &lt;spine&gt;. If the media-type is not correct, you should change it to match
- the actual media-type. Only certain media-types are allowed in ePubs, and the
- "media-type" field contains a drop-down selector containing only those media
- types. If the HTML file is XML-compliant it should have a media-type of
- "application/xhtml+xml"; otherwise, it probably has a media-type of "text/html".
- Typically, only HTML files should be added to the content list.</p>
+    <p>
+        Simply add a new editor selection for that media-type. You cannot edit
+        your selections of the Tools&#8209;&gt;Editors screen
+    </p>
 
-<p>If a manifested file is deleted from the file system the Manifest entry will
- remain, but the file indicator icon will change to the red "stop" symbol when
- the screen is refreshed.</p>
+    <p>
+        While you are setting up your editing tools you should also set up other
+        preferences. Tools&#8209;>Preferences allows you to set local paths for your
+        temporary files folder, and your xsl file folder. The purpose of the xsl file
+        folder will be explained later when we discuss editing existing ePub files. Here
+        you can also specify the default CSS file that will automatically be added to
+        all new ePub publications.
+    </p>
 
-<h5>Remove</h5>
+    <p>
+        Editor and path preferences are stored using the Java Preferences class.
+        The backing store for this class is operating system dependent, which means
+        the actual mechanism may differ based on the Operating System <b>ePubEditor</b>
+        is running on. On Windows preferences are stored in the System Registry,
+        whereas on Linux preferences are stored in a file in the user's home directory.
+        The upshot of this decision is that the preferences will have to be set for
+        every machine that <b>ePubEditor</b> runs on.
+    </p>
 
-<p>The "Remove" button allows you to remove a file from the publication. When
- a file is removed from the publication it is also removed from the Content
- table if it is part of the content, but it is <em>not</em> removed from the
- file system. The file will not be part of the compiled ePub, but it will remain
- in the working folder in the file system for future reference.</p>
+    <h4>Creating a new publication</h4>
 
-<h5>Edit</h5>
+    <p>
+        When you select File&#8209;&gt;New, <b>ePubEditor</b> will start a new
+        publication in the working directory/folder you select.
+    </p>
 
-<p>When the "Edit" button is pressed, ePubEditor attempts to launch the editor
- associated with the declared media-type. (see the <a href="#Editor">preferences
- setup</a> discussion earlier in this document.)</p>
+    <p>
+        The "Manifest" table will show a list of all the files that will be
+        included in the publication. When you start a new ePub, you should
+        see three files in the Manifest table: ebook.css, toc.html, and
+        cover.jpg. "toc.html" and "cover.jpg" should be marked with a red "stop"
+        symbol, indicating that while they are listed in the the manifest they
+        do not exist on the file system. You can remove them from the manifest,
+        or better yet you can create them. Once the files exist (and the window
+        is refreshed) the red "stop" will turn to a green "check."
+    </p>
 
-<h5>Split HTML</h5>
+    <img src="./newEPub.png" style="max-width:95vw" />
 
-<p>It is possible that you may be creating an ePub from an existing single large
- HTML file. In this case you may want to split the one large file into smaller
- files for better maintenance, such as one file per chapter. <b>ePubEditor</b>
- allows you to split up an HTML file into multiple files by specifying an HTML
- element which is a split point.</p>
+    <h5>Add</h5>
 
-<p>As an example, the Project Gutenberg version of <i>A Tale of Two Cities</i>, by
- Charles Dickens has each chapter sectioned into a &lt;div class="chapter"&gt;
- element. Suppose you add the PG file to a new ePub and set the media-type
- correctly. When you select the file and press the "Split" button you will be
- presented with a dialog box that will ask for the HTML element which will be
- the split point.</p>
+    <p>
+        On this screen there is an "Add" button. When you press this button,
+        a file system browser will appear and allow you to add one or more
+        files to the publication. When a file is added to the publication it is
+        copied to the publication's working folder.
+    </p>
 
-<img src="TOTC-Split.png" style="max-width: 95vw"/>
+    <p>
+        When you add a file to the publication, <b>ePubEditor</b> attempts to
+        "intuit" its media-type based on the file extension. It will then present
+        a dialog box asking if you want to add the file to the content list. If
+        you say yes, the file will be flagged as being part of the content, a
+        reference to it will be added to the "Content" table, and it will eventually
+        become part of the ePub's &lt;spine&gt;. If the media-type is not correct,
+        you should change it to match its actual media-type. Only certain media-types
+        are allowed in ePubs, and the "media-type" field contains a drop-down
+        selector containing only those media types. If the HTML file is
+        XML&#8209;compliant (ie, XHTML) it should have a media-type of
+        "application/xhtml+xml"; otherwise, it probably has a media-type of
+        "text/html". Typically, only (X)HTML files should be added to the
+        content list.
+    </p>
 
-<p>When you press the "Split" button you will end up with 49 new HTML files
- numbered consecutively. If the original file was part of the content, each of
- the new files will be added to the Content table as well. The original file
- will be split immediately before the selected element. Each new file will
- have the same &lt;head&gt; section (and thus all the same style data) but the body
- will contain only the text after the split point element and up to the next
- occurrence of the split point element. The original file will be removed
- from the Manifest, but it wil not be deleted from the file system.</p>
+    <p>
+        If a manifested file is deleted from the file system the Manifest entry will
+        remain, but the file indicator icon will change to the red "stop" symbol when
+        the screen is refreshed.
+    </p>
 
-<h5>Adding publication metadata</h5>
+    <h5>Remove</h5>
 
-<p>Metadata about the book can be entered or edited on the "Authors and Contributors"
- tab, or on the "Properties" tab. Every ePub must have at least one identifier which is
- globally unique, a title, and a language attribute. Once your publication is internally 
- consistent you may save it as an ePub.</p>
+    <p>
+        The "Remove" button allows you to remove a file from the publication. When
+        a file is removed from the publication it is also removed from the Content
+        table if it was part of the content, but it is <em>not</em> removed from the
+        file system. The file will not be part of the compiled ePub, but it will remain
+        in the working folder in the file system for future reference.
+    </p>
 
-<h4><i>Saved for later</i></h4>
-<p>Caution: if you have opened an ePub, and press "Save" your previous file will be replaced. 
-If you're exploring the capabilities of the program, be sure to use "Save As..." and put your 
-new file in some other location.</p>
+    <h5>Edit</h5>
 
-<p>The Manifest shows all files that will become part of the publication, but
- only files listed in the "Content" will be presented directly to the reader.
- Order is unimportant in the Manifest table, but items in the Content table
- will be presented in the order they are listed. Therefore, on the Content tab
- there are buttons to move file references up and down.</p>
+    <p>
+        When the "Edit" button is pressed, ePubEditor attempts to launch the editor
+        associated with the declared media-type. (see the <a href="#Editor">preferences
+        setup</a> discussion earlier in this document.)
+    </p>
+
+    <h5>Split HTML</h5>
+
+    <p>
+        It is possible that you will be creating an ePub from an existing single
+        large HTML file. In this case you may want to split the one large file
+        into smaller files for better maintenance, such as one file per chapter.
+        <b>ePubEditor</b> allows you to split up an HTML file into multiple files
+        by specifying an HTML element which is the split point.
+    </p>
+
+    <p>
+        As an example, the Project Gutenberg version of <i>A Tale of Two Cities</i>,
+        by Charles Dickens has each chapter sectioned into a &lt;div class="chapter"&gt;
+        element. Suppose you add the PG file to a new ePub and set the media-type
+        correctly. When you select the file and press the "Split" button you will be
+        presented with a dialog box that will ask for the HTML element which will be
+        the split point.
+    </p>
+
+    <img src="TOTC-Split.png" style="max-width: 95vw" />
+
+    <p>
+        When you press the "Split" button the original file will be split
+        immediately before the selected element and you will end up with 49 new
+        HTML files numbered consecutively. If the original file was part of the
+        Content table, each of the new files will be added to the Content table
+        as well. Each new file will have the same &lt;head&gt; section (and thus
+        all the same style and meta data) but the body will contain only the text
+        following and including the split point element and up to the next
+        occurrence of the split point element. The new files will be assigned
+        the same media-type as the original file. The original file will be removed
+        from the Manifest, but it wil not be deleted from the file system.
+    </p>
+
+    <p>
+        The function of the "Transform" button will be discussed later in the
+        section on editing existing ePubs.
+    </p>
+
+    <h5>The Content Tab</h5>
+
+    <p>
+        The Manifest shows all files that will be included in the ePub container,
+        but only files listed in the "Content" will be presented directly to the
+        reader. Order is unimportant in the Manifest table, but items in the
+        Content table will be presented by the reading system in the order they
+        are listed in the Content table. Therefore, on the Content tab in addition
+        to the "Add" and "Remove" buttons, there are buttons to move file references
+        up and down.
+    </p>
+
+    <img src="Content.png" style="max-width: 95vw" />
+    
+    <p>
+        Pressing the "Add" button will add a reference to the Content table of 
+        the first content file (HTML, XHTML) in the Manifest table which is
+        not yet already in the Content table. Future enhancements will include
+        the ability to explicitly select one or more candidate files. The "Remove"
+        button will remove the selected file from the Content table, but it will
+        not remove it from the Manifest table. The "Move Up" and "Move Down"
+        buttons will move the selected file reference up or down in the Content
+        list.
+    </p>
+
+    <h5>Navigation: Tables of Content and the .ncx file</h5>
+
+    <p>
+        Virtually every ePub should have a Table of Contents (TOC), which is why 
+        <b>ePubEditor</b> adds a "toc.html" Manifest enty to every new publication.
+        If your publication already has a Table of Contents (which should exist
+        in its own file) you can select the existing TOC by removing the 
+        auto-generated "toc.html" file entry from the Manifest table, then
+        selecting your own TOC file and changing the "id" value to "_toc".
+     </p>
+
+    <p>
+        In cases where you do not already have a Table of Contents, selecting
+        Edit&#8209;&gt;Build&#160;TOC from the main menu (or pressing Ctrl&#8209;T)
+        will cause <b>ePubEditor</b> to generate an XHTML formatted Table of 
+        Contents for the publication as a whole using unordered lists (&lt;ul&gt;). 
+        Each header becomes a list item, and each time a header level changes a 
+        new, embedded unordered list is started. When the entire list is
+        successfully created, it is saved as an XHTML file and added to 
+        the manifest.
+    </p>
+
+    <p>
+        For example, if your publication files use &lt;h2&gt; for "Part" headings
+        and &lt;h3&gt; for chapter headings, <b>ePubEditor</b> will create a TOC
+        similar to the following:
+    </p>
+    <blockquote>
+        <ul style="list-style:none;margin-left: -2em">
+            <li>&lt;ul&gt;</li>
+            <li>&lt;li&gt;Part One<ul style="list-style:none">
+            <li>&lt;ul&gt;</li>
+                <li>&lt;li&gt;Chapter I&lt;li&gt;
+                <li>&lt;li&gt;Chapter II&lt;li&gt;
+                <li>&lt;li&gt;Chapter III&lt;li&gt;
+                <li>&lt;/ul&gt;</ul></li>
+                <li>&lt;/li&gt;</li>
+            <li>&lt;li&gt;Part Two<ul style="list-style:none">
+            <li>&lt;ul&gt;</li>
+                <li>&lt;li&gt;Chapter IV&lt;li&gt;
+                <li>&lt;li&gt;Chapter V&lt;li&gt;
+                <li>&lt;li&gt;Chapter VI&lt;li&gt;
+                <li>&lt;/ul&gt;</ul></li>
+        </ul>
+        etc.
+    </blockquote>
+
+    <p>
+        When the IDPF was developing the specification for ePub 2.0, certain
+        businesses interests advocated forcefully for the required inclusion of
+        an NCX file (Navigation Control file for XML) in every compliant ePub.
+        The file, the format of which was developed for Digital Talking Book
+        (DTB), contains a hierarchical table of contents for the EPUB file.
+        As an XML file it was not designed for display to a reader, but 
+        required a reading system to parse the file and render the information
+        in some proprietary manner. 
+    </p>
+
+    <p>
+        A description of the format of the NCX file is beyond the scope of
+        this document.
+    </p>
+    <p>
+        While the 2.0 specification <em>required</em> every ePub to contain an
+        NCX file, it only suggested that reading system software <em>should</em>
+        support it. To my knowledge, very few reading system did. Once the IDPF
+        was merged into the W3C, the NCX file was deprecated and ePubs are no
+        longer required to include one.
+    </p>
+
+    <p>
+        In any event, should you desire to add an NCX file to your publication,
+        <b>ePubEditor</b> provides an automated function to create an NCX file,
+        similar to the behavior of the autogenerated Table of Contents. An NCX
+        file is generated by selecting Edit&#8209;&gt;Build&#160;NCX from the
+        main menu. Refinement of the generated NCX file is left as an exercise
+        for the reader.
+    </p>
+
+     <h5>Adding publication metadata</h5>
+
+    <p>
+        Metadata about the book can be entered or edited on the "Authors and
+        Contributors" tab, or on the "Properties" tab. Even though this metadata
+        is stored in a single &lt;metadata&gt; section of the OEB Package File,
+        data about authors and contributors is separate from other properties
+        in <b>ePubEditor</b>. This is because these two sets of metadata have
+        different attributes. Contributors have roles, and a File As attribute
+        (usually a contributor's name is entered as it would be displayed, and
+        the "File As" property is last name first. It is possible that the author's
+        name may be a pseudonym whereas the "File As" attribute may be the author's
+        given name).
+    </p>
+    <p>
+        The contributor's role is selected from a drop-down list of allowed roles.
+        If a contributor's role is not in the drop-down list "other" should be
+        selected.
+    </p>
+    <p>
+        In other properties, every ePub must have at least one identifier which
+        is globally unique, a title, and a language attribute. The "Properties"
+        tab will also show an entry for the ePub's working directly (aka
+        "epubeditor:rootPath") which is only for information; it will not
+        be indluded in the ePub file when compiled. Once your publication is
+        internally consistent you may compile it to an ePub.
+    </p>
+
+   <h5>Adding a cover image</h5>
+
+    <p>
+        When a new publication is started in <b>ePubEditor</b> it automatically
+        creates an entry in the Manifest table for a cover image, with the file
+        name "cover.jpg". The entry is marked with the red "stop" icon to 
+        indicate that while the file is manifested, it does not exist in the
+        file system. Before an ePub can be compiled the cover image must be
+        provided, or the Manifest entry must be removed.
+    </p>
+
+    <p>
+        It should be noted that only HTML files are presented to the user, so
+        even if a cover image is present, it will not be shown. Instead, it 
+        must be wrapped as an &lt;img&gt; element in an HTML file.
+    </p>
+
+
+    <h4><i>Saved for later</i></h4>
 
 
 </body>
