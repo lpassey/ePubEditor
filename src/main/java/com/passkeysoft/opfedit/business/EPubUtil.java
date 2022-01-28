@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -172,8 +172,8 @@ public class EPubUtil
                     head.insertBefore( link, null );
                 }
             }
-
-            XPath xpath = XPathFactory.newInstance().newXPath();
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
             XPathExpression exp = xpath.compile( "//div" );
             Element lastLi, tocList, tocNode = (Element) exp.evaluate( toc, XPathConstants.NODE );
             lastLi = tocList = null;
@@ -249,7 +249,7 @@ public class EPubUtil
                                     DOMIterator hiter = new DOMIterator( node );
                                     while (hiter.hasNext())
                                     {
-                                        Node child = (Node) hiter.next();
+                                        Node child = hiter.next();
                                         if (child.getNodeName().toLowerCase().equals( "a" ))
                                         {
                                             attr = ((Element) child).getAttribute( "id" );
@@ -385,15 +385,7 @@ public class EPubUtil
         }
         // Theoretically, since the DOM is a static string in this file, these
         // exceptions should never be thrown. No need to alert the end user.
-        catch( DOMException e )
-        {
-            e.printStackTrace();
-        }
-        catch( XPathExpressionException e )
-        {
-            e.printStackTrace();
-        }
-        catch( SAXException e )
+        catch( DOMException | XPathExpressionException | SAXException e )
         {
             e.printStackTrace();
         }
@@ -422,7 +414,7 @@ public class EPubUtil
         NodeList contents = ncx.getElementsByTagName( "content" );
         while (listIter.hasNext())
         {
-            Node next = null, child = listIter.next();
+            Node next, child = listIter.next();
             if (child.getNodeName().equalsIgnoreCase("li"))
             {
                 Element navPoint = null;
@@ -513,7 +505,6 @@ public class EPubUtil
      *            a template that can be used to build a page list. If this parameter is not null, a
      *            reference to each node that loosely matches this node, and which has an 'id'
      *            attribute, will be included in the <pageList> node.
-     * 
      */
     public static void buildNCX( EPubModel ePubData, File userCss, boolean createPageList )
     {
@@ -530,15 +521,14 @@ public class EPubUtil
             toc = EPubModel.db.parse( new File( ePubData.getOpfFolder(), tocHref ));
         }
         // If I can't parse the existing TOC, I'll just build a new one.
-        catch( SAXException ignore ) { ignore.printStackTrace();  }
-        catch( IOException ignore ) { ignore.printStackTrace(); }
+        catch( SAXException | IOException e ) { e.printStackTrace();  }
         if (null == toc)
         {
            toc = buildTOC( ePubData, userCss );
         }
         if (null == toc)
             return;     // I can't get or build a TOC, so I can't construct the NCX.
-        Document ncx = null;
+        Document ncx;
         String ncxHref = _opfData.getManifest().getHrefById( _opfData.getSpine().getNCXId() );
         if (null == ncxHref)
         {
@@ -572,13 +562,13 @@ public class EPubUtil
         child.appendChild( ncx.createTextNode( _opfData.getMetadata().getProperty( "title" )));
         
         ArrayList<String> properties = _opfData.getMetadata().getAllProperties( "creator" );
-        for (int i = 0; i < properties.size(); i++)
+        for (String property : properties)
         {
             el = ncx.createElement( "docAuthor" );
             top.appendChild( el );
             child = ncx.createElement( "text" );
             el.appendChild( child );
-            child.appendChild( ncx.createTextNode( properties.get( i ) ) );
+            child.appendChild( ncx.createTextNode( property ) );
         }
         
         int playOrder = 1;      // For inexplicable reasons, the play order must be sequential, must
@@ -650,7 +640,7 @@ public class EPubUtil
         top.insertBefore( el, pageList );
         
         // find the first list element in the toc.
-        Element list = null;
+        Element list;
         DOMIterator iter = new DOMIterator( toc.getDocumentElement() );
         while (iter.hasNext())
         {
@@ -700,16 +690,12 @@ public class EPubUtil
                     + "\nIt does not exist but cannot be created, it is a directory rather than a "
                     + "regular file, or you have insufficient permissions to create the file.", ex );
         }
-        catch( TransformerFactoryConfigurationError e )
+        catch( TransformerFactoryConfigurationError | TransformerConfigurationException e )
         {
             // The implementation is not available or cannot be instantiated.
             LogAndShowError.logAndShowEx( "Unable to create a Transformer instance to save the new NCX file.", e );
         }
-        catch( TransformerConfigurationException e )
-        {
-            // It is not possible to create a Transformer instance.
-            LogAndShowError.logAndShowEx( "Unable to create a Transformer instance to save the new NCX file.", e );
-        }
+        // It is not possible to create a Transformer instance.
         catch( TransformerException e )
         {
             // An unrecoverable error occurred during the course of the transformation.
@@ -729,14 +715,14 @@ public class EPubUtil
     }
 
 
-    public static final String coverHTML
+    static final String coverHTML
     = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n"
     + "<head>\n"
     + "<title>%s - Cover Image</title>\n"
     + "</head>\n"
     + "<body>\n"
     + "  <div style=\"text-align:center\">\n"
-    + "      <img src=\"%s\" alt=\"Cover Image\"/>\n"
+    + "      <img src=\"%s\" alt=\"Cover Image\" style=\"; max-width: 99vw; max-height: 99vh\"/>\n"
     + "  </div>\n"
     + "</body>\n"
     + "</html>\n"
@@ -875,17 +861,11 @@ public class EPubUtil
                     }
                     if (0 < docCount)
                     {
-                        FileOutputStream f =
-                                new FileOutputStream( new File( ePubData.getOpfFolder(), iter.href ) );
-                        try
+                        try( FileOutputStream f = new FileOutputStream( new File( ePubData.getOpfFolder(), iter.href )))
                         {
                             // Pretty print the html document
                             XHTMLDocument xhtmlFile = new XHTMLDocument( doc, iter.href );
                             xhtmlFile.print( f, 2, false );
-                        }
-                        finally
-                        {
-                            f.close();
                         }
                     }
                     count += docCount;
@@ -930,44 +910,47 @@ public class EPubUtil
 
                     // The rest is simple. Just clone the new child and insert the clone.
                     Node newNode = doc.importNode( newChild, true );
-                    if (actionCommand.equals( InsertTagDialog.PARENT ))
+                    switch (actionCommand)
                     {
-                        // newNode will become the parent of refChild
-                        Node parent = el.getParentNode();
-                        Node child = parent.replaceChild( newNode, el );
-                        newNode.insertBefore( child, null );
-                        // Apparently the list of nodes by name is dynamic, so by adding a parent, the not list just got longer. Skip ahead.
-                        if (newNode.getNodeName().equalsIgnoreCase( refChild.getNodeName() ))
-                            i++;
-                    }
-                    else if (actionCommand.equals( InsertTagDialog.STEP ))
-                    {
-                        // move all of the children from the refChild to the newChild,
-                        // then add the newChild as the sole child of refChild
-                        while (el.hasChildNodes())
+                        case InsertTagDialog.PARENT:
                         {
-                            newNode.insertBefore( el.getFirstChild(), null );
+                            // newNode will become the parent of refChild
+                            Node parent = el.getParentNode();
+                            Node child = parent.replaceChild( newNode, el );
+                            newNode.insertBefore( child, null );
+                            // Apparently the list of nodes by name is dynamic, so by adding a parent, the not list just got longer. Skip ahead.
+                            if (newNode.getNodeName().equalsIgnoreCase( refChild.getNodeName() ))
+                                i++;
+                            break;
                         }
-                        el.insertBefore( newNode, null );
-                    }
-                    else if (actionCommand.equals( InsertTagDialog.FIRST )
-                            || actionCommand.equals( InsertTagDialog.LAST ))
-                    {
-                        // newNode will become a child of refChild
-                        if (actionCommand.equals( InsertTagDialog.FIRST ))
-                            el.insertBefore( newNode, el.getFirstChild() );
-                        else
+                        case InsertTagDialog.STEP:
+                            // move all of the children from the refChild to the newChild,
+                            // then add the newChild as the sole child of refChild
+                            while (el.hasChildNodes())
+                            {
+                                newNode.insertBefore( el.getFirstChild(), null );
+                            }
                             el.insertBefore( newNode, null );
-                    }
-                    else if (actionCommand.equals( InsertTagDialog.AFTER )
-                            || actionCommand.equals( InsertTagDialog.BEFORE ))
-                    {
-                        // newNode will become a peer of refChild
-                        Node parent = el.getParentNode();
-                        if (actionCommand.equals( InsertTagDialog.BEFORE ))
-                            parent.insertBefore( newNode, el );
-                        else
-                            parent.insertBefore( newNode, el.getNextSibling() );
+                            break;
+                        case InsertTagDialog.FIRST:
+                        case InsertTagDialog.LAST:
+                            // newNode will become a child of refChild
+                            if (actionCommand.equals( InsertTagDialog.FIRST ))
+                                el.insertBefore( newNode, el.getFirstChild() );
+                            else
+                                el.insertBefore( newNode, null );
+                            break;
+                        case InsertTagDialog.AFTER:
+                        case InsertTagDialog.BEFORE:
+                        {
+                            // newNode will become a peer of refChild
+                            Node parent = el.getParentNode();
+                            if (actionCommand.equals( InsertTagDialog.BEFORE ))
+                                parent.insertBefore( newNode, el );
+                            else
+                                parent.insertBefore( newNode, el.getNextSibling() );
+                            break;
+                        }
                     }
                 }
                 if (0 < docCount)
