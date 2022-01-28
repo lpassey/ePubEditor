@@ -474,6 +474,67 @@
         list.
     </p>
 
+     <h5>Adding publication metadata</h5>
+
+    <p>
+        Metadata about the book can be entered or edited on the "Authors and
+        Contributors" tab, or on the "Properties" tab. Even though this metadata
+        is stored in a single &lt;metadata&gt; section of the OEB Package File,
+        data about authors and contributors is separate from other properties
+        in <b>ePubEditor</b>. This is because these two sets of metadata have
+        different attributes. Contributors have roles, and a File As attribute
+        (usually a contributor's name is entered as it would be displayed, and
+        the "File As" property is last name first. It is possible that the 
+        author's name may be a pseudonym whereas the "File As" attribute may be
+        the author's given name). The contributor's role is selected from a 
+        drop-down list of allowed roles. If a contributor's role is not in the
+        drop-down list "other" should be selected.
+    </p>
+    <p>
+        As to other properties, every ePub must have at least one identifier
+        which is globally unique, a title, and a language attribute. These
+        additional properties are show on the "Properties" tab. When a new ePub
+        is created these properties are populated with default values. The "title"
+        property is set to "Title of this work", the identifer is set to a random
+        <a href="https://en.wikipedia.org/wiki/Universally_unique_identifier">UUID</a>
+        value, and the language is set to "en". These property values should be
+        changed to values which are meaningful to your publication. For example,
+        the identifier value may be changed to the ISBN of the publication (if
+        it is known) in which case the identifier's "Other Attribute" should be
+        changed to 'opf:scheme="ISBN"'. Other <a href="http://idpf.github.io/epub-registries/identifiers/">identifier
+        schemes</a> are "DOI" for Digital Object Identifiers and "JDCN" for Japan
+        Digital Comic Number. If the identifier does not represent one of these
+        types the "opf:scheme" attribute should be omitted.
+    </p>
+    <p>
+        The Properties table will also show an entry for the ePub's working 
+        directory (aka "epubeditor:rootPath") which is shown only for information
+        purposes; it will not be included in the ePub file when compiled. 
+    </p>
+
+   <h5>The Guides Tab</h5>
+
+    <p>
+        The "Guides" table may contain references to various 
+        <a href="http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6">significant
+        parts</a> of the publication such as the cover image, the table of 
+        contents, any indexes and the start of the actual content. The actual
+        &lt;guide&gt; section of the .opf file has been deprecated in ePub version
+        3.3 in favor of an XHTML document utilizing the new HTML5 &lt;nav&gt;
+        element. <b>ePubEditor</b> does not yet support creation or maintenance
+        of the new ePub Navigation Document; users should continue to use the Guides
+        table until such time as support has been added.
+    </p>
+
+    <p>
+        While there are no &lt;guide&gt; entries required by the specification
+        in ePub documents, <b>ePubEditor</b> uses the "cover" entry to discover
+        any image that will become part of an HTML cover wrapper file, and the
+        "toc" entry to identify the table of contents file name that will be 
+        used when generating a new Table of Contents. These entries must be 
+        present before attempting to automatically generate either of these files.
+    </p>
+
     <h5>Navigation: Tables of Content and the .ncx file</h5>
 
     <p>
@@ -553,35 +614,7 @@
         for the reader.
     </p>
 
-     <h5>Adding publication metadata</h5>
-
-    <p>
-        Metadata about the book can be entered or edited on the "Authors and
-        Contributors" tab, or on the "Properties" tab. Even though this metadata
-        is stored in a single &lt;metadata&gt; section of the OEB Package File,
-        data about authors and contributors is separate from other properties
-        in <b>ePubEditor</b>. This is because these two sets of metadata have
-        different attributes. Contributors have roles, and a File As attribute
-        (usually a contributor's name is entered as it would be displayed, and
-        the "File As" property is last name first. It is possible that the author's
-        name may be a pseudonym whereas the "File As" attribute may be the author's
-        given name).
-    </p>
-    <p>
-        The contributor's role is selected from a drop-down list of allowed roles.
-        If a contributor's role is not in the drop-down list "other" should be
-        selected.
-    </p>
-    <p>
-        In other properties, every ePub must have at least one identifier which
-        is globally unique, a title, and a language attribute. The "Properties"
-        tab will also show an entry for the ePub's working directly (aka
-        "epubeditor:rootPath") which is only for information; it will not
-        be indluded in the ePub file when compiled. Once your publication is
-        internally consistent you may compile it to an ePub.
-    </p>
-
-   <h5>Adding a cover image</h5>
+    <h5>Adding a cover image</h5>
 
     <p>
         When a new publication is started in <b>ePubEditor</b> it automatically
@@ -593,14 +626,27 @@
     </p>
 
     <p>
-        It should be noted that only HTML files are presented to the user, so
-        even if a cover image is present, it will not be shown. Instead, it 
-        must be wrapped as an &lt;img&gt; element in an HTML file.
+        Only HTML files are presented to the user, so even if a cover image is
+        present, it cannot be shown directly. Instead, it must be wrapped as an
+        &lt;img&gt; element in an HTML file. A wrapper file can be created by
+        selecting Edit&#8209;&gt;Build&#160;Cover from the main menu. 
     </p>
 
+    <p>
+        To create a cover wrapper file <b>ePubEditor</b> scans the "Guide" table
+        for an entry of type "cover". If the "cover" entry does not exist in the
+        Guide, or if the specified image file does not exist on the file system,
+        an error message will be displayed. Otherwise a new HTML file will be
+        created with a name that is the same as the .opf file name plus "_cover"
+        (if the publication has not yet been saved, the new cover file name will
+        be simply "_cover.html"). The cover image will be embedded in an
+        &lt;img&gt; element with a style attribute of "max-width: 99vw; 
+        max-height: 99vh". "vh" and "vw" are percentage values of the "viewport"
+        which means that the cover image will always fit on the reading system's
+        screen without have to scroll up to down or right to left.
+    </p>
 
-    <h4><i>Saved for later</i></h4>
-
-
+    <p> Once your publication is
+        internally consistent you may compile it to an ePub.</p>
 </body>
 </html>
