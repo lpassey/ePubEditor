@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -45,6 +45,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Observable;
@@ -63,26 +64,29 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.ccil.cowan.tagsoup.Parser;
+
+import org.jsoup.helper.W3CDom;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.passkeysoft.XHTMLDocument;
-import com.passkeysoft.opfedit.business.EncodingReader;
+
 import com.passkeysoft.opfedit.staticutil.FileUtil;
 import com.passkeysoft.opfedit.ui.LogAndShowError;
 import com.passkeysoft.opfedit.ui.EPubEditor;
-import com.sun.org.apache.xalan.internal.xsltc.trax.SAX2DOM;
+
+import org.jsoup.*;
 
 public class EPubModel extends Observable
 {
-    public static final String metaEpubRoot = "epubeditor:rootPath";
+    static final String metaEpubRoot = "epubeditor:rootPath";
     public static DocumentBuilder db = null;
 
     static
@@ -94,12 +98,10 @@ public class EPubModel extends Observable
         DOMfactory.setNamespaceAware( false );
         try
         {
-//            DOMfactory.setSchema( SchemaFactory.newInstance( XMLConstants.W3C_XML_SCHEMA_NS_URI ).newSchema() );
             db = DOMfactory.newDocumentBuilder();
             db.setEntityResolver( new EntityResolver()
             {
                 public InputSource resolveEntity( String arg0, String arg1 )
-                        throws SAXException, IOException
                 {
                     return new InputSource( new StringReader( XHTMLDocument.entities ) );
                 }
@@ -111,7 +113,7 @@ public class EPubModel extends Observable
         }
     }
 
-    private OPFFileModel _opfData = null;
+    private OPFFileModel _opfData;
 
     public OPFFileModel getOpfData()
     {
@@ -125,25 +127,19 @@ public class EPubModel extends Observable
     
     public boolean isRooted() 
     {
-//        return false;
-        return (null != _epubRoot ); 
+        return (null != _epubRoot );
     }
     
     private EncryptionModel _encrypt = null;  // contents of the encryption.xml file, if any
 
-    public EncryptionModel getEncryptionModel()
-    {
-        return _encrypt;
-    }
-    
-    private Document _opfDom = null; // A DOM constructed from the .opf file
+    private Document _opfDom;       // A DOM constructed from the .opf file
 
     public Document getOpfDom()
     {
         return _opfDom;
     }
 
-    private File _opfFile = null; // The opf file name in the file system,
+    private File _opfFile = null;   // The opf file name in the file system,
 
     /**
      * 
@@ -258,7 +254,7 @@ public class EPubModel extends Observable
                 }
                 ZipFile zip = new ZipFile( _opfFile );
                 Enumeration<? extends ZipEntry> entries = zip.entries();
-                ZipEntry entry = null;
+                ZipEntry entry;
                 while (entries.hasMoreElements())
                 {
                     entry = entries.nextElement();
@@ -339,7 +335,6 @@ public class EPubModel extends Observable
         }
         if (null != _opfFile)
         {
-            
             _opfDom = db.parse( new FileInputStream( _opfFile ) );
         }
         else
@@ -364,7 +359,6 @@ public class EPubModel extends Observable
             }
         }
         else _opfData.getMetadata().setProperty( metaEpubRoot, "" );
-        
     }
 
     public boolean saveOPFFile() throws FileNotFoundException, TransformerException,
@@ -419,7 +413,7 @@ public class EPubModel extends Observable
     private long computeCRCforFile( InputStream fin ) throws IOException
     {
         CRC32 crc = new CRC32();
-        byte buffer[] = new byte[4096];
+        byte[] buffer = new byte[4096];
         for (int num = fin.read( buffer ); num > 0; num = fin.read( buffer ))
         {
             crc.update( buffer, 0, num );
@@ -431,12 +425,12 @@ public class EPubModel extends Observable
     private long computeCompressedSize( InputStream in ) throws IOException
     {
         long total = 0;
-        byte buffer[] = new byte[4096];
+        byte[] buffer = new byte[4096];
 
         Deflater d = new Deflater( 8 );
         DeflaterInputStream is = new DeflaterInputStream( in, d );
 
-        int read = 0;
+        int read;
         do
         {
             read = is.read( buffer, 0, 4096 );
@@ -449,16 +443,17 @@ public class EPubModel extends Observable
     }
 
     /**
-     * Checks to be sure a directory path is in the zip file before adding the new file.
+     * Checks to be sure a directory path is in the zip file before adding the new file,
+     * adding it if it's not there already.
      * 
      * @param filePath
      *            the relative path being saved
      * @param pathList
      *            a list of subdirectory paths already created
-     * @throws IOException
+     * @throws IOException thrown when the zip file could not be written.
      */
     private void checkSubDir( ZipOutputStream zipFile, String filePath, Set<String> pathList )
-            throws ZipException, IOException
+            throws IOException
     {
         File relativePath = new File( getOpfFolder(), filePath ).getParentFile();
         int rootLength = getEpubRootPath().length() + 1;
@@ -470,9 +465,9 @@ public class EPubModel extends Observable
             String[] pathParts = zipFileFullPath.split( "/" );
             // If the path is multi-level, be sure that each exists.
             StringBuilder zipFilePath = new StringBuilder();
-            for (int i = 0; i < pathParts.length; i++)
+            for (String pathPart : pathParts)
             {
-                zipFilePath.append( pathParts[i] + "/" );
+                zipFilePath.append( pathPart ).append( "/" );
                 if (!pathList.contains( zipFilePath.toString() ))
                 {
                     // Add the path to the zip file, and to the path list.
@@ -481,7 +476,7 @@ public class EPubModel extends Observable
                     entry.setCrc( 0 );
                     entry.setCompressedSize( 0 );
                     entry.setTime( new Date().getTime() );
-                    entry.setMethod( 0 );
+                    entry.setMethod( ZipEntry.DEFLATED );
                     zipFile.putNextEntry( entry );
                     zipFile.closeEntry();
                     pathList.add( zipFilePath.toString() );
@@ -491,9 +486,9 @@ public class EPubModel extends Observable
     }
 
     private void addToZip( String filePath, File infile, int method, ZipOutputStream zip )
-            throws IOException, FileNotFoundException
+            throws IOException
     {
-        byte buffer[] = new byte[4096];
+        byte[] buffer = new byte[4096];
 
         ZipEntry entry;
 
@@ -554,7 +549,7 @@ public class EPubModel extends Observable
                     + "   </rootfiles>\n" + "</container>\n" );
             fw.close();
 
-            TreeSet<String> pathList = new TreeSet<String>(); // build a list of folders.
+            TreeSet<String> pathList = new TreeSet<>(); // build a list of folders.
 
             // create the Zip file ...
             File tempFile = File.createTempFile( "epub", null, saveTo.getParentFile() );
@@ -566,7 +561,7 @@ public class EPubModel extends Observable
             zip.setLevel( Deflater.NO_COMPRESSION );
 
             // A constant per the epub spec.
-            byte[] mimetype = "application/epub+zip".getBytes( "US-ASCII" );
+            byte[] mimetype = "application/epub+zip".getBytes( StandardCharsets.US_ASCII );
             entry = new ZipEntry( "mimetype" );
             entry.setTime( 0L );
             entry.setSize( 20 );
@@ -589,7 +584,7 @@ public class EPubModel extends Observable
             entry.setTime( 0L );
 
             zip.putNextEntry( entry );
-            byte buffer[] = new byte[4096];
+            byte[] buffer = new byte[4096];
             FileInputStream fin = new FileInputStream( container );
             for (int num = fin.read( buffer ); num > 0; num = fin.read( buffer ))
             {
@@ -625,9 +620,7 @@ public class EPubModel extends Observable
                     @Override
                     public boolean accept( File arg0, String arg1 )
                     {
-                        if (arg1.equals( "container.xml" ))
-                            return false;
-                        return true;
+                        return !arg1.equals( "container.xml" );
                     }
                 } );
                 if (null != contained)
@@ -701,7 +694,7 @@ public class EPubModel extends Observable
                     backup.delete();
                 saveTo.renameTo( backup );
             }
-            if (false == tempFile.renameTo( saveTo ))
+            if (!tempFile.renameTo( saveTo ))
             {
                 // this will fail if the file is opened by another program
                 // - if so, announce the failure.
@@ -743,26 +736,17 @@ public class EPubModel extends Observable
                 {
                     f = new File( getOpfFolder(), fileName );
                 }
-                fileData = new FileInputStream( f );
                 String media_type = item.getAttribute("media-type");
                 if (MediaTypeModel.isHTML( media_type ))
                 {
-                    // If it's an html file, parse with TagSoup in case the document is not well-formed.
-                    Parser parser = new Parser();
-                    parser.setFeature( Parser.defaultAttributesFeature, false );
-                    
-                    parser.setFeature( Parser.namespacesFeature, true );
-                    parser.setProperty( Parser.autoDetectorProperty, new EncodingReader( "UTF-8" ) );
-                    
-                    SAX2DOM domMaker = new SAX2DOM( false );
-                    parser.setContentHandler( domMaker );
-                    InputSource is = new InputSource( fileData );
-                    parser.parse( is );
-                    doc = (Document) domMaker.getDOM();
+                    // If it's an html file, parse with JSoup in case the document is not well-formed.
+                    W3CDom w3cDom = new W3CDom();
+                    doc = w3cDom.fromJsoup( Jsoup.parse( f, "UTF-8" ));
                 }
                 else
                 {
                     // TODO: only parse <?xml> and <html> files
+                    fileData = new FileInputStream( f );
                     doc = db.parse( fileData );
                 }
             }
@@ -771,14 +755,14 @@ public class EPubModel extends Observable
         {
             throw ex;
         }
-        catch( ParserConfigurationException ex )
-        {
-            // ParserConfigurationException error. Log an error, then continue.
-            LogAndShowError.logAndShowEx(
-                    "Parser configuration exception while parsing the file:  \n"
-                            + _opfData.getManifest().getHrefById( id ) + "\n"
-                            + ex.getLocalizedMessage(), ex );
-       }
+//        catch( ParserConfigurationException ex )
+//        {
+//            // ParserConfigurationException error. Log an error, then continue.
+//            LogAndShowError.logAndShowEx(
+//                    "Parser configuration exception while parsing the file:  \n"
+//                            + _opfData.getManifest().getHrefById( id ) + "\n"
+//                            + ex.getLocalizedMessage(), ex );
+//       }
         catch( SAXParseException sex )
         {
             String message = "Parsing error while parsing "
@@ -817,7 +801,7 @@ public class EPubModel extends Observable
 
     
     /**
-     * @returns the path which will become the root of the epub document. We use a getter, even
+     * @return the path which will become the root of the epub document. We use a getter, even
      *          inside this file, to guarantee that this value will never be null.
      */
     public String getEpubRootPath()
@@ -875,28 +859,28 @@ public class EPubModel extends Observable
      * the .opf file has not yet been specified. If there is no commonality,
      * returns the canonical file path.
      * 
-     * @param absFile
+     * @param opfFilePath The path to the opf file
      * @return the relative path of absFile from the .opf file
      */
-    public String getPathRelativeToOpf( File absFile )
+    public String getPathRelativeToOpf( File opfFilePath )
     {
         String relPath;
         File base = getOpfFolder();
         try
         {
-            File common = FileUtil.getSharedPath( base, absFile );
+            File common = FileUtil.getSharedPath( base, opfFilePath );
 
             if (null != common && common.getCanonicalPath().length() < getEpubRootPath().length())
             {
                 // The commonality is less that the ePub document base directory. Return
                 // the absolute, canonical path name of the target file.
-                return absFile.getCanonicalPath().replace( '\\', '/' );
+                return opfFilePath.getCanonicalPath().replace( '\\', '/' );
             }
-            relPath = FileUtil.getPathRelativeToBase( absFile, base );
+            relPath = FileUtil.getPathRelativeToBase( opfFilePath, base );
         }
         catch( IOException ex )
         {
-            relPath = absFile.getName();
+            relPath = opfFilePath.getName();
         }
         return relPath;
     }
@@ -918,7 +902,7 @@ public class EPubModel extends Observable
     }
 
     
-    public File copyFileToOpf( File file ) throws FileNotFoundException // , IOException
+    public File copyFileToOpf( File file )
     {
 //        if (null != getOpfFile())
         {
@@ -938,7 +922,7 @@ public class EPubModel extends Observable
         return null;
     }
 
-    public static final String opfSkeleton
+    static final String opfSkeleton
             = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                     + "<package xmlns=\"http://www.idpf.org/2007/opf\""
                     + " version=\"2.0\""
