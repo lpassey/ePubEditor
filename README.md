@@ -13,12 +13,15 @@ publication in the directory/folder you specify. At this point, the current tab 
 Manifest table (new as of 10/23/11).</p> 
 <p>The "Manifest" table will show a list of all the files 
 that will be included in the publication. When you start a new ePub, you should see three files, 
-ebook.css, toc.html, and cover.jpg. All three of these files should be marked with a red "stop"
-symbol indicating that while they are listed in the manifest, they do not exist on the file 
+ebook.css, toc.html, and cover.jpg. The "ebook.css" file is marked with a green checkmark
+indicating that the default CSS file has be added to the publication structure. The remaining
+two files should be marked with a red "stop"
+symbol indicating that while they are listed in the manifest, they do not yet exist on the file 
 system. You can remove them from the manifest, or better yet you can create them. Once the 
-files exist (and the window is refreshed) the red "stop" will turn to a green "check." On this 
-same tab there is an "Add" button. When you press this button, a file system browser will appear 
-and allow you to add any file to the package. On this same tab there is an "Edit" button. When 
+files exist (and the window is refreshed) the red "stop" will turn to a green "check."</p>
+<p>At the bottom of the "Manifest" tab there is an "Add" button. When you press this button,
+a file system browser will appear and allow you to add any file to the package. On this same 
+tab there is also an "Edit" button. When a manifested file is highlighted and
 this button is pressed, ePubEditor attempts to launch the editor associated with the declared 
 media-type.</p>
 <p>The association between Media-types and editors are stored in the properties file
