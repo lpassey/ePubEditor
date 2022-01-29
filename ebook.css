@@ -1,5 +1,5 @@
-/*  Large, sans-serifed font is the default  DO NOT specify font color */	
-body { font-family: sans-serif;  }
+/* a convenience class now that we've lost the center tag */
+.center { text-align:center; margin: auto }
 
 /* Center first three headers */
 h1, h2, h3 {text-align:center; font-weight: bold }
@@ -36,11 +36,11 @@ div { margin-bottom: 1em }
 /*  Class used to recreate typed letters, newsprint or other documents. */
 /*  <tt > . . . </tt> is probably a better alternative, but this covers  */
 /*  other documents where <tt /> is not used.  */
-div.print, div.print p { font-family: Courier, monospace }
+div.print, div.print p, blockquote.print { font-family: Courier, monospace }
 
 /*  Class used to indicate address and signature blocks in correspondance  */
 .headfoot, .opener { margin-left: 50% }
-.salute { margin-left: 0; text-indent: 0 }
+.salute { margin-left: 0; text-indent: 0; page-break-after: avoid  }
 .closer { margin-left: 60%; margin-bottom: 0 }
 
 /*  Don't indent "paragraphs" inside signature blocks  */
@@ -64,9 +64,10 @@ h1.authors-name, h1.author { font-size: 150%; font-style: italic }
 h1.subtitle { font-style: italic }
 
 /* images that act as dingbats need to be very small */
-.dingbat { max-height: 2em; text-align: center }
+.dingbat, .dinkus, .transition { max-height: 2em; text-align: center }
+
 /* horizontal rules which represent text breaks need not be very wide */
-hr.dingbat { margin-right:auto; margin-left:auto; width: 10em }
+hr.dingbat, hr.dinkus, hr.transition { margin-right:auto; margin-left:auto; width: 10em }
 
 /* uncomment if you want to substitute other symbols for a horizontal rule as a
    dingbat. this example uses stars */
@@ -78,7 +79,7 @@ hr.dingbat:before { content: "\02605\000A0\000A0\02605\000A0\000A0\02605"; visib
 span.smallCaps { text-transform: uppercase; font-size:small; }
 
 /* poems commonly appear in books  */
-.poem { font-style: italic; font-family: monospace; white-space: pre; margin-top: 1em }
+.poem, .poetry { font-style: italic; font-family: monospace; white-space: pre; margin-top: 1em }
 /* a collection of lines in a poem is a verse  */
 div.verse {}
 span.line, span.linegroup { margin-left:3em; display:block }
@@ -113,7 +114,7 @@ tt { font-family: Terminal, "Droid Sans Mono", monospace }
 code {font-family: Terminal, Fixedsys, "Lucida Sans Unicode", "Droid Sans Mono", monospace }
 .code {font-family: Terminal, Fixedsys, "Lucida Sans Unicode", "Droid Sans Mono", monospace }
 
-ol.toc { list-style: none; text-indent: -2em; margin-left: 40% }
+ol.toc { list-style: none; text-indent: -2em; margin-left: 4em }
 ol.simple {list-style: none }
 
 li h4 { margin-bottom: 0;}
@@ -125,9 +126,12 @@ div.preface { display: block }
 div.titlepage { display: block }
 div.contents { display: block }
 div.notes { display: block }
+div.acknowledgement { display: block }
 
 h1.title { display:block }
 h3.subtitle { display:block }
 
 /* must be encapsulated in a "notes" division  */
 div.note {}
+
+blockquote.epigraph {}
