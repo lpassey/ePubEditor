@@ -8,15 +8,15 @@ import org.w3c.dom.NodeList;
 class EncryptionModel
 {
     public EPubModel fileData;
-    Document doc;
+    private Document doc;
 
-    public EncryptionModel( EPubModel owner, Document encrypt )
+    EncryptionModel( EPubModel owner, Document encrypt )
     {
         fileData = owner;
         doc = encrypt;
     }
     
-    public boolean isEncrypted( String fileName )
+    boolean isEncrypted( String fileName )
     {
         NodeList data = doc.getElementsByTagName( "EncryptedData" );
         for (int i = 0; i < data.getLength(); i++)

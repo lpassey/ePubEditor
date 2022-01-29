@@ -6,24 +6,24 @@ public abstract class MonitoringTableModel extends AbstractTableModel
 {
     private static final long serialVersionUID = 1L;
     
-    boolean dirty;
+    private boolean _dirty;
     public EPubModel fileData;
 
     MonitoringTableModel( EPubModel owner )
     {
         fileData = owner;
-        dirty = false;
+        _dirty = false;
     }
     
     public boolean isDirty()
     {
-        return dirty;
+        return _dirty;
     }
     
     @Override
     public void fireTableDataChanged()
     {
-        dirty = true;
+        _dirty = true;
         super.fireTableDataChanged();
     }
 }

@@ -44,21 +44,17 @@ public class ContributorModel extends MonitoringTableModel
                                         { "oth", "Other" }, //  must be last
                                         };
     
-    public static boolean isContributor( Node candidate )
+    static boolean isContributor( Node candidate )
     {
-        if (   candidate.getNodeName().toLowerCase().contains( "creator" )
-            || candidate.getNodeName().toLowerCase().contains( "contributor" ))
-        {
-            return true;
-        }
-        return false;
+        return candidate.getNodeName().toLowerCase().contains( "creator" )
+            || candidate.getNodeName().toLowerCase().contains( "contributor" );
     }
     
     /*
      *   PRIVATE methods
      */
     
-    Element _metadata;
+    private Element _metadata;
     
     
     private Element getRowElement( int rowIndex )
@@ -196,7 +192,7 @@ public class ContributorModel extends MonitoringTableModel
         if (rowIndex <= rows)   // should never happen
         {
             Element c = getRowElement( rowIndex );
-            switch( columnIndex )
+            if (c != null) switch( columnIndex )
             {
             case 0:
                 return c.getTextContent();
@@ -251,7 +247,7 @@ public class ContributorModel extends MonitoringTableModel
     {
         int i, rows = getRowCount();
 
-        Element contrib = null;
+        Element contrib;
         if (rowIndex >= rows)
         {
             // adding a new contributor
@@ -280,7 +276,7 @@ public class ContributorModel extends MonitoringTableModel
                 //  the array of roles to get the appropriate abbreviation
                 for (i = 0; i < roles.length - 1; i++)
                 {
-                    if (roles[i][1].equals( (String) aValue ))
+                    if (roles[i][1].equals( aValue ))
                         break;
                 }
 //                    Attr attr = _metadata.getOwnerDocument().createAttribute( "opf:role" );

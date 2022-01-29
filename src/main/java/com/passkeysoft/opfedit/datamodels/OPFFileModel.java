@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -42,16 +42,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import org.xml.sax.*;
-import org.apache.log4j.Logger;
+// import org.xml.sax.*;
 import org.w3c.dom.*;
 
 import com.passkeysoft.opfedit.staticutil.XMLUtil;
 
 public class OPFFileModel
 {
-    Logger logger = Logger.getRootLogger(); // where to log errors.
-
     private Document _opfDom = null; // The DOM document backing this data
     private MetadataModel _metadata = null;
     private Element _manifestEl = null;
@@ -114,16 +111,10 @@ public class OPFFileModel
      * 
      * @throws DOMException
      *             if there is any error building a DOM
-     * @throws SAXException
-     *             if the OPF file cannot be parsed into a DOM
-     * @throws FileNotFoundException
-     *             if the specified OPF file cannot be found
-     * @throws IOException
-     *             when any non-specific I/O error is encountered.
      */
     
-    public OPFFileModel( EPubModel pckg, Document opfDom ) 
-            throws DOMException, SAXException, FileNotFoundException, IOException
+    OPFFileModel( EPubModel pckg, Document opfDom )
+            throws DOMException
     {
         this._opfDom = opfDom;
         if (null != _opfDom)
@@ -164,7 +155,7 @@ public class OPFFileModel
             this._manifest = new ManifestModel( pckg, _manifestEl );
 
             // find the spine element and create a new spine model
-            Element spine = null;
+            Element spine;
             spine = XMLUtil.findFirstElement( opfItem, "spine" );
 
             if (null == spine)
@@ -180,7 +171,7 @@ public class OPFFileModel
             this._spine = new SpineModel( pckg, spine );
 
             // find the guide element and create a new guide model
-            Element guide = null;
+            Element guide;
             guide = XMLUtil.findFirstElement( opfItem, "guide" );
             if (null == guide)
             {
@@ -240,12 +231,9 @@ public class OPFFileModel
      *            the abstract representation of an .opf file to be saved.
      * @throws TransformerException
      *             when an XSL transformer fails
-     * @throws IOException 
-     * @throws FileNotFoundException
-     *             when the .opf file cannot be found in the file system.
      **/
     public boolean saveOPF( OutputStream saveTo ) 
-            throws TransformerException, IOException
+            throws TransformerException
     {
         // Remember our current ePubRoot
         getMetadata().setProperty( EPubModel.metaEpubRoot, getMetadata().fileData.getEpubRootPath() );

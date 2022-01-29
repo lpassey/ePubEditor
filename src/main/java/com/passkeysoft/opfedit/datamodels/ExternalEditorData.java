@@ -16,11 +16,11 @@ public class ExternalEditorData extends AbstractTableModel
     public ExternalEditorData()
     {
         _mediaTypes = new MediaTypeModel();
-        _editors = new ArrayList<Preferences>( 16 );
+        _editors = new ArrayList<>( 16 );
         resetEditorArray();
     }
     
-    public void resetEditorArray()
+    private void resetEditorArray()
     {
         Preferences media_type;
         
@@ -39,17 +39,17 @@ public class ExternalEditorData extends AbstractTableModel
         fireTableDataChanged();
     }
 
-    
-    public MediaTypeModel getAllMediaTypes()
-    {
-        return _mediaTypes;
-    }
-    
-    
-    public ArrayList<Preferences> getEditorPrefs()
-    {
-        return _editors;
-    }
+    // Unused getters
+//    public MediaTypeModel getAllMediaTypes()
+//    {
+//        return _mediaTypes;
+//    }
+//
+//
+//    public ArrayList<Preferences> getEditorPrefs()
+//    {
+//        return _editors;
+//    }
     
     
     @Override
@@ -117,9 +117,7 @@ public class ExternalEditorData extends AbstractTableModel
     @Override
     public boolean isCellEditable( int row, int column )
     {
-        if (0 == column)
-            return false;
-        return true;
+        return 0 != column;
     }
 
     
@@ -132,9 +130,9 @@ public class ExternalEditorData extends AbstractTableModel
     {
         // First remove the editor preferences from the referenced nodes in the 
         // preferences store, then recreate the list. Lastly, signal a data change.
-        for (int i = 0; i < rowIndex.length; i++)
+        for (int index : rowIndex)
         {
-            Preferences pref = _editors.get( rowIndex[i] );
+            Preferences pref = _editors.get( index );
             // remove 'editor' and 'edcl' values from this node.
             pref.remove( EPubEditor.PREFS_EDITOR_PATH );
             pref.remove( EPubEditor.PREFS_EDITOR_CL );
@@ -163,8 +161,6 @@ public class ExternalEditorData extends AbstractTableModel
             if (myMediaType.equals( mediaType ))
                 break;
         }
-        if (i >= _editors.size())
-            return false;
-        return true;
+        return i < _editors.size();
     }
 }

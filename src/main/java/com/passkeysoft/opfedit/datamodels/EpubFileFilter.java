@@ -12,10 +12,8 @@ public class EpubFileFilter extends FileFilter
         //  This allows us to browse.
         if (file.isDirectory())
             return true;
-        if (   file.getName().toLowerCase().endsWith( ".epub" )
-            || file.getName().toLowerCase().endsWith( ".zip" ))
-            return true;
-        return false;
+        return file.getName().toLowerCase().endsWith( ".epub" )
+            || file.getName().toLowerCase().endsWith( ".zip" );
     }
 
     @Override

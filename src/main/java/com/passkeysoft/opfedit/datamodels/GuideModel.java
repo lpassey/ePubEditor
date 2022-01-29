@@ -8,7 +8,7 @@ import org.w3c.dom.NodeList;
 public class GuideModel extends MonitoringTableModel
 {
     private static final long serialVersionUID = 2751181048004253681L;
-    private Element _guideElement = null;
+    private Element _guideElement;
 
     public static String[] types = 
     {    
@@ -33,7 +33,7 @@ public class GuideModel extends MonitoringTableModel
     };
   
 
-    public GuideModel( EPubModel fileData, Element guideNode )
+    GuideModel( EPubModel fileData, Element guideNode )
     {
         super(fileData );
         if (null != guideNode)
@@ -50,7 +50,6 @@ public class GuideModel extends MonitoringTableModel
     public void addGuideReference( String type, String title, String href )
     {
         
-        int rowIndex = getRowCount();
         Element ref = _guideElement.getOwnerDocument().createElement( "reference" );
         ref.setAttribute( "type", type );
         ref.setAttribute( "title",  title );
@@ -176,8 +175,8 @@ public class GuideModel extends MonitoringTableModel
     
     
     /**
-     * @param column - the column being queried 
-     * @return: a string containing the name of column
+     * @param colIndex - index of the column being queried
+     * @return a string containing the name of column
      */
     @Override
     public String getColumnName( int colIndex )

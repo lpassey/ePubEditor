@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -34,7 +34,6 @@
 package com.passkeysoft.opfedit.datamodels;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
@@ -63,10 +62,10 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
     /**
      * Constructor
      * 
-     * @param dataFile a OPFFileModel object or extension that represents the
+     * @param _opfData a OPFFileModel object or extension that represents the
      *   file or file system containing the .opf data to be displayed in the table.
      */
-    public ManifestModel( EPubModel _opfData, Element manifest )
+    ManifestModel( EPubModel _opfData, Element manifest )
     {
         super( _opfData );
         _manifest = manifest;
@@ -89,17 +88,18 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
             }
         }
         URL imagepath = getClass().getClassLoader().getResource( "images/ok.gif" );
-        _present = new ImageIcon( imagepath );
+        if (null != imagepath)
+            _present = new ImageIcon( imagepath );
         imagepath = getClass().getClassLoader().getResource( "images/stop.gif" );
-        _missing = new ImageIcon( imagepath );
+        if (null != imagepath)
+            _missing = new ImageIcon( imagepath );
         _listenerList = new EventListenerList();
     }
 
     
     public NodeList getManifestedItems()
     {
-        NodeList items = _manifest.getElementsByTagName( "item" );
-        return items;
+        return _manifest.getElementsByTagName( "item" );
     }
     
 
@@ -120,7 +120,7 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
                 if (f.exists() && f.isAbsolute())
                 {
                     // Copy the file next to the .opf file, and update the manifest entry.
-                    try
+//                    try
                     {
                         f = fileData.copyFileToOpf(f);
                         if (null == f)
@@ -128,10 +128,10 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
                             return false;
                         }
                     }
-                    catch( FileNotFoundException e )
-                    {
-                        return false;
-                    }
+//                    catch( FileNotFoundException e )
+//                    {
+//                        return false;
+//                    }
                     item.setAttribute( "href", fileData.getPathRelativeToOpf( f ) );
                     // if the manifest changed to copy in new files,
                     // the manifest and spine views must be refreshed.
@@ -298,7 +298,6 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
                 id = String.format( "%s_%02d", base, index);
                 index++;
                 i = 0;      // restart the for loop at the beginning.
-                continue;
             }
         }
         item.setAttribute( "id", id );
@@ -365,9 +364,9 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
     
     /**
      * Removes a range of items from the manifest according to their position in a table
-     * @param rowIndex
+     * @param rowIndex index numbers of the row being removed
      */
-    public void removeRow( int rowIndex[] )
+    public void removeRow( int[] rowIndex )
     {
         if (null != _manifest)
         {
@@ -412,7 +411,7 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
                 Element item = (Element) items.item( i );
                 if (id.equals( item.getAttribute( "id" ) ))
                 {
-                    int rowIndex[] = new int[1];
+                    int[] rowIndex = new int[1];
                     rowIndex[0] = i;
                     removeRow( rowIndex );
                     return;
@@ -432,44 +431,47 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
         if (_manifest.hasChildNodes())
         {
             Element first = XMLUtil.findFirstElement( _manifest, "item" );
-            Element test = XMLUtil.getNextElement( first );
-            while (null != test)
+            if (null != first)
             {
-                Element next = XMLUtil.getNextElement( test );
-                while (test != first)
+                Element test = XMLUtil.getNextElement( first );
+                while (null != test)
                 {
-                    Element prev = XMLUtil.getPrevElement( test );
-                    String testStr = test.getAttribute( attr );
-                    String prevStr = prev.getAttribute( attr );
-                    int comp = testStr.compareToIgnoreCase( prevStr );
-                    if (   (comp < 0 && key.getSortOrder() == SortOrder.ASCENDING)
-                        || (comp > 0 && key.getSortOrder() == SortOrder.DESCENDING ))
+                    Element next = XMLUtil.getNextElement( test );
+                    while (test != first)
                     {
-                        _manifest.insertBefore( _manifest.removeChild( test ), prev );
-                        if (prev == first)
-                            first = test;
+                        Element prev = XMLUtil.getPrevElement( test );
+                        if (null != prev)
+                        {
+                            String testStr = test.getAttribute( attr );
+                            String prevStr = prev.getAttribute( attr );
+                            int comp = testStr.compareToIgnoreCase( prevStr );
+                            if ((comp < 0 && key.getSortOrder() == SortOrder.ASCENDING)
+                                || (comp > 0 && key.getSortOrder() == SortOrder.DESCENDING))
+                            {
+                                _manifest.insertBefore( _manifest.removeChild( test ), prev );
+                                if (prev == first)
+                                    first = test;
+                            }
+                            else
+                                break;
+                        }
                     }
-                    else
-                        break;
+                    test = next;
                 }
-                test = next;
             }
         }
     }
-    
-    
-    @Override
-    /**
-     * 
-     * @param rowIndex
-     * @param columnIndex
+
+
+    /** isCellEditable
+     * @param rowIndex row number of the query
+     * @param columnIndex column number of the query
      * @return true of false depending on whether the cell is editable
      */
+    @Override
     public boolean isCellEditable( int rowIndex, int columnIndex)
     {
-        if (2 != columnIndex) 
-            return true;
-        return false;
+        return 2 != columnIndex;
     }
 
 
@@ -506,16 +508,15 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
         {
             NodeList items = getManifestedItems();
             
-            int count = items.getLength();
-            return count;
+            return items.getLength();
         }
         return 0;
     }
 
     
     /**
-     * @param column - the column being queried 
-     * @return: a string containing the name of column
+     * @param colIndex - index of the column being queried
+     * @return a string containing the name of column
      */
     @Override
     public String getColumnName( int colIndex )
@@ -575,7 +576,7 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
     /**
      * @param aValue - value to assign to cell
      * @param rowIndex - the row of the cell
-     * @param columnIndex - the column of the cell
+     * @param colIndex - the column of the cell
      */
     @Override
     public void setValueAt( Object aValue, int rowIndex, int colIndex )
@@ -592,7 +593,7 @@ public class ManifestModel extends MonitoringTableModel implements ListModel
                         // If the old ID matches something in the spine, change that idref
                         // to match this one.
                         String oldValue = item.getAttribute( "id" );
-                        if (!oldValue.equals( (String) aValue ))
+                        if (!oldValue.equals( aValue ))
                         {
                             fileData.getOpfData().getSpine().renameItemRef( oldValue, (String) aValue);
                         }

@@ -51,7 +51,7 @@ public class MediaTypeModel implements ComboBoxModel
     private int selected = -1;
     private EventListenerList eventListeners;
     
-    protected ArrayList<String> _media_types = new ArrayList<String>( 24 );
+    private ArrayList<String> _media_types = new ArrayList<>( 24 );
     
     public MediaTypeModel()
     {
@@ -60,15 +60,15 @@ public class MediaTypeModel implements ComboBoxModel
     }
     
     
-    public void resetMediaTypeList()
+    void resetMediaTypeList()
     {
         _media_types.clear();
         
         //  Fill the media-type list with all pre-set property names
-        for (int i = 0; i < mediaTypes.length; i++)
+        for (String[] mediaType : mediaTypes)
         {
-            _media_types.add( mediaTypes[i][0] );
-            if (mediaTypes[i][1] == null)
+            _media_types.add( mediaType[0] );
+            if (mediaType[1] == null)
                 break;
         }
         // Now search the preferences store and see if there are any media-types listed there
@@ -76,10 +76,10 @@ public class MediaTypeModel implements ComboBoxModel
         Preferences xform = EPubEditor.prefs.node( EPubEditor.PREFS_MEDIA_TYPES );
         try
         {
-            String children[] = xform.childrenNames();  // application, text, image, etc.
-            for (int i = 0; i < children.length; i++)
+            String[] children = xform.childrenNames();  // application, text, image, etc.
+            for (String child : children)
             {
-                addMediaTypeToCombo( children[i] ,xform.node( children[i] ) );
+                addMediaTypeToCombo( child, xform.node( child ) );
             }
         }
         catch( BackingStoreException ignore ) {}
@@ -90,15 +90,15 @@ public class MediaTypeModel implements ComboBoxModel
     private void addMediaTypeToCombo( String parentPath, Preferences media_type ) 
             throws BackingStoreException
     {
-        String children[] = media_type.childrenNames();
-        for (int i = 0; i < children.length; i++)
+        String[] children = media_type.childrenNames();
+        for (String child : children)
         {
-            String mType = parentPath + "/" + children[i];
+            String mType = parentPath + "/" + child;
 
             // If this media type is not already in the list, add it.
             if (!contains( mType ))
                 _media_types.add( mType );
-            addMediaTypeToCombo( mType, media_type.node( children[i] ) );
+            addMediaTypeToCombo( mType, media_type.node( child ) );
         }
     }
 
@@ -156,9 +156,7 @@ public class MediaTypeModel implements ComboBoxModel
                 break;
             i++;
         }
-        if (_media_types.size() == i)
-            return false;
-        return true;
+        return _media_types.size() != i;
     }
     
     @Override

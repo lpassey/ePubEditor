@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -40,11 +40,11 @@ package com.passkeysoft.opfedit.datamodels;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -59,7 +59,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.passkeysoft.DOMIterator;
 import com.passkeysoft.XHTMLDocument;
@@ -71,7 +70,7 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
 
     class HTMLAnchor
     {
-        public String htmlFile;
+        String htmlFile;
         public String href;
         public String id;
     }
@@ -89,9 +88,9 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
         return retVal;
     }
     
-    private TreeSet<HTMLAnchor> anchorList = new TreeSet<HTMLAnchor>( this );
+    private TreeSet<HTMLAnchor> anchorList = new TreeSet<>( this );
     
-    public HTMLAnchor findAnchorByID( String id )
+    private HTMLAnchor findAnchorByID( String id )
     {
         Iterator<HTMLAnchor> iter = anchorList.iterator();
         while (iter.hasNext())
@@ -113,7 +112,7 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
     {
         f.getCanonicalFile().getParentFile().mkdirs();
         FileOutputStream fout = new FileOutputStream( f );
-        _out = new BufferedWriter( new OutputStreamWriter( fout, "UTF-8" ));
+        _out = new BufferedWriter( new OutputStreamWriter( fout, StandardCharsets.UTF_8 ));
 //        _out.write( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" );
         _step = 2;
         _asciiOnly = false;
@@ -124,14 +123,14 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
     
     
     public ArrayList<File> burst(String path, DocumentBuilder db, Element delim, File href )
-            throws DOMException, FileNotFoundException, IOException
+            throws DOMException, IOException
     {
-        ArrayList<File> result = new ArrayList<File>();
+        ArrayList<File> result = new ArrayList<>();
         Node outNode, currNode, bodyNode = null;
         
         String name = FileUtil.getFileName( href );
         String ext = FileUtil.getExt( href );
-//        ext = "html";
+//        ext = "xhtml";
         int count = 0, counter = 0;
         
         // Set up the new document
@@ -148,7 +147,8 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
         {
             currNode = i.next();
             Node copyNode;
-            if (XMLUtil.nodesMatch( delim, currNode, true ))
+            if (   XMLUtil.nodesMatch( delim, currNode, true )
+                && null != bodyNode)
             {
                 // burst point encountered
                 // if outNode has children, spit them out before continuing.
@@ -197,7 +197,7 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
                     // If this is an <a>nchor node, remember it, because we're 
                     // going to have to fix it up later.
                     HTMLAnchor a = new HTMLAnchor();
-                    a.htmlFile = String.format( "%s_%02d.%s", name, count, ext );;
+                    a.htmlFile = String.format( "%s_%02d.%s", name, count, ext );
                     a.href = ((Element) copyNode).getAttribute( "href" );
                     if (a.href.startsWith( "#" ) || !a.href.contains( "#" ))
                     {
@@ -274,7 +274,7 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
                 }
             }
         }
-        if (XMLUtil.hasRealContent( bodyNode ))
+        if (null != bodyNode && XMLUtil.hasRealContent( bodyNode ))
         {
             result.add( publish( docOut, new File( path, newFile )));
         }
@@ -317,7 +317,6 @@ public class OEBDocument extends XHTMLDocument implements Comparator<OEBDocument
                             db.setEntityResolver( new EntityResolver()
                             {
                                 public InputSource resolveEntity( String arg0, String arg1 )
-                                        throws SAXException, IOException
                                 {
                                     return new InputSource( new StringReader( entities ) );
                                 }

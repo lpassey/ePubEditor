@@ -18,12 +18,12 @@ public class ExternalXformerData extends AbstractTableModel
     public ExternalXformerData()
     {
         _mediaTypes = new MediaTypeModel();
-        _xformers = new ArrayList<Preferences>( 16 );
+        _xformers = new ArrayList<>( 16 );
         resetXFormerArray();
     }
 
     
-    public void resetXFormerArray()
+    private void resetXFormerArray()
     {
         Preferences media_type;
         
@@ -59,9 +59,7 @@ public class ExternalXformerData extends AbstractTableModel
     @Override
     public boolean isCellEditable( int row, int column )
     {
-        if (0 == column)
-            return false;
-        return true;
+        return 0 != column;
     }
 
     
@@ -138,9 +136,9 @@ public class ExternalXformerData extends AbstractTableModel
     {
         // First remove the editor preferences from the referenced nodes in the 
         // preferences store, then recreate the list. Lastly, signal a data change.
-        for (int i = 0; i < rowIndex.length; i++)
+        for (int index : rowIndex)
         {
-            Preferences pref = _xformers.get( rowIndex[i] );
+            Preferences pref = _xformers.get( index );
             // remove 'editor' and 'edcl' values from this node.
             pref.remove( EPubEditor.PREFS_TRANSFORMER );
             pref.remove( EPubEditor.PREFS_XFORM_CL );

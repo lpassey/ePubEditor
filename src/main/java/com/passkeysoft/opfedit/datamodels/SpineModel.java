@@ -1,4 +1,4 @@
-/**
+/* *
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -57,7 +57,7 @@ public class SpineModel extends MonitoringTableModel
     };
      
      
-   static private TreeSet<String> htmlTypes = new TreeSet<String>();
+   static private TreeSet<String> htmlTypes = new TreeSet<>();
     {
         htmlTypes.add( acceptable[0] );
         htmlTypes.add( acceptable[1] );
@@ -71,15 +71,15 @@ public class SpineModel extends MonitoringTableModel
   
     public static boolean isAcceptable( String test )
     {
-        for (int i = 0; i < acceptable.length; i++)
+        for (String s : acceptable)
         {
-            if (test.equalsIgnoreCase( acceptable[i] ))
+            if (test.equalsIgnoreCase( s ))
                 return true;
         }
         return false;
     }
   
-    public SpineModel( EPubModel _opfData, Element spineNode )
+    SpineModel( EPubModel _opfData, Element spineNode )
     {
         super( _opfData );
    		_spine = spineNode;
@@ -179,9 +179,7 @@ public class SpineModel extends MonitoringTableModel
         public boolean hasNext()
         {
             moveToValid();
-            if (cursor < limit)
-                return true;
-            return false;
+            return cursor < limit;
         }
 
 
@@ -318,8 +316,7 @@ public class SpineModel extends MonitoringTableModel
     {
         ActionEvent event = new ActionEvent(this, 0, string);
         ActionListener[] listeners = _watcher.getListeners( ActionListener.class );
-        for (int i = 0; i < listeners.length; i++)
-            listeners[i].actionPerformed( event );        
+        for (ActionListener listener : listeners) listener.actionPerformed( event );
     }
 
     /*
@@ -345,17 +342,15 @@ public class SpineModel extends MonitoringTableModel
     @Override
 	public boolean isCellEditable( int rowIndex, int columnIndex )
 	{
-	    if (0 == columnIndex)
-	        return true;
-		return false;
-	}
+        return 0 == columnIndex;
+    }
 	
     
 	public int addRow( String idref, Node refChild )
 	{
         Element itemRef, element;
         
-        int i = 0, limit;
+        int i, limit;
         if (null == idref || 0 == idref.length())
         {
             NodeList manifested = fileData.getOpfData().getManifest().getManifestedItems();
@@ -421,7 +416,7 @@ public class SpineModel extends MonitoringTableModel
     }
 	
 	
-	public void removeItem( Element itemref )
+	void removeItem( Element itemref )
 	{
         if (null != itemref)
         {
@@ -519,7 +514,7 @@ public class SpineModel extends MonitoringTableModel
     }
 
 
-    public void renameItemRef( String oldValue, String aValue )
+    void renameItemRef( String oldValue, String aValue )
     {
         NodeList spineList = _spine.getElementsByTagName( "itemref" );
         for (int i = 0; i < spineList.getLength(); i++)

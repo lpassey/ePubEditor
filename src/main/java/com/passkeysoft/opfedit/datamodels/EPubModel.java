@@ -294,8 +294,7 @@ public class EPubModel extends Observable
                     _opfFolderName = ((Element) roots.item( 0 )).getAttribute( "full-path" );
                 }
                 else
-                // no container.xml, is there an .opf file /anywhere/ in the
-                // archive?
+                // no container.xml, is there an .opf file /anywhere/ in the archive?
                 {
                     entries = zip.entries();
 
@@ -361,8 +360,7 @@ public class EPubModel extends Observable
         else _opfData.getMetadata().setProperty( metaEpubRoot, "" );
     }
 
-    public boolean saveOPFFile() throws FileNotFoundException, TransformerException,
-            IOException
+    public boolean saveOPFFile() throws FileNotFoundException, TransformerException
     {
         if (null == _opfFile)
         {
@@ -404,8 +402,11 @@ public class EPubModel extends Observable
         }
         finally
         {
-            if (null != os)
+            if (null != os) try
+            {
                 os.close();
+            }
+            catch( IOException ignore ) {}
         }
         return false;
     }

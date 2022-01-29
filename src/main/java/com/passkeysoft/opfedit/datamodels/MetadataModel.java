@@ -44,10 +44,9 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
     }
     
     private Element _metadata = null;
-    private EventListenerList _listenerList;
+    private EventListenerList _listenerList = new EventListenerList();
 
-
-    public MetadataModel( EPubModel fileData, Element metadataNode )
+    MetadataModel( EPubModel fileData, Element metadataNode )
     {
         super( fileData );
         if (null != metadataNode)
@@ -223,7 +222,7 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
         return "";
     }
 
-    public boolean setProperty( String propName, String propValue )
+    boolean setProperty( String propName, String propValue )
     {
         String name;
         // find the row that contains this property
@@ -247,7 +246,7 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
     
     public ArrayList<String> getAllProperties( String prop )
     {
-        ArrayList<String> properties = new ArrayList<String>();
+        ArrayList<String> properties = new ArrayList<>();
         Node meta;
         for (meta = _metadata.getFirstChild();null != meta; meta = meta.getNextSibling())
         {
@@ -266,7 +265,7 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
     }
     
     
-    public Element getCreatorsElement()
+    Element getCreatorsElement()
     {
         return _metadata;
     }
@@ -275,7 +274,7 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
     /**
      * Returns the value for the cell at columnIndex and rowIndex.
      * 
-     * @see com.sun.java.swing.table.TableModel
+     * @see javax.swing.table.TableModel
      */
     @Override
     public Object getValueAt( int rowIndex, int columnIndex )
@@ -308,8 +307,7 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
                     case 1:
                         return meta.getTextContent();
                     case 2:
-                        String attr = meta.getAttribute( "id" );
-                        return attr;
+                        return meta.getAttribute( "id" );
                     case 3:
                     {
                         if (meta.hasAttributes())
@@ -323,8 +321,10 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
                                 {
                                     if (0 < attributes.length())
                                         attributes.append( ", " );
-                                    attributes.append( attrs.item( i ).getNodeName() + "=\""
-                                            + attrs.item( i ).getNodeValue() + "\"" );
+                                    attributes.append( attrs.item( i ).getNodeName() )
+                                        .append( "=\"" )
+                                        .append( attrs.item( i ).getNodeValue() )
+                                        .append( "\"" );
                                 }
                             }
                             return attributes.toString();
@@ -451,10 +451,10 @@ public class MetadataModel extends MonitoringTableModel implements ListModel
                         
                         // deal with multiple attributes.
                         String[] newAttrs = value.split(" *, *");
-                        for (int i = 0; i < newAttrs.length; i++)
+                        for (String newAttr : newAttrs)
                         {
                             // TODO: deal with malformed metadata pairs
-                            String[] values = newAttrs[i].split( " *= *" );
+                            String[] values = newAttr.split( " *= *" );
                             if (1 < values.length)
                             {
                                 String[] temp = values[1].split( "\"" );

@@ -1,7 +1,33 @@
+/*-*
+   Copyright-Only Dedication (based on United States law)
+
+  The person or persons who have associated their work with this
+  document (the "Dedicator") hereby dedicate whatever copyright they
+  may have in the work of authorship herein (the "Work") to the
+  public domain.
+
+  Dedicator makes this dedication for the benefit of the public at
+  large and to the detriment of Dedicator's heirs and successors.
+  Dedicator intends this dedication to be an overt act of
+  relinquishment in perpetuity of all present and future rights
+  under copyright law, whether vested or contingent, in the Work.
+  Dedicator understands that such relinquishment of all rights
+  includes the relinquishment of all rights to enforce (by lawsuit
+  or otherwise) those copyrights in the Work.
+
+  Dedicator recognizes that, once placed in the public domain, the
+  Work may be freely reproduced, distributed, transmitted, used,
+  modified, built upon, or otherwise exploited by anyone for any
+  purpose, commercial or non-commercial, and in any way, including
+  by methods that have not yet been invented or conceived.
+*/
+
 package com.passkeysoft.opfedit.datamodels;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
+
+import com.steadystate.css.dom.CSSValueImpl;
 import org.w3c.dom.css.*;
 
 public class StyleSheetCascade
@@ -10,7 +36,7 @@ public class StyleSheetCascade
     
     public StyleSheetCascade()
     {
-        sss = new ArrayList<CSSStyleSheet>();
+        sss = new ArrayList<>();
     }
     
     
@@ -28,7 +54,7 @@ public class StyleSheetCascade
      */
     public TreeMap<String, CSSValue> matchStyles( String nodeName, String clazz )
     {
-        TreeMap<String, CSSValue> answer = new TreeMap<String, CSSValue>();
+        TreeMap<String, CSSValue> answer = new TreeMap<>();
         for (CSSStyleSheet s : sss)
         {
             // look for a match in this stylesheet
@@ -38,14 +64,23 @@ public class StyleSheetCascade
                 CSSRule cssRule = cssRuleList.item( i );
                 if (CSSRule.STYLE_RULE == cssRule.getType())
                 {
-                    String[] selector = ((CSSStyleRule) cssRule).getSelectorText().split( "," );
-                    for (int k = 0; k < selector.length; k++)
+                    String[] selectors = ((CSSStyleRule) cssRule).getSelectorText().split( "," );
+//                    if (selectors.length > 1)
+//                        System.out.println( "breaking" );
+                    for (String selector : selectors)
                     {
-                        if (   selector[k].trim().equals( nodeName + "." + clazz ) 
-                            || selector[k].trim().equals( "*." + clazz ))
+                        if (selector.contains( ":" ))
+                            selector = selector.substring( 0, selector.indexOf( ":" ) );
+                        if (   selector.trim().equals( nodeName + "." + clazz )
+                            || selector.trim().equals( "*." + clazz )
+                            || selector.trim().equals( "." + clazz ))
                         {
                             CSSStyleDeclaration decl = ((CSSStyleRule) cssRule).getStyle();
-                            for (int j = 0; j < decl.getLength(); j++)
+                            if (0 == decl.getLength())
+                            {
+                                answer.put( clazz, new CSSValueImpl());
+                            }
+                            else for (int j = 0; j < decl.getLength(); j++)
                             {
                                 String property = decl.item( j );
                                 answer.put( property, decl.getPropertyCSSValue( property ) );
