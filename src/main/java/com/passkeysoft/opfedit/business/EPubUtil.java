@@ -96,23 +96,28 @@ import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
 public class EPubUtil
 {
     private static final String tocSkeleton
-    = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-    + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
-    + "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
-    + "<html>\n"
-    + "  <head>\n"
-    + "    <title>Table of Contents</title>"
-    + "    <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />\n"
-    + "  </head>\n" + "  <body>\n" + "    <div class=\"toc\">\n"
-    + "      <h3>Table of Contents</h3>\n" + "    </div>" + "  </body>"
-    + "</html>";
+        = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+        + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
+        + "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
+        + "<html lang=\"en\">\n"
+        + "  <head>\n"
+        + "    <title>Table of Contents</title>"
+        + "    <meta content=\"text/html; charset=utf-8\" http-equiv=\"content-type\" />\n"
+        + "  </head>\n"
+        + "  <body>\n"
+        + "    <nav class=\"toc\" epub:type=\"toc\">\n"
+        + "      <h3>Table of Contents</h3>\n"
+        + "    </nav>"
+        + "  </body>"
+        + "</html>";
 
 
     /**
      * Builds an XHTML formatted Table of Contents for the publication as a whole using 
-     * unordered lists (<ul>). Each header becomes a list item, and each time a header level 
-     * changes a new, embedded unordered list is started. When the entire list is successfully
+     * ordered lists (<ol>). Each header becomes a list item, and each time a header level
+     * changes a new, embedded ordered list is started. When the entire list is successfully
      * created, it is saved as an XHTML file and added to the manifest.
+     *
      * TODO: The new TOC is not added to the guide or the spine. Should it be?
      *
      * @param ePubData "this"
@@ -146,7 +151,10 @@ public class EPubUtil
             Document toc;
             try
             {
-                toc = EPubModel.db.parse( new ByteArrayInputStream( tocSkeleton.getBytes() ) );
+                toc = EPubModel.db.parse( new ByteArrayInputStream( tocSkeleton.getBytes() ));
+                Element docEl = toc.getDocumentElement();
+                toc.renameNode( docEl,"http://www.w3.org/1999/xhtml", "html" );
+                docEl.setAttribute( "xmlns:epub", "http://www.idpf.org/2007/ops" );
             }
             catch( IOException e )
             {
@@ -174,7 +182,7 @@ public class EPubUtil
             }
             XPathFactory fac = XPathFactory.newInstance();
             XPath xpath = fac.newXPath();
-            XPathExpression exp = xpath.compile( "//div" );
+            XPathExpression exp = xpath.compile( "//nav" );
             Element lastLi, tocList, tocNode = (Element) exp.evaluate( toc, XPathConstants.NODE );
             lastLi = tocList = null;
             SpineModel.SpineHTMLIterator iter = ePubData.getOpfData().getSpine().new SpineHTMLIterator();
@@ -201,7 +209,7 @@ public class EPubUtil
                     // Do an inorder traversal of the tree elements. If a node
                     // is a header, create a list item to represent it, and add
                     // that to the tocList. If the list class does not match, the
-                    // element name, create a new UL to hold it if it is more
+                    // element name, create a new OL to hold it if it is more
                     // granular, or move to the parent if it is not.
                     NodeList nodelist =
                             doc.getDocumentElement().getElementsByTagName( "body" );
@@ -242,7 +250,7 @@ public class EPubUtil
                                         }
                                     }
                                 }
-                                if (0 == attr.length())
+//                                if (0 == attr.length())
                                 {
                                     // If the header has an anchor child,
                                     // adopt that id, otherwise create a temporary id.
@@ -252,26 +260,36 @@ public class EPubUtil
                                         Node child = hiter.next();
                                         if (child.getNodeName().toLowerCase().equals( "a" ))
                                         {
-                                            attr = ((Element) child).getAttribute( "id" );
-                                            if (0 < attr.length())
+                                            // if the anchor node is the first child, and the <a> tag is empty,
+                                            // or if the header has no id value
+                                            // use the anchor id.
+                                            Node firstChild = node.getFirstChild();
+                                            if (   (   child.equals( firstChild )
+                                                    && !child.hasChildNodes())
+                                                // or node has no id.
+                                                || ((Element) node).getAttribute( "id" ).isEmpty()
+                                            )
                                             {
-                                                ((Element) child).removeAttribute( "id" );
+                                                attr = ((Element) child).getAttribute( "id" );
+//                                                if (0 < attr.length())
+//                                                {
+//                                                    ((Element) child).removeAttribute( "id" );
+//                                                }
+//                                                if (!child.hasAttributes())
+//                                                {
+//                                                    // No remaining attributes, remove the whole node.
+//                                                    Node n = child.getFirstChild();
+//                                                    while (null != n)
+//                                                    {
+//
+//                                                        a.appendChild( toc.adoptNode( child.removeChild( n ) ) );
+//                                                        n = child.getFirstChild();
+//                                                    }
+//                                                    Node parent = child.getParentNode();
+//                                                    parent.removeChild( child );
+//                                                }
+                                                break;
                                             }
-                                            if (!child.hasAttributes())
-                                            {
-                                                // No remaining attributes, remove the whole node.
-                                                Node n = child.getFirstChild();
-                                                while (null != n)
-                                                {
-                                                    
-                                                    a.appendChild(toc.adoptNode( child.removeChild( n )));
-                                                    n = child.getFirstChild();
-                                                }
-                                                Node parent = child.getParentNode();
-                                                parent.removeChild( child );
-                                            }
-                                            break;
-
                                         }
                                     }
                                     if (0 == attr.length())
@@ -288,12 +306,17 @@ public class EPubUtil
                                 for (Node child = node.getFirstChild(); null != child; child =
                                         child.getNextSibling())
                                 {
-                                    a.appendChild( toc.importNode( child, true ) );
+                                    // do not copy empty anchor nodes.
+                                    if (   !"a".equalsIgnoreCase( child.getNodeName() )
+                                        || child.hasChildNodes() )
+                                    {
+                                        a.appendChild( toc.importNode( child, true ) );
+                                    }
                                 }
                                 li.appendChild( a );
                                 if (null == tocList)
                                 {
-                                    tocList = toc.createElement( "ul" );
+                                    tocList = toc.createElement( "ol" );
                                     tocList.setAttribute( "class", name );
                                     tocNode.appendChild( tocList );
                                 }
@@ -303,11 +326,11 @@ public class EPubUtil
                                     int relative = name.compareToIgnoreCase( attr );
                                     if (0 < relative)
                                     {
-                                        // need to create new ul, attached to the previous li
-                                        Element ul = toc.createElement( "ul" );
-                                        ul.setAttribute( "class", name );
-                                        lastLi.appendChild( ul );
-                                        tocList = ul;
+                                        // need to create new ol, attached to the previous li
+                                        Element ol = toc.createElement( "ol" );
+                                        ol.setAttribute( "class", name );
+                                        lastLi.appendChild( ol );
+                                        tocList = ol;
                                     }
                                     else
                                         while (0 > relative)
@@ -317,10 +340,10 @@ public class EPubUtil
                                                     (Element) tocList.getParentNode()
                                                             .getParentNode();
                                             if (!tocList.getNodeName().toLowerCase()
-                                                    .equals( "ul" ))
+                                                    .equals( "ol" ))
                                             {
                                                 // We've backed up past the list owner; start over.
-                                                tocList = toc.createElement( "ul" );
+                                                tocList = toc.createElement( "ol" );
                                                 tocList.setAttribute( "class", name );
                                                 tocNode.appendChild( tocList );
                                             }
@@ -396,7 +419,7 @@ public class EPubUtil
                     "Unable to find the manifested file: \""
                   + ePubData.getOpfData().getManifest().getHrefById( id ) + "\";\n"
                   + "No Table of Contents can be created.\n"
-                  + "Restore the manifested file, or remove the reference from the manifest."
+                  + "Restore the manifested file, or remove the reference from the content table."
                   /* + ex.getLocalizedMessage() */, ex );
         }
         return null;
