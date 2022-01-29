@@ -722,7 +722,7 @@ public class EPubUtil
     + "</head>\n"
     + "<body>\n"
     + "  <div style=\"text-align:center\">\n"
-    + "      <img src=\"%s\" alt=\"Cover Image\" style=\"; max-width: 99vw; max-height: 99vh\"/>\n"
+    + "      <img src=\"%s\" alt=\"Cover Image\" style=\"max-width: 99vw; max-height: 99vh\"/>\n"
     + "  </div>\n"
     + "</body>\n"
     + "</html>\n"
