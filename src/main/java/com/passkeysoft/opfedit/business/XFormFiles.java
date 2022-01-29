@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -24,8 +24,6 @@
   $Log: XFormFiles.java,v $
   Revision 1.4  2013/07/03 22:11:38  lpassey
   Improve error handling when .opf file has not yet been created.
-
-  
 */
 
 
@@ -57,7 +55,7 @@ public class XFormFiles extends MonitoredWorker<String, Void>
     private Frame _parent;
     private JTable _tableData;
     private MonitorThread _stdoutMonitor, _stderrMonitor;
-    int rows[];
+    private int[] rows;
     
     class MonitorThread extends Thread
     {
@@ -78,7 +76,7 @@ public class XFormFiles extends MonitoredWorker<String, Void>
             {
                 line = _reader.readLine();
                 if (null != line && 0 < line.length())
-                    _sb.append( line + "\n" );
+                    _sb.append( line ).append( "\n" );
             }
             catch( IOException ignore ) { }
         }
@@ -121,7 +119,7 @@ public class XFormFiles extends MonitoredWorker<String, Void>
     }
 
     @Override
-    protected String doInBackground() throws Exception
+    protected String doInBackground()
     {
         String fileName;
         
@@ -144,15 +142,20 @@ public class XFormFiles extends MonitoredWorker<String, Void>
                 String transformer = prefNode.get( EPubEditor.PREFS_TRANSFORMER, null );
                 if (null == transformer)
                 {
-                    _sb.append( "No transformer is set for files of media-type " 
-                                + mediaType + "\n\n");
+                    _sb.append( "No transformer is set for files of media-type " )
+                        .append( mediaType )
+                        .append( "\n\n" );
                 }
                 else if (new File(transformer).exists()) try
                 {
                     // ... the command line arguments, in a format that String.format can understand
                     String commandLine = String.format( prefNode.get( EPubEditor.PREFS_XFORM_CL, "%s" ), 
                             xformFile.getAbsolutePath() );
-                    _sb.append( "executing " + transformer + " " + commandLine + "\n");
+                    _sb.append( "executing " )
+                        .append( transformer )
+                        .append( " " )
+                        .append( commandLine )
+                        .append( "\n" );
                     Process proc = java.lang.Runtime.getRuntime().exec(
                             transformer + " " + commandLine  );
 
@@ -168,11 +171,14 @@ public class XFormFiles extends MonitoredWorker<String, Void>
                     proc.waitFor();
                     int retVal = proc.exitValue(); 
                     
-                    _sb.append( "\n" + transformer + " completed with return code: " + retVal + "\n\n" );
-                    
-                    _sb.append( _stderrMonitor );
-                    _sb.append( "\n" );
-                    _sb.append( _stdoutMonitor );
+                    _sb.append( "\n" )
+                        .append( transformer )
+                        .append( " completed with return code: " )
+                        .append( retVal )
+                        .append( "\n\n" )
+                        .append( _stderrMonitor )
+                        .append( "\n" )
+                        .append( _stdoutMonitor );
                     
                     // Rename the file with the new file extension
                     commandLine = FileUtil.getExt( xformFile );
@@ -202,25 +208,23 @@ public class XFormFiles extends MonitoredWorker<String, Void>
                     commandLine = _epubModel.getPathRelativeToOpf( xformFile );
 //                    commandLine = FileUtil.getPathRelativeToBase( xformFile, _epubModel.getOpfFile() );
                     _opfData.getManifest().setItemById( id, commandLine, mediaType );
-                    update( null, new Integer( i ));
+                    update( null, i );
                     if (isCancelled())
                         break;
                 }
-                catch( IOException ignore )
+                catch( IOException | InterruptedException ignore )
                 {
                     ignore.printStackTrace();
                 }
-                catch( InterruptedException e )
-                {
-                    e.printStackTrace();
-                }
                 else
                 {
-                    _sb.append( transformer + " cannot be found; \nno transformation was performed.\n" );
+                    _sb.append( transformer )
+                        .append( " cannot be found; \nno transformation was performed.\n" );
                 }
             }
             else
-                _sb.append( href + " cannot be found, \nno transformation was performed.\n" );
+                _sb.append( href )
+                    .append( " cannot be found, \nno transformation was performed.\n" );
             _sb.append( "\n------------------------------------------\n" );  
         }
         return _sb.toString();

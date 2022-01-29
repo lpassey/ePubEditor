@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -22,6 +22,12 @@
   by methods that have not yet been invented or conceived.
   
   $Log: CleanInBackground.java,v $
+
+ If a span has an id, move it to it's parent node if it's the first child
+ and the parent doesn't already have an id. If the text style is italic,
+ remove it and add an <i>. If it has a font-weight of bold, remove it and add
+ a <b>. If it is now empty, remove it.
+
   Revision 1.10  2014/07/29 22:11:43  lpassey
   Use alternate File constructor to ensure parent/child relationship.
 
@@ -186,7 +192,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
         {
             SpineModel.SpineHTMLIterator iter = _opfData.getSpine().new SpineHTMLIterator();
             
-            Integer progress = new Integer( 0 );
+            Integer progress = 0;
             update( null, progress );
             while (iter.hasNext())
             {
@@ -215,7 +221,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
                                 // this is the http-equiv node, be sure it
                                 // indicates that all content is utf-8 encoded.
                                 meta.setAttribute( "content", "text/html; charset=utf-8" );
-                                meta.setAttribute( "http-equiv", "Content-Type" );
+                                meta.setAttribute( "http-equiv", "content-type" );
                                 equiv = meta;
                             }
                             content = meta.getAttribute( "name" );
@@ -235,7 +241,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
                             // there was not http-equiv element, add one now.
                             equiv = doc.createElement( "meta" );
                             equiv.setAttribute( "content", "text/html; charset=utf-8" );
-                            equiv.setAttribute( "http-equiv", "Content-Type" );
+                            equiv.setAttribute( "http-equiv", "content-type" );
                             metas = doc.getElementsByTagName( "head" );
                             if (0 < metas.getLength())
                                 metas.item( 0 ).insertBefore( equiv, metas.item( 0 ).getFirstChild() );
@@ -297,19 +303,15 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
                                     + _opfData.getManifest().getHrefById( id ) + "\n"
                                     + ex.getLocalizedMessage(), ex );
                 }
-                catch( TransformerFactoryConfigurationError e )
-                {
-                    LogAndShowError.logException( null, e );
-                }
                 catch( TransformerException ex )
                 {
                     LogAndShowError.logAndShowEx(
-                            "A serious error occured while transforming "
-                                    + _opfData.getManifest().getHrefById( id ) 
-                                    + "\nConsult the error log for more details."
-                                    + ex.getLocalizedMessage(), ex );
+                        "A serious error occured while transforming "
+                            + _opfData.getManifest().getHrefById( id )
+                            + "\nConsult the error log for more details."
+                            + ex.getLocalizedMessage(), ex );
                 }
-                catch( Exception e )
+                catch( TransformerFactoryConfigurationError | Exception e )
                 {
                     LogAndShowError.logException( null, e );
                 }
@@ -322,7 +324,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
         }
     }
 
-    public static void insertUserCss( Document doc, String relativePathToUserCss )
+    static void insertUserCss( Document doc, String relativePathToUserCss )
     {
         NodeList elements = doc.getElementsByTagName( "link" );
         for (int i = 0; i < elements.getLength(); i++)
@@ -333,8 +335,8 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
                             .getAttribute( "href" );
             if (relativePathToUserCss.equalsIgnoreCase( href ))
             {
-                Node parent = ((Element) elements.item( i )).getParentNode();
-                parent.removeChild( ((Element) elements.item( i )) );
+                Node parent = ( elements.item( i )).getParentNode();
+                parent.removeChild( (elements.item( i )) );
                 break;
             }
         }

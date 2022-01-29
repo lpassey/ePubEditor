@@ -14,7 +14,7 @@ public class EPubChecker extends MonitoredWorker<String, Object>
 {
     private EPubFileCheck _ePubFileChecker;
     private EPubModel _ePubModel;
-    Frame _parent;
+    private Frame _parent;
 
     public EPubChecker( Frame parent, EPubModel ePub )
     {
@@ -44,7 +44,7 @@ public class EPubChecker extends MonitoredWorker<String, Object>
             String report;
             try
             {
-                report = (String) get();
+                report = get();
             }
             catch( ExecutionException e1 )
             {

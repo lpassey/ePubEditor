@@ -10,7 +10,7 @@ public class DOMSubIterator extends DOMIterator
 
     private DOMIterator parent;
     
-    public DOMSubIterator( DOMIterator start )
+    DOMSubIterator( DOMIterator start )
     {
         super( start.getCurrNode() );
         parent = start;

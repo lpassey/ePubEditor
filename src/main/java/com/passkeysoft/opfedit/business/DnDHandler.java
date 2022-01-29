@@ -51,9 +51,7 @@ public class DnDHandler extends TransferHandler
                 // if any one file can be dropped, then the group is acceptable.
                 String newType =
                         new MediaTypeModel().resolveMediaType( null, file.getName() );
-                if (newType.equals( "other" ))
-                    continue;
-                else
+                if (!newType.equals( "other" ))
                     return true;
             }
         }
@@ -65,13 +63,9 @@ public class DnDHandler extends TransferHandler
             // importData() itself will not import bad files, so this check is unnecessary.
             return true;
         }
-        catch( UnsupportedFlavorException ex )
+        catch( UnsupportedFlavorException | IOException ex )
         {
             // I can't accept anything that's not a list.
-            return false;
-        }
-        catch( IOException ex )
-        {
             return false;
         }
         return false;
@@ -106,11 +100,7 @@ public class DnDHandler extends TransferHandler
             }
             _manifest.refresh();             
         } 
-        catch( UnsupportedFlavorException e )
-        {
-            return false;
-        }
-       catch (IOException ex) 
+        catch( UnsupportedFlavorException | IOException e )
         {
             return false;
         }

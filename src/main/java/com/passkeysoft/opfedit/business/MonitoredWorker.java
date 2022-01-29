@@ -27,16 +27,16 @@ public abstract class MonitoredWorker<T,V> extends SwingWorker<T,V> implements O
     protected void done()
     {
         // This implementation fires a property change with a value of -1 when work is complete
-        firePropertyChange( "progress", null, new Integer( -1 ));
+        firePropertyChange( "progress", null, -1 );
         
         // Let subclasses finish up their work on the Event Dispatch Thread
         complete();
         
         // turn off all listeners, to help garbage collection on the thread happen faster
         PropertyChangeListener[] listeners = getPropertyChangeSupport().getPropertyChangeListeners();
-        for (int i = 0; i < listeners.length; i++)
+        for (PropertyChangeListener listener : listeners)
         {
-            removePropertyChangeListener( listeners[i] );
+            removePropertyChangeListener( listener );
         }
     }
 

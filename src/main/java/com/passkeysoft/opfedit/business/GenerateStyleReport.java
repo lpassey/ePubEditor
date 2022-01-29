@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -28,8 +28,6 @@
   Revision 1.4  2013/07/03 22:10:40  lpassey
   1. Catch FileNotFoundException from getManifestedDocument.
   2. Improve error handling when .opf file has not yet been created.
-
-
 */
 
 
@@ -60,17 +58,16 @@ import com.passkeysoft.opfedit.datamodels.SpineModel;
 import com.passkeysoft.opfedit.datamodels.StyleSheetCascade;
 import com.passkeysoft.opfedit.ui.LogAndShowError;
 import com.steadystate.css.parser.CSSOMParser;
+import org.w3c.css.sac.InputSource;
 
 public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Object>
 {
-    private File _css;
     private EPubModel _ePubData;
     private StyleSheetCascade _userStyles;
     private final String[] columnNames = { "Selector", "File Name", "Styles" };
     
     public GenerateStyleReport( File usercss, EPubModel epubData )
     {
-        _css = usercss;
         _ePubData = epubData;
         final DocumentBuilderFactory DOMfactory = DocumentBuilderFactory.newInstance();
         DOMfactory.setValidating( false );
@@ -81,19 +78,18 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
             Document _styleHolder = db.newDocument();
             _userStyles = new StyleSheetCascade();
             
-            if (null != _css)
+            if (null != usercss)
             {
                 try
                 {
                     // build a style sheet from the user's sheet. If a style is detected
                     // in this cascade, it will /not/ be added to the report.
                     CSSOMParser parser = new CSSOMParser();
-                    FileReader reader = new FileReader( _css );
-                    org.w3c.css.sac.InputSource is =
-                            new org.w3c.css.sac.InputSource( reader );
+                    FileReader reader = new FileReader( usercss );
+                    InputSource is = new InputSource( reader );
                     CSSStyleSheet ss =
                             parser.parseStyleSheet( is, _styleHolder,
-                                    _css.getName() );
+                                    usercss.getName() );
                     reader.close();
                     if (null != ss && 0 < ss.getCssRules().getLength())
                         _userStyles.add( ss );
@@ -101,7 +97,7 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
                 catch( FileNotFoundException fnfe )
                 {
                     LogAndShowError.logAndShowEx( "Could not find user specified CSS file "
-                            + _css.getAbsolutePath() 
+                            + usercss.getAbsolutePath()
                             + "\nNo user defined exceptions will be applied.", fnfe );
                 }
                 catch( IOException ex )
@@ -129,7 +125,7 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
 
     
     @Override
-    protected DefaultTableModel doInBackground()  throws ClassNotFoundException
+    protected DefaultTableModel doInBackground()
     {
         // traverse every element in every html file. If a "class" attribute is
         // encountered, record it in a list set.
@@ -178,10 +174,6 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
                                             styles.add( ss );
                                     }
                                 }
-                                catch( FileNotFoundException ex )
-                                {
-                                    ex.printStackTrace();
-                                }
                                 catch( IOException ex )
                                 {
                                     ex.printStackTrace();
@@ -204,12 +196,6 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
                 // File not available, just skip it
             }
         }
-//        StringBuilder sb = new StringBuilder();
-//        for (String s : classes)
-//        {
-//            sb.append( s + "\n" );
-//        }
-//        return sb.toString();
         return classes;
     }
 
@@ -230,20 +216,20 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
             if (0 < classs.length())
             {
                 // look at each selector in the whitespace limited list of classes
-                String selectors[] = classs.split("\\s");
-                for (int i = 0; i < selectors.length; i++ )
+                String[] selectors = classs.split( "\\s" );
+                for (String s : selectors)
                 {
                     // look up the same style in the master style sheet (may not catch it if the
                     // master style sheet was modified after it was attached to this publication)
                     TreeMap<String, CSSValue> myStyles =
-                            userStyles.matchStyles( node.getNodeName(), selectors[i] );
+                        userStyles.matchStyles( node.getNodeName(), s );
                     if (null == myStyles || 0 >= myStyles.size())
                     {
                         // not in the master, try to find how it's defined in the publication
                         // specific style sheet
                         TreeMap<String, CSSValue> newStyles =
-                                styles.matchStyles( node.getNodeName(), selectors[i] );
-                        String selector = node.getNodeName() + "." + selectors[i];
+                            styles.matchStyles( node.getNodeName(), s );
+                        String selector = node.getNodeName() + "." + s;
                         String styleString = "";        // An orphan style;
                         if (0 < newStyles.size())
                         {
@@ -252,16 +238,16 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
                             styleString = newStyles.toString();
                         }
                         // Add this style to the table model if it doesn't already exist
-                        int j = classes.getRowCount();
+                        int j;
                         for (j = 0; j < classes.getRowCount(); j++)
                         {
-                            if (   selector.equalsIgnoreCase( (String) classes.getValueAt( j, 0 ))
-                                && fileName.equalsIgnoreCase( (String) classes.getValueAt( j, 1 ))
-                                && styleString.equalsIgnoreCase( (String) classes.getValueAt( j, 2 )))
+                            if (selector.equalsIgnoreCase( (String) classes.getValueAt( j, 0 ) )
+                                && fileName.equalsIgnoreCase( (String) classes.getValueAt( j, 1 ) )
+                                && styleString.equalsIgnoreCase( (String) classes.getValueAt( j, 2 ) ))
                                 break;
                         }
                         if (j == classes.getRowCount())
-                            classes.addRow( new String[] { selector, fileName, styleString } );
+                            classes.addRow( new String[]{selector, fileName, styleString} );
 //                        classes.add(  "     \"" + node.getNodeName() + "." + selectors[i]
 //                                    + "\", \"" + fileName + "\", \"" + styleString + "\"" );
                     }
