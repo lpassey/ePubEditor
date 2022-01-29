@@ -114,6 +114,7 @@ tt { font-family: Terminal, "Droid Sans Mono", monospace }
 code {font-family: Terminal, Fixedsys, "Lucida Sans Unicode", "Droid Sans Mono", monospace }
 .code {font-family: Terminal, Fixedsys, "Lucida Sans Unicode", "Droid Sans Mono", monospace }
 
+nav.toc ol { list-style: none }
 ol.toc { list-style: none; text-indent: -2em; margin-left: 4em }
 ol.simple {list-style: none }
 
