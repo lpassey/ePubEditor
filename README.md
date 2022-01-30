@@ -17,4 +17,4 @@ User documentation for **ePubEditor** can be found at [https://lpassey.github.io
 
 For instructions on how to create a new ePub, see [https://lpassey.github.io/ePubEditor#new](https://lpassey.github.io/ePubEditor#new).
 
-For instructions on how to import, edit and clean an existing ePub, see [https://lpassey.github.io/ePubEditor#import](https://lpassey.github.io/ePubEditor#import])
+For instructions on how to import, edit and clean an existing ePub, see [https://lpassey.github.io/ePubEditor#import](https://lpassey.github.io/ePubEditor#import)
