@@ -1,7 +1,7 @@
-<html>
+<html lang="en">
 <head>
-<title>ePubEditor</title>
-<meta http-equiv="Content-Type" content="text/html;" lang="en"/>
+    <title>ePubEditor</title>
+    <meta http-equiv="content-type" content="text/html;" lang="en"/>
 </head>
 <body>
     <h1>ePubEditor User Documentation</h1>
@@ -15,10 +15,8 @@
 
     <p>
         The ePub file format had its genesis in 1999 with the publication of the
-        <a href="http://web.archive.org/web/20101212183516/http://idpf.org/oebps/oebps1.0/download/oeb1-oebps.htm">
-            Open
-            eBook Publication Structure 1.0 (OEBPS)
-        </a> by the Open eBook Forum, a consortium
+        <a href="http://web.archive.org/web/20101212183516/http://idpf.org/oebps/oebps1.0/download/oeb1-oebps.htm">Open
+        eBook Publication Structure 1.0 (OEBPS) </a> by the Open eBook Forum, a consortium
         of individuals representing publishers, reading system vendors, software
         developers and experts in relevant web standards. A maintenance release of the
         specification was released in July of 2001 to clarify some parts of the original
@@ -45,8 +43,8 @@
         </p>
     </blockquote>
     <p>
-        Note that the acronym "OPF" originally signified "OEB Package File", and 
-        not "Open Packaging Format" as the <a href="http://idpf.org/">International 
+        Note that the acronym "OPF" originally signified "OEB Package File", and
+        not "Open Packaging Format" as the <a href="http://idpf.org/">International
         Digital Publishers Forum</a> (IDPF) subsequently rebranded it.
     </p>
 
@@ -54,7 +52,7 @@
 
     <p>
         The Open eBook Forum envisioned that the primary file format in an OEBPS
-        publication would be HTML (at the time, HTML 4 was the most current 
+        publication would be HTML (at the time, HTML 4 was the most current
         version of HTML). The decision by the Open eBook Forum to make HTML the
         exclusive document format of the OEBPS was an excellent one, for a number
         of reasons. (Other types of files could be included in the publication
@@ -68,7 +66,7 @@
         elements surrounded by angle braces (&lt;&gt;); character entities are
         provided if a literal angle brace needs to be represented (&amp;lt; and
         &amp;gt;). It is relatively easy to understand and master (at least as
-        compared to other document formats) and there is a lot of free and 
+        compared to other document formats) and there is a lot of free and
         open-source software (FOSS) available to manipulate and display HTML files.
     </p>
 
@@ -113,7 +111,7 @@
     </p>
 
     <p>
-        The adaptablity of HTML allows one to create documents that are 
+        The adaptablity of HTML allows one to create documents that are
         "reflowable", that is one where line length changes depending on
         the width of the screen. Anyone who has tried to read a PDF file
         on a cell phone understands just how annoying it can be to be
@@ -159,14 +157,13 @@
         since been placed in "<a href="http://jonnoring.net/OpenReader/index.html">cold storage</a>."
         It did, however, have a
         <a href="https://web.archive.org/web/20170118033049/http://blogs.adobe.com/billmccoy/2007/01/openreader_vict.html">significant
-        impact</a> on the later development of the "ePub" format. The IDPF's
-        specification for the
-        "<a href="http://idpf.org/epub/20/spec/OCF_2.0.1_draft.doc">Open
-        Container Format</a>" (the development of which I participated in as an
-        "Invited Expert") is, in practice, virtually identical to the format I
-        originally proposed to Jon Noring.
+        impact</a> on the later development of the "ePub" format. The IDPF's specification for the
+        "<a href="http://idpf.org/epub/20/spec/OCF_2.0.1_draft.doc">Open Container
+        Format</a>" (the development of which I participated in as an "Invited
+        Expert") is, in practice, virtually identical to the format I originally
+        proposed to Jon Noring.
     </p>
-    <aside>
+    <details>
         (The actual IDPF specification permits additional but purely optional and
         no doubt proprietary XML files to be added to the META-INF folder.
         Additionally, the container.xml file could contain references to multiple
@@ -174,7 +171,7 @@
         In my somewhat limited experience I have never seen a publication that
         contains more than the required "container.xml" file, or more that a
         single publication referenced in that file.)
-    </aside>
+    </details>
 
     <p>
         In January of 2017 the IDPF was
@@ -190,9 +187,9 @@
         which used Java Swing for its user-interface code. The source code was
         originally hosted at
         <a href="https://sourceforge.net/projects/epubeditor/">SourceForge</a>,
-        and more recently revived and copied to 
+        and more recently revived and copied to
         <a href="https://github.com/lpassey/ePubEditor">GitHub</a>.
-        It is my intention moving forward to upgrade the project to JavaFX and 
+        It is my intention moving forward to upgrade the project to JavaFX and
         add whatever additional functionality may be required to support the
         newest version of <a href="https://en.wikipedia.org/wiki/EPUB">ePub</a>
         (currently 3.2).
@@ -221,8 +218,10 @@
         the publication. It does <em>not</em> contain references to <em>all</em>
         of the items in the manifest, only to those which are designed to be
         presented directly to the reader. These spine items can be thought of
-        as the "chapters" of the publication. <strong> Order is important 
-        here</strong>; when an ePub is opened, the content files will be presented
+        as the "chapters" of the publication. <strong>
+            Order is important
+            here
+        </strong>; when an ePub is opened, the content files will be presented
         to the human reader in exactly the same order as they appear in this section.
     </p>
 
@@ -462,9 +461,9 @@
     </p>
 
     <img src="Content.png" style="max-width: 95vw" />
-    
+
     <p>
-        Pressing the "Add" button will add a reference to the Content table of 
+        Pressing the "Add" button will add a reference to the Content table of
         the first content file (HTML, XHTML) in the Manifest table which is
         not yet already in the Content table. Future enhancements will include
         the ability to explicitly select one or more candidate files. The "Remove"
@@ -474,7 +473,7 @@
         list.
     </p>
 
-     <h5>Adding publication metadata</h5>
+    <h5>Adding publication metadata</h5>
 
     <p>
         Metadata about the book can be entered or edited on the "Authors and
@@ -484,9 +483,9 @@
         in <b>ePubEditor</b>. This is because these two sets of metadata have
         different attributes. Contributors have roles, and a File As attribute
         (usually a contributor's name is entered as it would be displayed, and
-        the "File As" property is last name first. It is possible that the 
+        the "File As" property is last name first. It is possible that the
         author's name may be a pseudonym whereas the "File As" attribute may be
-        the author's given name). The contributor's role is selected from a 
+        the author's given name). The contributor's role is selected from a
         drop-down list of allowed roles. If a contributor's role is not in the
         drop-down list "other" should be selected.
     </p>
@@ -506,18 +505,19 @@
         Digital Comic Number. If the identifier does not represent one of these
         types the "opf:scheme" attribute should be omitted.
     </p>
+
     <p>
-        The Properties table will also show an entry for the ePub's working 
+        The Properties table will also show an entry for the ePub's working
         directory (aka "epubeditor:rootPath") which is shown only for information
-        purposes; it will not be included in the ePub file when compiled. 
+        purposes; it will not be included in the ePub file when compiled.
     </p>
 
-   <h5>The Guides Tab</h5>
+    <h5>The Guides Tab</h5>
 
     <p>
-        The "Guides" table may contain references to various 
+        The "Guides" table may contain references to various
         <a href="http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6">significant
-        parts</a> of the publication such as the cover image, the table of 
+        parts</a> of the publication such as the cover image, the table of
         contents, any indexes and the start of the actual content. The actual
         &lt;guide&gt; section of the .opf file has been deprecated in ePub version
         3.3 in favor of an XHTML document utilizing the new HTML5 &lt;nav&gt;
@@ -530,30 +530,30 @@
         While there are no &lt;guide&gt; entries required by the specification
         in ePub documents, <b>ePubEditor</b> uses the "cover" entry to discover
         any image that will become part of an HTML cover wrapper file, and the
-        "toc" entry to identify the table of contents file name that will be 
-        used when generating a new Table of Contents. These entries must be 
+        "toc" entry to identify the table of contents file name that will be
+        used when generating a new Table of Contents. These entries must be
         present before attempting to automatically generate either of these files.
     </p>
 
     <h5>Navigation: Tables of Content and the .ncx file</h5>
 
     <p>
-        Virtually every ePub should have a Table of Contents (TOC), which is why 
+        Virtually every ePub should have a Table of Contents (TOC), which is why
         <b>ePubEditor</b> adds a "toc.html" Manifest enty to every new publication.
         If your publication already has a Table of Contents (which should exist
-        in its own file) you can select the existing TOC by removing the 
+        in its own file) you can select the existing TOC by removing the
         auto-generated "toc.html" file entry from the Manifest table, then
         selecting your own TOC file and changing the "id" value to "_toc".
-     </p>
+    </p>
 
     <p>
         In cases where you do not already have a Table of Contents, selecting
         Edit&#8209;&gt;Build&#160;TOC from the main menu (or pressing Ctrl&#8209;T)
-        will cause <b>ePubEditor</b> to generate an XHTML formatted Table of 
-        Contents for the publication as a whole using unordered lists (&lt;ul&gt;). 
-        Each header becomes a list item, and each time a header level changes a 
+        will cause <b>ePubEditor</b> to generate an XHTML formatted Table of
+        Contents for the publication as a whole using ordered lists (&lt;ol&gt;).
+        Each header becomes a list item, and each time a header level changes a
         new, embedded unordered list is started. When the entire list is
-        successfully created, it is saved as an XHTML file and added to 
+        successfully created, it is saved as an XHTML file and added to
         the manifest.
     </p>
 
@@ -563,22 +563,28 @@
         similar to the following:
     </p>
     <blockquote>
-        <ul style="list-style:none;margin-left: -2em">
-            <li>&lt;ul&gt;</li>
-            <li>&lt;li&gt;Part One<ul style="list-style:none">
-            <li>&lt;ul&gt;</li>
-                <li>&lt;li&gt;Chapter I&lt;li&gt;
-                <li>&lt;li&gt;Chapter II&lt;li&gt;
-                <li>&lt;li&gt;Chapter III&lt;li&gt;
-                <li>&lt;/ul&gt;</ul></li>
-                <li>&lt;/li&gt;</li>
-            <li>&lt;li&gt;Part Two<ul style="list-style:none">
-            <li>&lt;ul&gt;</li>
-                <li>&lt;li&gt;Chapter IV&lt;li&gt;
-                <li>&lt;li&gt;Chapter V&lt;li&gt;
-                <li>&lt;li&gt;Chapter VI&lt;li&gt;
-                <li>&lt;/ul&gt;</ul></li>
-        </ul>
+        <ol style="list-style:none;margin-left: -2em">
+            <li>&lt;ol&gt;</li>
+            <li>
+                &lt;li&gt;Part One<ol style="list-style:none">
+                    <li>&lt;ul&gt;</li>
+                    <li>&lt;li&gt;Chapter I&lt;li&gt;
+                    <li>&lt;li&gt;Chapter II&lt;li&gt;
+                    <li>&lt;li&gt;Chapter III&lt;li&gt;
+                    <li>&lt;/ol&gt;
+                </ol>
+            </li>
+            <li>&lt;/li&gt;</li>
+            <li>
+                &lt;li&gt;Part Two<ul style="list-style:none">
+                    <li>&lt;ol&gt;</li>
+                    <li>&lt;li&gt;Chapter IV&lt;li&gt;
+                    <li>&lt;li&gt;Chapter V&lt;li&gt;
+                    <li>&lt;li&gt;Chapter VI&lt;li&gt;
+                    <li>&lt;/ol&gt;
+                </ul>
+            </li>
+        </ol>
         etc.
     </blockquote>
 
@@ -588,9 +594,9 @@
         an NCX file (Navigation Control file for XML) in every compliant ePub.
         The file, the format of which was developed for Digital Talking Book
         (DTB), contains a hierarchical table of contents for the EPUB file.
-        As an XML file it was not designed for display to a reader, but 
+        As an XML file it was not designed for display to a reader, but
         required a reading system to parse the file and render the information
-        in some proprietary manner. 
+        in some proprietary manner.
     </p>
 
     <p>
@@ -619,7 +625,7 @@
     <p>
         When a new publication is started in <b>ePubEditor</b> it automatically
         creates an entry in the Manifest table for a cover image, with the file
-        name "cover.jpg". The entry is marked with the red "stop" icon to 
+        name "cover.jpg". The entry is marked with the red "stop" icon to
         indicate that while the file is manifested, it does not exist in the
         file system. Before an ePub can be compiled the cover image must be
         provided, or the Manifest entry must be removed.
@@ -629,7 +635,7 @@
         Only HTML files are presented to the user, so even if a cover image is
         present, it cannot be shown directly. Instead, it must be wrapped as an
         &lt;img&gt; element in an HTML file. A wrapper file can be created by
-        selecting Edit&#8209;&gt;Build&#160;Cover from the main menu. 
+        selecting Edit&#8209;&gt;Build&#160;Cover from the main menu.
     </p>
 
     <p>
@@ -640,13 +646,257 @@
         created with a name that is the same as the .opf file name plus "_cover"
         (if the publication has not yet been saved, the new cover file name will
         be simply "_cover.html"). The cover image will be embedded in an
-        &lt;img&gt; element with a style attribute of "max-width: 99vw; 
+        &lt;img&gt; element with a style attribute of "max-width: 99vw;
         max-height: 99vh". "vh" and "vw" are percentage values of the "viewport"
         which means that the cover image will always fit on the reading system's
         screen without have to scroll up to down or right to left.
     </p>
 
-    <p> Once your publication is
-        internally consistent you may compile it to an ePub.</p>
+    <p>
+        Once your publication is
+        internally consistent you may compile it to an ePub.
+    </p>
+
+    <h4>Editing and cleaning an existing publication</h4>
+
+    <p>
+        As mentioned earlier, semantic HTML has huge advantages as ePub content
+        documents. Examination of ePub files from commercial publishers, however,
+        demonstrates conclusively that when it comes to HTML, commercial publishers
+        are almost totally clueless.
+    </p>
+
+    <p>
+        HTML 4 was intended to be a mostly <a href="https://en.wikipedia.org/wiki/Semantic_HTML">semantic
+        markup language</a>, and its successor, HTML 5 is even more so, with
+        the addition of new semantic elements, such as &lt;figure&gt;, &lt;abbr&gt;,
+        &lt;address&gt;, &lt;aside&gt; and &lt;data&gt;. The styling of these semantic
+        elements was designed to be accomplished by reference to an external
+        style-sheet, usually known as "Cascading Style Sheets", or CSS.
+    </p>
+
+    <p>
+        For a good example of how various style sheets can affect (and effect)
+        the display of a document, visit <a href="http://www.csszengarden.com/">CSS
+        Zen Garden</a>. The interesting thing about the CSS Zen Garden is that
+        every view is exactly the same document; only the stylesheet changes!
+    </p>
+
+    <p>
+        By changing a style sheet an end-user can cause a user agent to
+        present an HTML document in a way that is most satisfying to that user.
+        As a simple example, a paragraph is almost universally defined as "a
+        collection of one or more complete sentences, usually dealing with a
+        single theme and indicated by a new line, indentation, or numbering."
+        While most printed works use a seriffed font to present a paragraph,
+        in most cases on a computer screen a sans-serifed font is more
+        understandable. And while justified lines are often preferred on
+        relative wide computer screens, line justification is quite ugly on
+        narrow screens such as a cell phone, tablet or PDA. Lastly,
+        &lt;p&gt;aragraphs on browsers are almost always rendered as blocks,
+        separated by a blank line, whereas in most printed material a paragraph
+        is indicated by an indentation. Which of these alternatives is
+        preferable is largely a matter of taste.
+    </p>
+
+    <p>
+        There are two tags in HTML that are intentionally free from semantics:
+        &lt;div&gt; and &lt;span&gt;. The &lt;div&gt; tag is intended to hold
+        a number of other elements and by default is rendered as a block of
+        text (text that begins on a new line and causes a new line to begin
+        afterwards). The idea behind these elements is that
+        additional semantics can be added to a document by adding a "class"
+        attribute to one of these elements that indicates the new semantics.
+        The &lt;span&gt; tag is intended to mark a snippet of text within
+        other tags.
+    </p>
+
+    <p>
+        An example of appropriate use of a &lt;div&gt; tag might be to hold
+        a glossary, a set of footnotes, or a poem e.g. &lt;div class="glossary">.
+        An example of an appropriate use of a &lt;span&gt; tag might be to
+        mark a snippet of text as a foreign language, e.g. &lt;span
+        class="foreign" lang="fr"&gt;sous vide&lt;/span&gt;. The spanned
+        text may need to be displayed differently, such as in an alternate
+        font, of could be used by a spell checker to check the spelling of
+        foreign words.
+    </p>
+
+    <p>
+        An unfortunate side-effect of relying on CSS for styling is that it is
+        possible to use these generic elements to assign styles to a segment of
+        text without adding any new semantics. For example, &lt;div
+        style="text-indent:2em"&gt; could create an indented block of text that
+        looks just like a paragraph, but may or may not be one. &lt;span
+        style="font-family:'Times New Roman'"&gt; would cause a snipped of text
+        to be rendered in a different font without any indication of of <em>why</em>
+        that snippet is distinguishable from the surrounding text.
+    </p>
+
+    <p>
+        Even more unfortunate is that there is no way to prevent semantic elements
+        from being used as generic elements; the number one culprit here is the
+        &lt;p&gt;aragraph element. It is virtually impossible for a computer
+        program to intuit the semantics of a section of text based on its
+        presentation. If you were to select "View Page Source" in your browser
+        you would see that this paragraph is inside &lt;p&gt; tags. But if you
+        were instead to use &lt;div class="para"&gt; a computer couldn't
+        distinguish between the two. Likewise, the computer couldn't tell the
+        difference between &lt;h1&gt;ePubEditor User Documentation&lt;/h1&gt;,
+        which is the top-level header of this document, and &lt;p style="..."&gt;ePubEditor
+        User Documentation&lt;/p&gt;, where the style attribute mimics the style of
+        the header element.
+    </p>
+
+    <p>
+        I think it fairly obvious that a Table of Contents is semantically a
+        list, the items of which may contain other lists. The W3C certainly
+        thinks so as it mandates a human-readable Table of Contents in ePub 3.0
+        using lists. According to the
+        <a href="https://www.w3.org/publishing/epub3/epub-packages.html#sec-package-nav">specification</a>,
+        "The ol child of the nav element represents the primary level of content
+        navigation. Each list item of the ordered list represents a heading,
+        structure or other item of interest."
+    </p>
+
+    <p>
+        A sample Table of Contents satisfying the ePub specification might be:
+    </p>
+
+    <blockquote>
+        <pre>
+&lt;nav class="toc"&gt;
+    &lt;h2>CONTENTS&lt;/h2>
+    &lt;ol>
+        &lt;li>PROLOGUE&lt;/li>
+        &lt;li>PART I
+        &lt;ol>
+            &lt;li>ONE&lt;/li>
+            &lt;li>TWO&lt;/li>
+        &lt;/ol>&lt;/li>
+    &lt;/ol>
+</pre>
+        etc...<br /><br />
+
+        Which would be rendered as follows:
+        <h2>CONTENTS</h2>
+        <ol style="list-style:none">
+            <li>PROLOGUE</li>
+            <li>
+                PART I
+                <ol style="list-style:none">
+                    <li>ONE</li>
+                    <li>TWO</li>
+                </ol>
+            </li>
+        </ol>
+        etc...
+    </blockquote>
+    <p>
+        On the other hand, consider the following snippet from a Table of Contents
+        Contents from a recent publication by Tom Doherty Associates:
+    </p>
+    <blockquote>
+<pre>
+    &lt;p class="contentsHead" style="text-indent: 0%;"&gt;
+        CONTENTS
+    &lt;/p&gt;
+    &lt;p class="toc1" style="text-indent: 0em;"&gt;
+         PROLOGUE 
+    &lt;/p&gt;
+    &lt;p class="toc" style="text-indent: 0em;"&gt;
+         PART I 
+    &lt;/p&gt;
+    &lt;p class="toc" style="text-indent: 1em;"&gt;
+         ONE 
+    &lt;/p&gt;
+    &lt;p class="toc" style="text-indent: 1em;"&gt;
+         TWO
+     &lt;/p&gt;
+</pre>
+        etc...
+    </blockquote>
+
+    <aside>
+        (In both cases the &lt;a&gt;nchor tags have been omitted for ease
+        of comprehension.)
+    </aside>
+
+    <p>
+        Presumably, with the correct stylesheet, the TOR Table of Contents would
+        look exactly like the W3C-compliant Table of Contents. But only a human
+        could make the connection. I am not convinced that "CONTENTS" is a
+        complete sentence (indeed, I am fairly certain it is not). The second
+        example has lost all adaptability; without the availability of a very
+        specific style sheet a user-agent could simply not present the TOC
+        correctly. And if I am writing a program to find all the headers in a
+        document, text in a &lt;p&gt; element is not going to be a candidate
+        even if it has a class name of "contentsHead".
+    </p>
+
+    <p>
+        This last observation is not speculative. The very method <b>ePubEditor</b>
+        uses to build a TOC is to scan each file referenced in the Content table
+        in reading order and add each header value found (and a link to its location
+        in the publication) into hierarchical, ordered lists. Any user agent will
+        be able to present an acceptable version of the Table of Contents even
+        without any special style specification.
+    </p>
+
+    <p>
+        When it comes to inflexible, unadaptable typography, there is virtually
+        nothing as non-adaptive as pigment on wood pulp. I suspect that much
+        of the failure of commercial publishers to understand HTML is the fact
+        that they have lived for centuries in the world of ink and paper. The
+        notion that a publication can dynamically alter its presentation based
+        upon the reader's preferences is utterly incomprehensible to them.
+    </p>
+
+    <p>
+        Because computers cannot derive semantic meaning from text presentation,
+        just about no WYSIWYG (What You See Is What You Get) HTML editor can
+        produce a semantic HTML file without significant human oversight. The
+        human being using the editor must be able to recognize that a header,
+        or the caption on an image, are not paragraphs and must be identified
+        accordingly when the file is generated. And because most human typesetters
+        are steeped in th world of ink and paper they are unlikely to provide
+        the required oversight. Add this to the fact that most WYSIWYG editors
+        use the &lt;p&gt; tag as a generic (non-semantic) element what you have
+        is a recipe not for disaster, but certainly for failure.
+    </p>
+
+    <p>
+        As a result of this state of affairs, I don't believe I have ever seen
+        a commercially produced ePub that can comfortably be read on my preferred
+        reading system (an Android phone with the CoolReader app) without extensive
+        "cleaning." The second goal I had for <b>ePubEditor</b> was to create an
+        application that can clean the kind of overstyled, generic markup common
+        in commercial publications.
+    </p>
+
+    <h4>Importing an existing ePub</h4>
+
+    <p>
+        An existing ePub can be opened in <b>ePubEditor</b> by selecting
+        "File&#8209;&gt;Import&#160;from&#160;ePub" on the main menu. When you
+        elect to import an ePub a file system browser will open allowing you
+        to select an existing ePub on your file system.
+    </p>
+
+    <img src="Import.png" style="max-width: 95vw" />
+
+    <p>
+        As noted above, an ePub file is just a specialized version of a zip file;
+        when you press the "Open" button <b>ePubEditor</b> will create a new folder
+        in your working folder which will have the same name as the ePub file but
+        with a ".d" extension, and will extract all the files from the ePub into
+        the newly created temporary folder.  So, if you were to open "Oliver 
+        Twist - Charles Dickens.epub" all the publication's files would be 
+        extracted into a folder named "Oliver Twist - Charles Dickens.epub.d".
+        <b>ePubEditor</b> then opens the container.xml file from the META-INF 
+        directory, reads the "rootfile" entry to determine the name of the .opf 
+        file, opens that file to load the publication structure, then remembers
+        that the publication's working folder is the newly created temporary folder.
+    </p>
 </body>
 </html>
