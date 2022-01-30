@@ -15,8 +15,10 @@
 
     <p>
         The ePub file format had its genesis in 1999 with the publication of the
-        <a href="http://web.archive.org/web/20101212183516/http://idpf.org/oebps/oebps1.0/download/oeb1-oebps.htm">Open
-        eBook Publication Structure 1.0 (OEBPS) </a> by the Open eBook Forum, a consortium
+        <a href="http://web.archive.org/web/20101212183516/http://idpf.org/oebps/oebps1.0/download/oeb1-oebps.htm">
+            Open
+            eBook Publication Structure 1.0 (OEBPS)
+        </a> by the Open eBook Forum, a consortium
         of individuals representing publishers, reading system vendors, software
         developers and experts in relevant web standards. A maintenance release of the
         specification was released in July of 2001 to clarify some parts of the original
@@ -44,8 +46,10 @@
     </blockquote>
     <p>
         Note that the acronym "OPF" originally signified "OEB Package File", and
-        not "Open Packaging Format" as the <a href="http://idpf.org/">International
-        Digital Publishers Forum</a> (IDPF) subsequently rebranded it.
+        not "Open Packaging Format" as the <a href="http://idpf.org/">
+            International
+            Digital Publishers Forum
+        </a> (IDPF) subsequently rebranded it.
     </p>
 
     <h5>OEB Content Documents</h5>
@@ -146,8 +150,10 @@
         be used by ebook reading software to reconstruct the publication as a whole.
         To promote this new format, and to develop a prototype ebook reading system,
         Jon and I, together with a few like-minded individuals formed the
-        <a href="https://en.wikipedia.org/wiki/OpenReader_Consortium">Open
-        Reader Consortium</a>, created a couple of Yahoo discussion groups, and sent
+        <a href="https://en.wikipedia.org/wiki/OpenReader_Consortium">
+            Open
+            Reader Consortium
+        </a>, created a couple of Yahoo discussion groups, and sent
         <a href="https://groups.google.com/g/rec.arts.books/c/3MHa0lh5ea8/m/ETKaE2Nln9IJ">invitations</a>
         to the nascent ebook community to join us.
     </p>
@@ -156,10 +162,14 @@
         Unfortunately, the Open Reader Consortium never gained much traction and has
         since been placed in "<a href="http://jonnoring.net/OpenReader/index.html">cold storage</a>."
         It did, however, have a
-        <a href="https://web.archive.org/web/20170118033049/http://blogs.adobe.com/billmccoy/2007/01/openreader_vict.html">significant
-        impact</a> on the later development of the "ePub" format. The IDPF's specification for the
-        "<a href="http://idpf.org/epub/20/spec/OCF_2.0.1_draft.doc">Open Container
-        Format</a>" (the development of which I participated in as an "Invited
+        <a href="https://web.archive.org/web/20170118033049/http://blogs.adobe.com/billmccoy/2007/01/openreader_vict.html">
+            significant
+            impact
+        </a> on the later development of the "ePub" format. The IDPF's specification for the
+        "<a href="http://idpf.org/epub/20/spec/OCF_2.0.1_draft.doc">
+            Open Container
+            Format
+        </a>" (the development of which I participated in as an "Invited
         Expert") is, in practice, virtually identical to the format I originally
         proposed to Jon Noring.
     </p>
@@ -175,8 +185,10 @@
 
     <p>
         In January of 2017 the IDPF was
-        <a href="https://www.w3.org/2017/01/pressrelease-idpf-w3c-combination.html.en">merged
-        into the W3C</a>, and itself went into "cold storage."
+        <a href="https://www.w3.org/2017/01/pressrelease-idpf-w3c-combination.html.en">
+            merged
+            into the W3C
+        </a>, and itself went into "cold storage."
     </p>
 
     <h4><b>ePubEditor</b> purpose and goals</h4>
@@ -218,8 +230,10 @@
         the publication. It does <em>not</em> contain references to <em>all</em>
         of the items in the manifest, only to those which are designed to be
         presented directly to the reader. These spine items can be thought of
-        as the "chapters" of the publication. <strong>Order is important
-        here</strong>; when an ePub is opened, the content files will be presented
+        as the "chapters" of the publication. <strong>
+            Order is important
+            here
+        </strong>; when an ePub is opened, the content files will be presented
         to the human reader in exactly the same order as they appear in this section.
     </p>
 
@@ -251,7 +265,7 @@
         At this point, the current tab will be the Manifest table.
     </p>
 
-    <p id="editors">
+    <p>
         Before attempting to edit any ePub file, you may want to set up your tool
         preferences. At the bottom of the Manifest tab there are 5 buttons, one of which
         is the "Edit" button. When you select a file on the Manifest tab and press the
@@ -269,27 +283,40 @@
     <img src="Editors.png" style="max-width: 95vw" />
 
     <p>
-        To add an editor to this list you must
-        know where on your computer the executable file resides. This can sometimes be
-        challenging on Windows platforms because Microsoft makes a concerted effort to
-        hide this information from you. If you don't know where an executable file is
+        To add an editor to this list you must know where on your computer the
+        executable file resides. This can sometimes be challenging on Windows
+        platforms because Microsoft makes a concerted effort to hide this
+        information from you. If you don't know where an executable file is
         found on Windows, find the shortcut you use to launch the application.
-        Right&#8209;click on the icon or the program listing in the start menu and select
-        "properties". The "Target" value will be the location of the executable. If you
-        are a Mac user I can't tell you how to find the location of the executable.
-        If someone could help me out I would appreciate it. If you're a Linux user,
-        you already know how to find an executable's location.
+        Right&#8209;click on the icon or the program listing in the start menu
+        and select "properties". The "Target" value will be the location of the
+        executable. If you are a Mac user I can't tell you how to find the
+        location of the executable. If someone could help me out I would
+        appreciate it. If you're a Linux user, you already know how to find
+        an executable's location.
     </p>
 
     <p>
-        In the Tools&#8209;>Editors dialog, press the "Add" button. Yet another dialog
-        box will open where you can select a media-type that this editor will handle. Press
-        the "Browse" button and a file system browser will open that will let you navigate
-        to the executable's location in the file system. Select the executable in the
-        browser dialog, and press "Select". The path to the executable will be set in
-        "Add" dialog. Lastly, edit the command line options, if necessary. "%s" will
-        be replaced with the name of the file to be edited; usually this is sufficient,
-        but if more command-line options are required you can set them here.
+        In the Tools&#8209;>Editors dialog, press the "Add" button. Yet another
+        dialog box will open where you can select a media-type that this editor
+        will handle. Press the "Browse" button and a file system browser will
+        open that will let you navigate to the executable's location in the file
+        system. Select the executable in the browser dialog, and press "Select".
+        The path to the executable will be set in "Add" dialog. Lastly, edit the
+        command line options, if necessary. "%s" will be replaced with the name
+        of the file to be edited; usually this is sufficient but if more command-line
+        options are required you can set them here.
+    </p>
+
+    <p>
+        There is a special media-type of "other" included in the media-type
+        drop-down editor. This is in fact not an acknowledged media-type at all,
+        but indicates a "catch-all" editor that will be launched if no other
+        editor has been set up for a particular file type. If there is no
+        catch-all editor set up, <b>ePubEditor</b> will attempt to launch
+        C:\Program Files\Windows NT\Accessories\wordpad.exe.
+        In all likelihood Wordpad will not exist on your system, so it behooves
+        you to select a default editor when the program is first run.
     </p>
 
     <p>
@@ -312,11 +339,6 @@
         a command-line file name could work. I have used IrfanView in the past
         and it worked well. Microsoft Paint is an acceptable alternative. If
         you have the money you could even use Photoshop or PaintShop Pro.
-    </p>
-
-    <p>
-        Simply add a new editor selection for that media-type. You cannot edit
-        your selections of the Tools&#8209;&gt;Editors screen
     </p>
 
     <p>
@@ -403,8 +425,10 @@
 
     <p>
         When the "Edit" button is pressed, ePubEditor attempts to launch the editor
-        associated with the declared media-type. (see the <a href="#Editor">preferences
-        setup</a> discussion earlier in this document.)
+        associated with the declared media-type. (see the <a href="#Editor">
+            preferences
+            setup
+        </a> discussion earlier in this document.)
     </p>
 
     <h5>Split HTML</h5>
@@ -499,8 +523,10 @@
         the identifier value may be changed to the ISBN of the publication (if
         it is known) in which case the identifier's "Other Attribute" should be
         changed to 'opf:scheme="ISBN"'. Other
-        <a href="http://idpf.github.io/epub-registries/identifiers/">identifier
-        schemes</a> are "DOI" for Digital Object Identifiers and "JDCN" for Japan
+        <a href="http://idpf.github.io/epub-registries/identifiers/">
+            identifier
+            schemes
+        </a> are "DOI" for Digital Object Identifiers and "JDCN" for Japan
         Digital Comic Number. If the identifier does not represent one of these
         types the "opf:scheme" attribute should be omitted.
     </p>
@@ -515,8 +541,10 @@
 
     <p>
         The "Guides" table may contain references to various
-        <a href="http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6">significant
-        parts</a> of the publication such as the cover image, the table of
+        <a href="http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.6">
+            significant
+            parts
+        </a> of the publication such as the cover image, the table of
         contents, any indexes and the start of the actual content. The actual
         &lt;guide&gt; section of the .opf file has been deprecated in ePub version
         3.3 in favor of an XHTML document utilizing the new HTML5 &lt;nav&gt;
@@ -652,10 +680,24 @@
     </p>
 
     <p>
-        Once your publication is internally consistent you may compile it to an ePub.
+        Once your publication is internally consistent you may compile it to an
+        ePub. However, you may want to save the publication structure while it
+        is still being manipulated. This is accomplished by selecting
+        File&#8209;&gt;Save or File&#8209;&gt;Save&#160;As from the main menu.
+        These operations take the information from <b>ePubEditor</b>, create
+        an appropriate .opf file, and save it to your working folder. "Save"
+        stores the file with the same .opf file name you specified when you
+        created the new publication, whereas "Save As" allows you to rename the
+        .opf file. You may now exit <b>ePubEditor</b> and no information will
+        be lost. Remember to old adage, "Save early and save often."
     </p>
 
-    <h4 id="import">Editing and cleaning an existing publication</h4>
+    <p>
+        Selecting File&#8209;&gt;Open will allow you to open an OEB publication
+        structure from the file system by opening its corresponding .opf file.
+    </p>
+
+    <h4 id="import">Editing and cleaning existing publications</h4>
 
     <p>
         As mentioned earlier, semantic HTML has huge advantages as ePub content
@@ -665,8 +707,11 @@
     </p>
 
     <p>
-        HTML 4 was intended to be a mostly <a href="https://en.wikipedia.org/wiki/Semantic_HTML">semantic
-        markup language</a>, and its successor, HTML 5 is even more so, with
+        HTML 4 was intended to be a mostly
+        <a href="https://en.wikipedia.org/wiki/Semantic_HTML">
+            semantic
+            markup language
+        </a>, and its successor, HTML 5 is even more so, with
         the addition of new semantic elements, such as &lt;figure&gt;, &lt;abbr&gt;,
         &lt;address&gt;, &lt;aside&gt; and &lt;data&gt;. The styling of these semantic
         elements was designed to be accomplished by reference to an external
@@ -675,8 +720,11 @@
 
     <p>
         For a good example of how various style sheets can affect (and effect)
-        the display of a document, visit <a href="http://www.csszengarden.com/">CSS
-        Zen Garden</a>. The interesting thing about the CSS Zen Garden is that
+        the display of a document, visit
+        <a href="http://www.csszengarden.com/">
+            CSS
+            Zen Garden
+        </a>. The interesting thing about the CSS Zen Garden is that
         every view is exactly the same document; only the stylesheet changes!
     </p>
 
@@ -726,9 +774,11 @@
         text without adding any new semantics. For example, &lt;div
         style="text-indent:2em"&gt; could create an indented block of text that
         looks just like a paragraph, but may or may not be one. &lt;span
-        style="font-family:'Times New Roman'"&gt; would cause a snipped of text
+        style="font-family:'Times New Roman'"&gt; could cause a snipped of text
         to be rendered in a different font without any indication of of <em>why</em>
-        that snippet is distinguishable from the surrounding text.
+        that snippet is distinguishable from the surrounding text. If a user has
+        selected 'Times New Roman' as his/her default font the snippet will not
+        be distinquishable from the surrounding text even if it needs to be.
     </p>
 
     <p>
@@ -792,7 +842,7 @@
     </blockquote>
     <p>
         On the other hand, consider the following snippet from a Table of Contents
-        Contents from a recent publication by Tom Doherty Associates:
+        file from a recent publication by Tom Doherty Associates:
     </p>
     <blockquote>
 <pre>
@@ -824,10 +874,12 @@
         Presumably, with the correct stylesheet, the TOR Table of Contents would
         look exactly like the W3C-compliant Table of Contents. But only a human
         could make the connection. I am not convinced that "CONTENTS" is a
-        complete sentence (indeed, I am fairly certain it is not). The second
-        example has lost all adaptability; without the availability of a very
-        specific style sheet a user-agent could simply not present the TOC
-        correctly. And if I am writing a program to find all the headers in a
+        complete sentence and appropriately labeled a paragraph (indeed, I am
+        fairly certain it is not). This second example from TOR has lost all
+        adaptability; without the availability of a very specific style sheet
+        a user-agent could simply not present the TOC correctly, and even with
+        that style sheet it may not be presented in the best way for a specific
+        platform. And if I am writing a program to find all the headers in a
         document, text in a &lt;p&gt; element is not going to be a candidate
         even if it has a class name of "contentsHead".
     </p>
@@ -839,6 +891,23 @@
         in the publication) into hierarchical, ordered lists. Any user agent will
         be able to present an acceptable version of the Table of Contents even
         without any special style specification.
+    </p>
+
+    <p>
+        The lesson for e-book designers is: use only semantic markup in your
+        content documents, and don't add styling unless it is absolutely necessary;
+        in this case use the minimum styling required. The W3C ePub Working Group
+        recognized the importance of user control of presentation when it stated
+        in the specification that "users SHOULD be able to override Author style
+        sheets as desired." It went on to note that "Developers of Reading
+        Systems are strongly encouraged to publicly document their user agent
+        style sheets and how they interact with Author style sheets."
+    </p>
+
+    <p>
+        Of course, publishers should also document their Author style sheets,
+        and be consistent in the usage, in order to make it easier for user
+        to override those styles.
     </p>
 
     <p>
@@ -866,10 +935,10 @@
     <p>
         As a result of this state of affairs, I don't believe I have ever seen
         a commercially produced ePub that can comfortably be read on my preferred
-        reading system (an Android phone with the CoolReader app) without extensive
-        "cleaning." The second goal I had for <b>ePubEditor</b> was to create an
-        application that can clean the kind of overstyled, generic markup common
-        in commercial publications.
+        reading system (an Android phone with the Cool Reader app) without extensive
+        "cleaning." Thus, the second goal I had for <b>ePubEditor</b> was to
+        create an application that can clean the kind of overstyled, generic
+        markup common in commercial publications.
     </p>
 
     <h4>Importing an existing ePub</h4>
@@ -888,13 +957,129 @@
         when you press the "Open" button <b>ePubEditor</b> will create a new folder
         in your working folder which will have the same name as the ePub file but
         with a ".d" extension, and will extract all the files from the ePub into
-        the newly created temporary folder.  So, if you were to open "Oliver 
-        Twist - Charles Dickens.epub" all the publication's files would be 
+        the newly created temporary folder.  So, if you were to open "Oliver
+        Twist - Charles Dickens.epub" all the publication's files would be
         extracted into a folder named "Oliver Twist - Charles Dickens.epub.d".
-        <b>ePubEditor</b> then opens the container.xml file from the META-INF 
-        directory, reads the "rootfile" entry to determine the name of the .opf 
+        <b>ePubEditor</b> then opens the container.xml file from the META-INF
+        directory, reads the "rootfile" entry to determine the name of the .opf
         file, opens that file to load the publication structure, then remembers
         that the publication's working folder is the newly created temporary folder.
+    </p>
+
+    <p>
+        Once an ePub file has been imported, every file that makes up the
+        publication can be edited. Simply select a file in the Manifest table
+        and press the "Edit" button. <b>ePubEditor</b> will launch the editor
+        you have set up for that media-type in the <a href="#Editor">Tools&#8209;>Editors</a>
+        menu. If there is no editor set up for the file you have selected,
+        <b>ePubEditor</b> will launch the editor you have specified for "other"
+        media types.
+    </p>
+
+    <p>
+        It can be tedious to clean every file in a publication by hand,
+        particularly as commercial publishers have so thoroughly abused
+        the HTML markup language. <b>ePubEditor</b> provides three automated
+        means to clean up an ePub publication.
+    </p>
+
+    <h5>"Edit&#8209;&gt;Clean"</h5>
+
+    <p>
+        In addition to the creation of navigation files (Tables of Contents,
+        Cover image wrappers) the "Edit" menu item also has functions labeled
+        "Clean", "Replace" and "Insert". Unfortunately, each of these functions
+        requires a certain amount of technical savvy.
+    </p>
+
+    <p>
+        The most technical, but also the most powerful, of these functions is
+        "Clean". "Clean" uses <a href="https://en.wikipedia.org/wiki/XSLT">
+            XSL
+            Transformations (XSLT)
+        </a> to automatically modify the contents of the
+        publication files.
+    </p>
+
+    <p>
+        An XSLT style sheet (not to be confused with a CSS style sheet)
+        provides templates to transform an XML document, including XHTML
+        documents which are HTML coded as conformant XML. A simple XSLT
+        template might look like this:
+    </p>
+<pre>
+    &lt;xsl:template match="html:p[@class='para']">
+      &lt;p>
+        &lt;xsl:apply-templates />
+      &lt;/p>
+    &lt;/xsl:template>
+</pre>
+
+    <p>
+        This template finds HTML &lt;p class="para"> tags and replaces them
+        with simple &lt;p&gt; tags. (The only reason you would need to identify
+        a &lt;p&gt; tag as a "para" is if you're abusing the &lt;p&gt; tag for
+        other, non-paragraph purposes).
+    </p>
+
+    <p>
+        A discussion of how to create XSLT style sheets (files which typically
+        use an .xsl file name extension) is <em>way</em> beyond the scope of
+        this document. However, when you select Edit&#8209;&gt;Clean
+        <b>ePubEditor</b> looks in a specified file folder for .xsl files
+        and applies the appropriate transformations to every HTML file
+        in the publication.
+    </p>
+
+    <p>
+        How does <b>ePubEditor</b> know what is the specified file
+        folder for XSLT files? Again, the answer is that you tell it.
+        One of the user configurable file paths in the Tools&#8209;>Preferences
+        dialog is "User defined xsl file folder". The file path you specify
+        for this property is where your XSLT files are stored. This path is
+        <em>not</em> part of the program; you may copy new files to this folder
+        and edit them to your heart's content. Be aware, however, that editing
+        and maintaining XSLT files is <em>very</em> technical and tasking. The
+        best option is to find and share .xsl transformation files here at
+        GitHub, in the xslt folder.
+    </p>
+
+    <p>
+        When Edit&#8209;&gt;Clean is selected, <b>ePubEditor</b> opens the user
+        defined xsl folder and looks for matching XSLT files. It first tries to
+        find a file named "default.xsl". If found, it applies that transformation
+        to all the HTML files in the Manifest table. If the HTML file is not
+        valid XML it first converts the file in memory to XML, and then transforms
+        the the resulting XHTML file. As a consequence, the file <em>becomes</em>
+        valid XHTML when it is rewritten.
+    </p>
+
+    <p>
+        <b>ePubEditor</b> then searches for the publisher identified in the
+        "Properties" table. It strips that publisher name of all but the first
+        word and searches for a file with that publisher name plus an ".xsl"
+        extension. If it cannot find an XSLT file for that publisher it shows
+        a dialog indicating that the file cannot be found and that default
+        cleaning only will be performed:
+    </p>
+
+    <img src="No_Pub.png" style="max-width: 95vw" />
+
+    <p>
+        If no publisher XSLT file is found, and no default.xsl file is found,
+        of if the user defined xsl file folder does not exist, <b>ePubEditor</b>
+        will tell you that as well:
+    </p>
+
+    <img src="No_Default.png" style="max-width: 95vw" />
+
+    <p>
+        After all cleaning is performed, <b>ePubEditor</b> will copy the user
+        defined .css file as specified in the path Preferences into the
+        publication working folder, and will add a link to that file at the end
+        of the &lt;head&gt; section in each of the HTML content files. Because
+        the file link comes at the end of the section, it will override any 
+        matching styles from any previous linked Cascading Style Sheets.
     </p>
 </body>
 </html>
