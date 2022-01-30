@@ -218,10 +218,8 @@
         the publication. It does <em>not</em> contain references to <em>all</em>
         of the items in the manifest, only to those which are designed to be
         presented directly to the reader. These spine items can be thought of
-        as the "chapters" of the publication. <strong>
-            Order is important
-            here
-        </strong>; when an ePub is opened, the content files will be presented
+        as the "chapters" of the publication. <strong>Order is important
+        here</strong>; when an ePub is opened, the content files will be presented
         to the human reader in exactly the same order as they appear in this section.
     </p>
 
@@ -253,7 +251,7 @@
         At this point, the current tab will be the Manifest table.
     </p>
 
-    <p>
+    <p id="editors">
         Before attempting to edit any ePub file, you may want to set up your tool
         preferences. At the bottom of the Manifest tab there are 5 buttons, one of which
         is the "Edit" button. When you select a file on the Manifest tab and press the
@@ -340,7 +338,7 @@
         every machine that <b>ePubEditor</b> runs on.
     </p>
 
-    <h4>Creating a new publication</h4>
+    <h4 id="new">Creating a new publication</h4>
 
     <p>
         When you select File&#8209;&gt;New, <b>ePubEditor</b> will start a new
@@ -500,7 +498,8 @@
         changed to values which are meaningful to your publication. For example,
         the identifier value may be changed to the ISBN of the publication (if
         it is known) in which case the identifier's "Other Attribute" should be
-        changed to 'opf:scheme="ISBN"'. Other <a href="http://idpf.github.io/epub-registries/identifiers/">identifier
+        changed to 'opf:scheme="ISBN"'. Other
+        <a href="http://idpf.github.io/epub-registries/identifiers/">identifier
         schemes</a> are "DOI" for Digital Object Identifiers and "JDCN" for Japan
         Digital Comic Number. If the identifier does not represent one of these
         types the "opf:scheme" attribute should be omitted.
@@ -653,11 +652,10 @@
     </p>
 
     <p>
-        Once your publication is
-        internally consistent you may compile it to an ePub.
+        Once your publication is internally consistent you may compile it to an ePub.
     </p>
 
-    <h4>Editing and cleaning an existing publication</h4>
+    <h4 id="import">Editing and cleaning an existing publication</h4>
 
     <p>
         As mentioned earlier, semantic HTML has huge advantages as ePub content
