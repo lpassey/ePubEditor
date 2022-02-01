@@ -57,7 +57,7 @@ public class OCFFilePackage extends OCFPackage
 
     private EPubModel _ePubData;
 
-    public OCFFilePackage( EPubModel epub )
+    OCFFilePackage( EPubModel epub )
     {
         super();
         _ePubData = epub;
@@ -160,7 +160,7 @@ public class OCFFilePackage extends OCFPackage
     @Override
     public List<String> getEntries()
     {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     private static final String container = "<?xml version=\"1.0\"?> "

@@ -14,9 +14,9 @@ import com.passkeysoft.opfedit.ui.LogAndShowError;
 public class EPubFileCheck extends Observable implements Report 
 {
     private Observer _observer;
-    StringBuilder errorReport, warningReport;
+    private StringBuilder errorReport, warningReport;
 
-    int errors = 0, warnings = 0, exceptions = 0;
+    private int errors = 0, warnings = 0, exceptions = 0;
         
         @Override
         public void error(String resource, int line, int column, String message) 
@@ -73,7 +73,7 @@ public class EPubFileCheck extends Observable implements Report
                 errorReport.append( String.format("Error at line %d in file %s: %s\n", 
                                     line, resource, message ));
             }
-            _observer.update( this, new Integer( errors + warnings ));
+            _observer.update( this,  errors + warnings );
         }
 
         @Override
@@ -89,7 +89,7 @@ public class EPubFileCheck extends Observable implements Report
             ++warnings;
             warningReport.append( String.format("Warning at line %d in file %s: %s\n", 
                                   line, resource, message ));
-            _observer.update( this, new Integer( errors + warnings ));
+            _observer.update( this, errors + warnings );
         }
 
          @Override
@@ -145,11 +145,11 @@ public class EPubFileCheck extends Observable implements Report
             OCFChecker checker = new OCFChecker( ocf, this, EPUBVersion.VERSION_2 );
             checker.runChecks();
         }
-        catch (RuntimeException e)
-        {
-            e.printStackTrace();
-            LogAndShowError.logAndShowEx( "ePubChecker failed: " + e.getLocalizedMessage(), e );
-        }
+//        catch (RuntimeException e)
+//        {
+//            e.printStackTrace();
+//            LogAndShowError.logAndShowEx( "ePubChecker failed: " + e.getLocalizedMessage(), e );
+//        }
         catch (Exception e)
         {
             e.printStackTrace();
