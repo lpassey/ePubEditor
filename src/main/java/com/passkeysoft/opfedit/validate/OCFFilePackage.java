@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -53,7 +53,7 @@ import com.passkeysoft.opfedit.staticutil.FileUtil;
 public class OCFFilePackage extends OCFPackage
 {
 
-    EPubModel _ePubData;
+    private EPubModel _ePubData;
 
     public OCFFilePackage( EPubModel epub )
     {
@@ -91,20 +91,17 @@ public class OCFFilePackage extends OCFPackage
         File opfFile = _ePubData.getOpfFile();
         if (name.equals( "META-INF/container.xml" ))
         {
-            // return a bogus -- but valid -- container file.
-            String opfRootPath = _ePubData.getEpubRootPath();
-            
-            opfRootPath = null == opfFile ? "content.opf" :
+             // return a bogus -- but valid -- container file.
+            String opfRootPath = null == opfFile ? "content.opf" :
                 FileUtil.getPathRelativeToBase( opfFile, 
                     new File( _ePubData.getEpubRootPath() ));
-            ByteArrayInputStream containerxml = new ByteArrayInputStream( 
+            return new ByteArrayInputStream(
                     String.format( container, opfRootPath ).getBytes() );
-            return containerxml;
         }
         else if (name.equals( "mimetype" ))
             return new ByteArrayInputStream( "application/epub+zip".getBytes() );
         else if (   (null == opfFile && name.equals( "content.opf" )) 
-                 || (null != opfFile && entry.equals( opfFile )))
+                 || entry.equals( opfFile ))    // equals() checks for null...
         {
             // generate a new .opf file on the fly into a temporary output stream.
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -130,9 +127,9 @@ public class OCFFilePackage extends OCFPackage
 
     
     @Override
-    public HashSet<String> getFileEntries() throws IOException
+    public HashSet<String> getFileEntries() // throws IOException
     {
-        HashSet<String> entryNames = new HashSet<String>();
+        HashSet<String> entryNames = new HashSet<>();
 
         NodeList entries = _ePubData.getOpfData().getManifest().getManifestedItems();
         
@@ -153,14 +150,12 @@ public class OCFFilePackage extends OCFPackage
     }
 
     @Override
-    public HashSet<String> getDirectoryEntries() throws IOException
+    public HashSet<String> getDirectoryEntries()
     {
-        HashSet<String> entryNames = new HashSet<String>();
-
-        return entryNames;
+        return new HashSet<>();
     }
 
-    static final String container = "<?xml version=\"1.0\"?> "
+    private static final String container = "<?xml version=\"1.0\"?> "
         + "<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\"> "
         + "   <rootfiles> "
         + "      <rootfile full-path=\"%s\" media-type=\"application/oebps-package+xml\"/> "
@@ -174,5 +169,4 @@ public class OCFFilePackage extends OCFPackage
         // TODO Auto-generated method stub
         return 0;
     }
-
 }
