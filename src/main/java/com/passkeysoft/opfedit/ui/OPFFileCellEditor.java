@@ -2,7 +2,7 @@ package com.passkeysoft.opfedit.ui;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.IOException;
+// import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
@@ -53,7 +53,7 @@ public class OPFFileCellEditor extends AbstractFileCellEditor
     @Override
     protected String getFilePath( File f )
     {
-        try
+//        try
         {
             String relative = _editor.getEPubModel().getPathRelativeToOpf( f );
             File relPath = new File( relative );
@@ -64,11 +64,11 @@ public class OPFFileCellEditor extends AbstractFileCellEditor
             }
             return relative;
         }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-        }
-        return null;
+//        catch (IOException ex)
+//        {
+//            ex.printStackTrace();
+//        }
+//        return null;
     }
     
     @Override
