@@ -121,8 +121,13 @@ public class EPubFileCheck extends Observable implements Report
         {
         }
 
+    @Override
+    public void hint( String s, int i, int i1, String s1 )
+    {
 
-    
+    }
+
+
     public EPubFileCheck()
     {
 //       reporter = new ProxyReport();

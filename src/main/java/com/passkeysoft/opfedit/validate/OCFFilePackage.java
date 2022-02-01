@@ -39,7 +39,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
@@ -153,6 +155,12 @@ public class OCFFilePackage extends OCFPackage
     public HashSet<String> getDirectoryEntries()
     {
         return new HashSet<>();
+    }
+
+    @Override
+    public List<String> getEntries()
+    {
+        return new ArrayList<String>();
     }
 
     private static final String container = "<?xml version=\"1.0\"?> "
