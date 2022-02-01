@@ -1,4 +1,4 @@
-/**
+/*-*
    Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -36,7 +36,6 @@
 
   Revision 1.3  2012/08/14 22:10:12  lpassey
   Remember last "SaveAs" path, but use the currently opened file name as the default name.
-
 */
 
 package com.passkeysoft.opfedit.ui;
@@ -61,9 +60,10 @@ import javax.swing.table.TableColumnModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.apache.log4j.*;
 import com.passkeysoft.opfedit.Prefs;
 import com.passkeysoft.opfedit.business.CleanInBackground;
 import com.passkeysoft.opfedit.business.EPubChecker;
@@ -84,31 +84,33 @@ public class EPubEditor extends JFrame implements Observer
     
     private static final String 
         defaultEditor = "C:\\Program Files\\Windows NT\\Accessories\\wordpad.exe";
-        
-    public static final String PREFS_MEDIA_TYPES = "media-types", 
-                               PREFS_EDITOR_PATH = "editor", 
-                               PREFS_EDITOR_CL = "edcl",
-                               PREFS_TRANSFORMER = "transformer", 
-                               PREFS_XFORM_CL = "arguments",
-                               PREFS_XFORM_NEWMT = "newMimeType",
-                               PREFS_XFORM_NEWEXT = "newExtension",
-                               PREFS_EDITORS_DEFAULT = "other", 
-                               PREFS_USERCSSS = "usercss", 
-                               PREFS_PATHS = "paths", 
-                               PREFS_PATHS_XSLT = "userxsl",
-                               PREFS_PATHS_SAVE_FILE = "saveFile", 
-                               PREFS_PATHS_SAVE_EPUB = "saveEPub", 
-                               PREFS_PATHS_OPF_OPEN = "opfOpenPath", 
-                               PREFS_PATHS_EPUB_OPEN = "ePubOpenPath",
-                               PREFS_PATHS_CONTENT = "contentPath", 
-                               PREFS_PATHS_TEMP = "temp",
-                               PREFS_MRU = "file-mru-list"
+
+    static final Logger LOGGER = LogManager.getRootLogger();
+
+    public static final String PREFS_MEDIA_TYPES = "media-types",
+                        PREFS_EDITOR_PATH = "editor",
+                        PREFS_EDITOR_CL = "edcl",
+                        PREFS_TRANSFORMER = "transformer",
+                        PREFS_XFORM_CL = "arguments",
+                        PREFS_XFORM_NEWMT = "newMimeType",
+                        PREFS_XFORM_NEWEXT = "newExtension",
+                        PREFS_EDITORS_DEFAULT = "other",
+                        PREFS_USERCSSS = "usercss",
+                        PREFS_PATHS = "paths",
+                        PREFS_PATHS_XSLT = "userxsl",
+                        PREFS_PATHS_SAVE_FILE = "saveFile",
+                        PREFS_PATHS_SAVE_EPUB = "saveEPub",
+                        PREFS_PATHS_OPF_OPEN = "opfOpenPath",
+                        PREFS_PATHS_EPUB_OPEN = "ePubOpenPath",
+                        PREFS_PATHS_CONTENT = "contentPath",
+                        PREFS_PATHS_TEMP = "temp",
+                        PREFS_MRU = "file-mru-list"
                 ;
 
 //    public static final String opfNS = "http://www.idpf.org/2007/opf";
 
-    public static final Dimension buttonSize = new Dimension( 96, 32 );
-    public static final Dimension buttonPanelSize = new Dimension( 32767, 32 );
+    static final Dimension buttonSize = new Dimension( 96, 32 );
+    static final Dimension buttonPanelSize = new Dimension( 32767, 32 );
     public static final Dimension toolButtonSize = new Dimension( 24, 32 );
 
     // action commands for toolbar buttons and menus
@@ -814,12 +816,10 @@ public class EPubEditor extends JFrame implements Observer
      * 
      * @param args
      *            TBD
-     * @throws ParserConfigurationException
      * @throws IOException
      * @throws SAXException
      */
-    public EPubEditor( String args[] ) throws ParserConfigurationException,
-            IOException, SAXException
+    public EPubEditor( String[] args ) throws IOException, SAXException
     {
         String classPath = System.getProperty( "java.class.path" );
         int semiColon = classPath.indexOf( ';' );
@@ -830,51 +830,61 @@ public class EPubEditor extends JFrame implements Observer
             logPath = logPath.getCanonicalFile().getParentFile();
         
         // Set up logging first, so we can log errors from the start.
-        RollingFileAppender logConfig = new RollingFileAppender();
-        logConfig.setFile( logPath + File.separator + "ePubEditor.log" );
-        logConfig.setName( "RollingLog" );
-        logConfig.setMaxFileSize( "1MB" );
-        logConfig.setLayout( new PatternLayout( "%-5p - %d{DATE}: %m%n") );
-        logConfig.activateOptions();
-        BasicConfigurator.configure( logConfig );
+//        RollingFileAppender logConfig = new RollingFileAppender();
+//        logConfig.setFile( logPath + File.separator + "ePubEditor.log" );
+//        logConfig.setName( "RollingLog" );
+//        logConfig.setMaxFileSize( "1MB" );
+//        logConfig.setLayout( new PatternLayout( "%-5p - %d{DATE}: %m%n") );
+//        logConfig.activateOptions();
+//        BasicConfigurator.configure( logConfig );
 
-        Logger logger = Logger.getRootLogger();
-        logger.setLevel( Level.WARN );
-        logger.debug( classPath + " | " + logPath + File.separator + "ePubEditor.log" );
+//        Logger logger = Logger.getRootLogger();
+//        logger.setLevel( Level.WARN );
+//        logger.debug( classPath + " | " + logPath + File.separator + "ePubEditor.log" );
+
 
         int option;
         
         for (option = 0; option < args.length; option++)
-        { 
-            if (args[option].equals( "-d" ) && option + 1 < args.length) 
-            { 
-                //  Someone wants to change the logging level 
-                ++option; 
-                if (args[option].equalsIgnoreCase( "debug" )) 
-                    logger.setLevel( Level.DEBUG ); 
-                else if (args[option].equalsIgnoreCase( "info" ))
-                    logger.setLevel( Level.INFO ); 
-                else if (args[option].equalsIgnoreCase( "off" )) 
-                    logger.setLevel( Level.OFF ); 
-                else if (args[option].equalsIgnoreCase( "error" )) 
-                    logger.setLevel( Level.ERROR ); 
-                else if (args[option].equalsIgnoreCase( "fatal" )) 
-                    logger.setLevel( Level.FATAL ); 
-                else if (args[option].equalsIgnoreCase( "all" )) 
-                    logger.setLevel( Level.ALL ); 
-                else if (args[option].equalsIgnoreCase( "trace" )) 
-                    logger.setLevel( Level.TRACE ); 
-                else 
-                    logger.setLevel( Level.WARN ); 
-            } 
-            else 
+        {
+            if (args[option].equals( "-d" ) && option + 1 < args.length)
             {
-                logger.info( args[option] ); 
+                //  Someone wants to change the logging level
+                ++option;
+
+                 if (args[option].equalsIgnoreCase( "debug" ))
+                     Configurator.setLevel(LOGGER.getName(), Level.DEBUG);
+//                logger.setLevel( Level.DEBUG );
+                else if (args[option].equalsIgnoreCase( "info" ))
+                     Configurator.setLevel(LOGGER.getName(), Level.INFO);
+//                logger.setLevel( Level.INFO );
+                else if (args[option].equalsIgnoreCase( "off" ))
+                     Configurator.setLevel(LOGGER.getName(), Level.OFF);
+//                    logger.setLevel( Level.OFF );
+                else if (args[option].equalsIgnoreCase( "error" ))
+                     Configurator.setLevel(LOGGER.getName(), Level.ERROR);
+//                    logger.setLevel( Level.ERROR );
+                else if (args[option].equalsIgnoreCase( "fatal" ))
+                     Configurator.setLevel(LOGGER.getName(), Level.FATAL);
+//                    logger.setLevel( Level.FATAL );
+                else if (args[option].equalsIgnoreCase( "all" ))
+                     Configurator.setLevel(LOGGER.getName(), Level.ALL);
+//                    logger.setLevel( Level.ALL );
+                else if (args[option].equalsIgnoreCase( "trace" ))
+                     Configurator.setLevel(LOGGER.getName(), Level.TRACE);
+//                    logger.setLevel( Level.TRACE );
+                else
+                     Configurator.setLevel(LOGGER.getName(), Level.INFO);
+//                    logger.setLevel( Level.WARN );
+            }
+            else
+            {
+                LOGGER.info( args[option] );
                 break;
             }
-        } 
+        }
 
-        logger.info( "\nePubEditor starting with log level " + logger.getLevel() );
+        LOGGER.info( "\nePubEditor starting with log level " + LOGGER.getLevel() );
 
         try
         {
@@ -950,7 +960,7 @@ public class EPubEditor extends JFrame implements Observer
     {
         try
         {
-            Logger.getLogger( "OpenOEBFile" ).info( "Opening " + f.getCanonicalPath() );
+            LOGGER.info( "Opening " + f.getCanonicalPath() );
 
             _epubModel = new EPubModel( f, null );
             contribPanel.setModelData( _epubModel );
@@ -1075,7 +1085,7 @@ public class EPubEditor extends JFrame implements Observer
     public void IOError( IOException t, String when )
     {
         String message = "An unknown IO error has occured while " + when;
-        Logger.getLogger( "IOError" ).error( message, t );
+        LogManager.getLogger( "IOError" ).error( message, t );
         JOptionPane.showMessageDialog( this, message, "I/O Error",
                 JOptionPane.ERROR_MESSAGE );
     }
@@ -1083,7 +1093,7 @@ public class EPubEditor extends JFrame implements Observer
     public void transformerError( Exception t )
     {
         String message = "A fatal error has occured while trying to save the OPF file.\nThe file was not saved.";
-        Logger.getLogger( "TransformerError" ).error( message, t );
+        LogManager.getLogger( "TransformerError" ).error( message, t );
         JOptionPane.showMessageDialog( this, message, "Transformer Error",
                 JOptionPane.ERROR_MESSAGE );
     }
@@ -1136,8 +1146,8 @@ public class EPubEditor extends JFrame implements Observer
         JFileChooser fc = new JFileChooser( startPath );
         fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
         fc.setSelectedFile( startPath );
-        fc.setAcceptAllFileFilterUsed( false );
         fc.addChoosableFileFilter( new EpubFileFilter() );
+        fc.setAcceptAllFileFilterUsed( true );
         Cursor cursor = getContentPane().getCursor();
         if (fc.showOpenDialog( this ) == JFileChooser.APPROVE_OPTION) try
         {
@@ -1593,7 +1603,7 @@ public class EPubEditor extends JFrame implements Observer
                             + "\"\n could not be found in the file system.";
                     JOptionPane.showMessageDialog( this, message,
                             "File Not Found", JOptionPane.ERROR_MESSAGE );
-                    Logger.getLogger( "FileNotFound" ).error( message, ex );
+                    LogManager.getLogger( "FileNotFound" ).error( message, ex );
 
                     ex.printStackTrace();
                 }
@@ -1601,7 +1611,7 @@ public class EPubEditor extends JFrame implements Observer
                 {
                     JOptionPane.showMessageDialog( this, ex.getMessage(),
                             "Zip error", JOptionPane.ERROR_MESSAGE );
-                    Logger.getLogger( "FileNotFound" ).error(
+                    LogManager.getLogger( "FileNotFound" ).error(
                             ex.getMessage(), ex );
 
                     ex.printStackTrace();

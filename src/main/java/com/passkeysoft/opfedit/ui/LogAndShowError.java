@@ -24,8 +24,6 @@
   $Log: LogAndShowError.java,v $
   Revision 1.2  2013/07/03 22:25:13  lpassey
   Catch and ignore HeadlessExceptions so the routines can be used in non-UI applications.
-
-
 */
 
 
@@ -33,7 +31,6 @@ package com.passkeysoft.opfedit.ui;
 
 import java.awt.HeadlessException;
 
-import org.apache.log4j.Logger;
 import javax.swing.*;
 
 
@@ -44,8 +41,8 @@ import javax.swing.*;
  */
 public class LogAndShowError
 {
-    static Logger logger = Logger.getRootLogger(); // where to log errors.
-    
+//    static Logger logger = Logger.getRootLogger(); // where to log errors.
+
     static public int logAndShowEx( String message, Throwable ex )
     {
         logException( message, ex );
@@ -60,7 +57,7 @@ public class LogAndShowError
 
     static public void logAndShowNoEx( String message )
     {
-        logger.error( message );
+        EPubEditor.LOGGER.error( message );
         try
         {
             JOptionPane.showMessageDialog( null, message, "Error", JOptionPane.ERROR_MESSAGE );
@@ -71,7 +68,7 @@ public class LogAndShowError
     
     static public int logException( String message, Throwable ex )
     {
-        logger.error( message, ex );
+        EPubEditor.LOGGER.error( message, ex );
         return 0;
     }
 }
