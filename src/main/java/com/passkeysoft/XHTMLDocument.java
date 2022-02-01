@@ -1,4 +1,4 @@
-/**
+/*-*
   Copyright-Only Dedication (based on United States law)
   
   The person or persons who have associated their work with this
@@ -28,6 +28,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 
 import org.w3c.dom.DOMException;
@@ -61,29 +62,27 @@ public class XHTMLDocument
 
 
     /**
-     * @param name
+     * @param nodeName
      *            the name of an HTML tag
      * @return true if the content model of the named tag is 'empty' (cannot have children) false
      *         otherwise
      */
-    static public boolean htmlIsEmpty( String name )
+    static public boolean htmlIsEmpty( String nodeName )
     {
-        if (null != name)
+        if (null != nodeName)
         {
-            if (   name.equalsIgnoreCase( "hr" )
-                || name.equalsIgnoreCase( "br" )
-                || name.equalsIgnoreCase( "img" )
-                || name.equalsIgnoreCase( "link" )
-                || name.equalsIgnoreCase( "meta" )
-                || name.equalsIgnoreCase( "param" )
-                || name.equalsIgnoreCase( "reference" )
-                || name.equalsIgnoreCase( "lb" )
-                || name.equalsIgnoreCase( "text" )
-                || name.equalsIgnoreCase( "area" )
-                || name.equalsIgnoreCase( "map" )
-                || name.equalsIgnoreCase( "input" )
-                || name.equalsIgnoreCase( "col" )
-                || name.equalsIgnoreCase( "svg:image" )
+            if (   "area".equalsIgnoreCase( nodeName )
+                || "col".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "hr" )
+                || nodeName.equalsIgnoreCase( "br" )
+                || nodeName.equalsIgnoreCase( "img" )
+                || nodeName.equalsIgnoreCase( "input" )
+                || nodeName.equalsIgnoreCase( "link" )
+                || nodeName.equalsIgnoreCase( "meta" )
+                || nodeName.equalsIgnoreCase( "param" )
+                || "picture".equalsIgnoreCase( nodeName )
+                || "wbr".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "svg:image" )
                 )
                 return true;
         }
@@ -101,23 +100,37 @@ public class XHTMLDocument
         // return true if it's a block that can't contain other blocks
         if (null != nodeName)
         {
-            if (   nodeName.equalsIgnoreCase( "p" )
+            if (   "audio".equalsIgnoreCase( nodeName )
+                || "button".equalsIgnoreCase( nodeName )
+                || "canvas".equalsIgnoreCase( nodeName )
+                || "caption".equalsIgnoreCase( nodeName )
+                || "center".equalsIgnoreCase( nodeName )
                 || nodeName.equalsIgnoreCase( "dd" )
-                || nodeName.equalsIgnoreCase( "dt" )
+                || "dialog".equalsIgnoreCase( nodeName )
+                || "dt".equalsIgnoreCase( nodeName )
+                || "figcaption".equalsIgnoreCase( nodeName )
                 || nodeName.equalsIgnoreCase( "h1" )
                 || nodeName.equalsIgnoreCase( "h2" )
                 || nodeName.equalsIgnoreCase( "h3" )
                 || nodeName.equalsIgnoreCase( "h4" )
                 || nodeName.equalsIgnoreCase( "h5" )
                 || nodeName.equalsIgnoreCase( "h6" )
-                || nodeName.equalsIgnoreCase( "td" )
+                || "header".equalsIgnoreCase( nodeName )
+                || "legend".equalsIgnoreCase( nodeName )
                 || nodeName.equalsIgnoreCase( "li" )
+                || nodeName.equalsIgnoreCase( "meta" )
+                || "option".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "p" )
+                || "samp".equalsIgnoreCase( nodeName )
+                || "script".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "style" )
+                || "select".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "td" )
+                || "textarea".equalsIgnoreCase( nodeName )
                 || nodeName.equalsIgnoreCase( "th" )
                 || nodeName.equalsIgnoreCase( "title" )
-                || nodeName.equalsIgnoreCase( "meta" )
-                || nodeName.equalsIgnoreCase( "style" )
+
                 || nodeName.equalsIgnoreCase( "link" )
-                || nodeName.equalsIgnoreCase( "caption" )
                 )
                 return true;
         }
@@ -136,24 +149,42 @@ public class XHTMLDocument
         {
             if (htmlIsSemiBlock( nodeName ))
                 return true;
-            if (   nodeName.equalsIgnoreCase( "pre" )
-                || nodeName.equalsIgnoreCase( "ol" )
-                || nodeName.equalsIgnoreCase( "ul" )
-                || nodeName.equalsIgnoreCase( "dl" )
+            if (   "address".equalsIgnoreCase( nodeName )
+                || "article".equalsIgnoreCase( nodeName )
+                || "pre".equalsIgnoreCase( nodeName )
+                || "aside".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "blockquote" )
+                || nodeName.equalsIgnoreCase( "body" )
+                || "colgroup".equalsIgnoreCase( nodeName )
+                || "datalist".equalsIgnoreCase( nodeName )
+                || "dd".equalsIgnoreCase( nodeName )
+                || "dl".equalsIgnoreCase( nodeName )
+                || "details".equalsIgnoreCase( nodeName )
+                || "dir".equalsIgnoreCase( nodeName )
                 || nodeName.equalsIgnoreCase( "div" )
+                || "fieldset".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "figure" )
+                || "footer".equalsIgnoreCase( nodeName )
+                || "form".equalsIgnoreCase( nodeName )
                 || nodeName.equalsIgnoreCase( "html" )
                 || nodeName.equalsIgnoreCase( "head" )
-                || nodeName.equalsIgnoreCase( "body" )
-                || nodeName.equalsIgnoreCase( "center" )
-                || nodeName.equalsIgnoreCase( "blockquote" )
-                || nodeName.equalsIgnoreCase( "form" )
-                || nodeName.equalsIgnoreCase( "table" )
-                || nodeName.equalsIgnoreCase( "tr" )
-                || nodeName.equalsIgnoreCase( "thead" )
-                || nodeName.equalsIgnoreCase( "tbody" )
-                || nodeName.equalsIgnoreCase( "script" )
+                || nodeName.equalsIgnoreCase( "header" )
                 || nodeName.equalsIgnoreCase( "iframe" )
-                || nodeName.startsWith( "svg:" )
+                || "main".equalsIgnoreCase( nodeName )
+                || "map".equalsIgnoreCase( nodeName )
+                || "nav".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "ol" )
+                || "optgroup".equalsIgnoreCase( nodeName )
+                || "section".equalsIgnoreCase( nodeName )
+                || "summary".equalsIgnoreCase( nodeName )
+                || nodeName.startsWith( "svg" )
+                || nodeName.equalsIgnoreCase( "table" )
+                || nodeName.equalsIgnoreCase( "tbody" )
+                || "template".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "thead" )
+                || "tfoot".equalsIgnoreCase( nodeName )
+                || nodeName.equalsIgnoreCase( "tr" )
+                || nodeName.equalsIgnoreCase( "ul" )
                 )
                 return true;
         }
@@ -261,8 +292,8 @@ public class XHTMLDocument
 
     /**
      *  Write a new line to the buffered writer, and reset the line length value to zero
-     *  
-     * @throws IOException
+     *
+     * @throws IOException when write could not be completed
      */
     private void _newLine() throws IOException
     {
@@ -280,7 +311,7 @@ public class XHTMLDocument
      * spaces. Set the line length equal to the indent size.
      * 
      * @param indent The number of spaces to indent
-     * @throws IOException
+     * @throws IOException when write could not be completed
      */
     private void _startLine( int indent ) throws IOException
     {
@@ -292,8 +323,8 @@ public class XHTMLDocument
 
     /**
      * Windows 1252 - convert to unicode.
-     * @param ch
-     * @return
+     * @param ch  windows 1252 character to convert to unicode
+     * @return the converted character
      */
     private char x1252toUni( char ch )
     {
@@ -411,8 +442,7 @@ public class XHTMLDocument
             }
             if (_asciiOnly || 160 == ch)
             {
-                String xformed = String.format( "&#%d;", (int) ch );;
-                return xformed;
+                return String.format( "&#%d;", (int) ch );
             }
         }
         return String.valueOf( ch );
@@ -424,7 +454,7 @@ public class XHTMLDocument
      * written as entities, not natively.
      * 
      * @param text A string holding the text to write.
-     * @throws IOException
+     * @throws IOException  when write could not be completed
      */
     private void _writeTracked( String text, int preserveSpace ) throws IOException
     {
@@ -492,7 +522,7 @@ public class XHTMLDocument
     
     private String normalizeSpaces( String text )
     {
-        StringBuffer normalized = new StringBuffer( text.length());
+        StringBuilder normalized = new StringBuilder( text.length());
         int i = 0;
         while (i < text.length() && Character.isWhitespace( text.charAt( i ) ))
             i++;
@@ -532,7 +562,7 @@ public class XHTMLDocument
      * 
      * @param text The text to write.
      * @param indent The number of spaces to indent new lines
-     * @throws IOException
+     * @throws IOException  when write could not be completed
      */
     private void writeWrapped( String text, int indent ) 
             throws IOException
@@ -621,11 +651,11 @@ public class XHTMLDocument
 
     
     /**
-     * Writes a list of a nodes attributes as name/value pairs in the form
+     * Writes a list of a node's attributes as name/value pairs in the form
      * 'name="value"'
      * 
-     * @param pNode
-     * @throws IOException
+     * @param pNode The node containing the attributes
+     * @throws IOException  when write could not be completed
      */
     private void printAttrList( Node pNode, int indent ) throws IOException
     {
@@ -693,8 +723,8 @@ public class XHTMLDocument
     /**
      * Write an opening tag to the buffered writer. If the tag is an HTML
      * empty tag, add the self-closing slash as well.
-     * @param pNode
-     * @throws IOException
+     * @param pNode the HTML node to write
+     * @throws IOException when write could not be completed
      */
     private void createOpenTag( Node pNode, int indent ) throws IOException
     {
@@ -746,7 +776,7 @@ public class XHTMLDocument
      * @throws IOException
      */
     protected boolean printNode( Node pNode, int indent, int preserveSpace ) 
-            throws DOMException, IOException
+           throws IOException // , DOMException
     {
         if (null == pNode)
             return false;
@@ -765,7 +795,7 @@ public class XHTMLDocument
                     && null != ((Element) pNode).getAttribute( "http-equiv" )
                     && 0 != ((Element)pNode).getAttribute( "http-equiv"  ).length())
                 {
-                    _out.write("\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
+                    _out.write("\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />" );
                     return;
                 }
 */
@@ -888,10 +918,10 @@ public class XHTMLDocument
               }
               break;
             case Node.DOCUMENT_NODE:
-              // print out my own DTD, and ignore the documents DTD and PIs
-              _out.write( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" );
-              _out.write(   "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
-                         + "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" );
+//              // print out my own DTD, and ignore the documents DTD and PIs
+//              _out.write( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" );
+//              _out.write(   "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
+//                         + "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" );
               indent -= _step;
               break;
             case Node.PROCESSING_INSTRUCTION_NODE:
@@ -1029,22 +1059,21 @@ public class XHTMLDocument
     
     
     /**
-     * Pretty print the internal DOM document to an output stream.
+     * Pretty print the internal DOM document to an output stream. Let the caller
+     * close the OutputStream
      * 
      * @param fout The target output stream
      * @param step The number of spaces to indent for each new block.
-     * @throws DOMException
-     * @throws IOException
+     * @throws IOException forward this to the caller
      */
     public void print( OutputStream fout, int step, boolean ascii ) 
-            throws DOMException, IOException
+            throws IOException // DOMException,
     {
-        _out = new BufferedWriter( new OutputStreamWriter( fout, "UTF-8" ));
+        _out = new BufferedWriter( new OutputStreamWriter( fout, StandardCharsets.UTF_8 ));
 //        _out.write( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" );
         _step = step;
         _asciiOnly = ascii;
         printNode( _baseDoc, 0, 0 );
-//        fout.close();
     }
     
     
@@ -1072,7 +1101,7 @@ public class XHTMLDocument
                     if (null != child)
                     {
                         String textValue = child.getNodeValue();
-                        StringBuffer normalized = new StringBuffer( textValue.length());
+                        StringBuilder normalized = new StringBuilder( textValue.length());
                         for (int i = 0; i < textValue.length(); i++)
                         {
                             char c = textValue.charAt( i );
