@@ -104,7 +104,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
      * Cleans up all the XHTML documents in a publication, 
      * and adds a user defined CSS file to the manifest and archive.
      */
-    void cleanFiles( File userCssFile )
+    private void cleanFiles( File userCssFile )
     {
         if (null == _opfData.getSpine())
             return;
@@ -324,7 +324,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
         }
     }
 
-    static void insertUserCss( Document doc, String relativePathToUserCss )
+    private static void insertUserCss( Document doc, String relativePathToUserCss )
     {
         NodeList elements = doc.getElementsByTagName( "link" );
         for (int i = 0; i < elements.getLength(); i++)
