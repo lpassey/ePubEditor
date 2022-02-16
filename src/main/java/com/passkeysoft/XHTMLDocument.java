@@ -115,7 +115,6 @@ public class XHTMLDocument
                 || nodeName.equalsIgnoreCase( "h4" )
                 || nodeName.equalsIgnoreCase( "h5" )
                 || nodeName.equalsIgnoreCase( "h6" )
-                || "header".equalsIgnoreCase( nodeName )
                 || "legend".equalsIgnoreCase( nodeName )
                 || nodeName.equalsIgnoreCase( "li" )
                 || nodeName.equalsIgnoreCase( "meta" )
