@@ -7,6 +7,10 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import com.adobe.epubcheck.api.EPUBLocation;
+import com.adobe.epubcheck.messages.MessageId;
+import com.adobe.epubcheck.util.EPUBVersion;
 import com.passkeysoft.opfedit.datamodels.EPubModel;
 import com.passkeysoft.opfedit.validate.EPubFileCheck;
 
@@ -15,12 +19,14 @@ public class EPubChecker extends MonitoredWorker<String, Object>
     private EPubFileCheck _ePubFileChecker;
     private EPubModel _ePubModel;
     private Frame _parent;
+    private EPUBVersion _version;
 
-    public EPubChecker( Frame parent, EPubModel ePub )
+    public EPubChecker( Frame parent, EPubModel ePub, EPUBVersion version )
     {
         _ePubFileChecker = new EPubFileCheck();
         _ePubModel = ePub;
         _parent = parent;
+        _version = version;
     }
 
     @Override
@@ -28,7 +34,7 @@ public class EPubChecker extends MonitoredWorker<String, Object>
     {
         try
         {
-            return _ePubFileChecker.validate( _ePubModel, this );
+            return _ePubFileChecker.validate( _ePubModel, _version,this );
         }
         catch( Exception e )
         {
@@ -50,7 +56,7 @@ public class EPubChecker extends MonitoredWorker<String, Object>
             {
                 // Should never happen, so this is for debugging only
                 e1.printStackTrace();
-                _ePubFileChecker.error("", 0, 0, e1.toString());
+                _ePubFileChecker.message( MessageId.OPF_004d, (EPUBLocation) null, e1.toString());
                 report = _ePubFileChecker.toString();
             }
 

@@ -45,6 +45,7 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
+import com.adobe.epubcheck.api.Report;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -54,7 +55,6 @@ import com.passkeysoft.opfedit.staticutil.FileUtil;
 
 public class OCFFilePackage extends OCFPackage
 {
-
     private EPubModel _ePubData;
 
     OCFFilePackage( EPubModel epub )
@@ -63,6 +63,11 @@ public class OCFFilePackage extends OCFPackage
         _ePubData = epub;
     }
 
+    /**
+     * @param name
+     *          the name of a relative file that is possibly in the container
+     * @return true if the file is in the container, false otherwise
+     */
     @Override
     public boolean hasEntry( String name )
     {
@@ -85,7 +90,13 @@ public class OCFFilePackage extends OCFPackage
         return entry.exists();
     }
 
-    
+
+    /**
+     * @param name
+     *          the name of a relative file to fetch from the container.
+     * @return an InputStream representing the data from the named file, possibly
+     *         decrypted if an appropriate encryption filter has been set
+     */
     @Override
     public InputStream getInputStream( String name ) throws IOException
     {
@@ -127,7 +138,10 @@ public class OCFFilePackage extends OCFPackage
         return null;
    }
 
-    
+
+    /**
+     * @return a set of relative file names of files in this container (cleaned from duplicates)
+     */
     @Override
     public HashSet<String> getFileEntries() // throws IOException
     {
@@ -151,12 +165,20 @@ public class OCFFilePackage extends OCFPackage
         return entryNames;
     }
 
+    /**
+     * Undocumented
+     * @return null
+     */
     @Override
-    public HashSet<String> getDirectoryEntries()
+    public String getPackagePath()
     {
-        return new HashSet<>();
+        return _ePubData.getEpubRootPath();
     }
 
+    /**
+     * @return a list of all the entries in this container. May contain duplicate
+     *         entries (which is invalid in EPUB).
+     */
     @Override
     public List<String> getEntries()
     {
@@ -171,10 +193,46 @@ public class OCFFilePackage extends OCFPackage
         + "</container>"
         ;
 
+    /**
+     * Undocumented
+     * @param name ???
+     * @return 0
+     */
     @Override
     public long getTimeEntry( String name )
     {
         // TODO Auto-generated method stub
         return 0;
     }
+
+    /**
+     * @return a set of relative directory entries in this container (cleaned from duplicates)
+     */
+    @Override
+    public HashSet<String> getDirectoryEntries()
+    {
+        return new HashSet<>();
+    }
+
+    /**
+     * Undocumented
+     * @param s ??
+     * @param report ??
+     */
+    @Override
+    public void reportMetadata( String s, Report report )
+    {
+
+    }
+
+    /**
+     * Undocumented
+     * @return null
+     */
+    @Override
+    public String getName()
+    {
+        return null;
+    }
+
 }
