@@ -44,6 +44,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Observable;
@@ -57,9 +58,9 @@ import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import com.adobe.epubcheck.util.EPUBVersion;
 import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.xml.sax.SAXException;
@@ -75,6 +76,8 @@ import com.passkeysoft.opfedit.staticutil.FileUtil;
 import com.passkeysoft.opfedit.validate.EPubFileCheck;
 import com.steadystate.css.parser.CSSOMParser;
 
+import static java.awt.event.KeyEvent.*;
+
 public class EPubEditor extends JFrame implements Observer
 {
     private static final long serialVersionUID = 1L;
@@ -87,86 +90,98 @@ public class EPubEditor extends JFrame implements Observer
 
     static final Logger LOGGER = LogManager.getRootLogger();
 
-    public static final String PREFS_MEDIA_TYPES = "media-types",
-                        PREFS_EDITOR_PATH = "editor",
-                        PREFS_EDITOR_CL = "edcl",
-                        PREFS_TRANSFORMER = "transformer",
-                        PREFS_XFORM_CL = "arguments",
-                        PREFS_XFORM_NEWMT = "newMimeType",
-                        PREFS_XFORM_NEWEXT = "newExtension",
-                        PREFS_EDITORS_DEFAULT = "other",
-                        PREFS_USERCSSS = "usercss",
-                        PREFS_PATHS = "paths",
-                        PREFS_PATHS_XSLT = "userxsl",
-                        PREFS_PATHS_SAVE_FILE = "saveFile",
-                        PREFS_PATHS_SAVE_EPUB = "saveEPub",
-                        PREFS_PATHS_OPF_OPEN = "opfOpenPath",
-                        PREFS_PATHS_EPUB_OPEN = "ePubOpenPath",
-                        PREFS_PATHS_CONTENT = "contentPath",
-                        PREFS_PATHS_TEMP = "temp",
-                        PREFS_MRU = "file-mru-list"
+    public static final String PREFS_MEDIA_TYPES = "media-types";
+    public static final String PREFS_EDITOR_PATH = "editor";
+    public static final String PREFS_EDITOR_CL = "edcl";
+    public static final String PREFS_PATHS = "paths";
+    public static final String PREFS_PATHS_XSLT = "userxsl";
+    public static final String PREFS_PATHS_TEMP = "temp";
+    public static final String PREFS_TRANSFORMER = "transformer";
+    public static final String PREFS_XFORM_CL = "arguments";
+    public static final String PREFS_XFORM_NEWMT = "newMimeType";
+    public static final String PREFS_XFORM_NEWEXT = "newExtension";
+
+    static final String PREFS_PATHS_OPF_OPEN = "opfOpenPath";
+    static final String PREFS_PATHS_CONTENT = "contentPath";
+
+    private static final String PREFS_EDITORS_DEFAULT = "other";
+    private static final String PREFS_USERCSSS = "usercss";
+//    public static final String PREFS_PATHS_SAVE_FILE = "saveFile";
+    private static final String PREFS_PATHS_SAVE_EPUB = "saveEPub";
+    private static final String PREFS_PATHS_EPUB_OPEN = "ePubOpenPath";
+    private static final String PREFS_MRU = "file-mru-list"
                 ;
 
 //    public static final String opfNS = "http://www.idpf.org/2007/opf";
 
     static final Dimension buttonSize = new Dimension( 96, 32 );
     static final Dimension buttonPanelSize = new Dimension( 32767, 32 );
-    public static final Dimension toolButtonSize = new Dimension( 24, 32 );
+//    public static final Dimension toolButtonSize = new Dimension( 24, 32 );
 
     // action commands for toolbar buttons and menus
-    static final String newOPF = "new", openOPF = "open", cleanOPF = "clean",
+    private static final String newOPF = "new", openOPF = "open", cleanOPF = "clean",
             saveOPF = "save", saveOPFas = "saveas", exitOPF = "exit",
             aboutOPF = "about", replaceTags = "replace",
             insertBefore = "insert", styleReport = "report", buildTOC = "toc", 
-            buildNCX = "ncx", validate = "validate", tools = "tools",
+            buildNCX = "ncx", validate2 = "validate2", validate3 = "validate3", tools = "tools",
             editors = "editors", options = "options", xformer="transformers",
             buildCover = "cover", importEPub = "import", compileEPub = "compile"
                 ;
 
-    static final String oxygenIconPath = "images/oxygen/16x16/";
+    private static final String _oxygenIconPath = "images/oxygen/16x16/";
 
     private static final int MAX_DISPLAY_PATH = 64;
 
-     
-    ImageIcon newIcon = new ImageIcon( getClass().getClassLoader().getResource(
-            "images/book-add-icon16a.png" ) );
-    ImageIcon openIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( "images/book-open-icon16a.png" ) );
-    ImageIcon saveIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "actions/document-save.png" ) );
-    ImageIcon saveAsIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "actions/document-save-as.png" ) );
-    ImageIcon aboutIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "status/dialog-information.png" ) );
-    ImageIcon exitIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "actions/dialog-close.png" ) );
-    ImageIcon cleanIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( "images/broom16.png" ));
-    ImageIcon replaceIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( "images/text-replace-icon16.png" ));
-    ImageIcon insertIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "actions/document-import.png" ));
-    ImageIcon cssIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "apps/preferences-web-browser-stylesheets.png" ));
-    ImageIcon reportIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "apps/keduca.png" ));
-    ImageIcon editorsIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "actions/document-edit.png" ));
-    ImageIcon xformersIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "apps/plasmagik.png" ));
-    ImageIcon prefsIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "filesystems/folder_bookmarks.png" ));
-    ImageIcon tocIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "apps/alacarte.png" ));
-    ImageIcon ncxIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "mimetypes/text-xml.png" ));
-    ImageIcon imageIcon = new ImageIcon( getClass().getClassLoader()
-            .getResource( oxygenIconPath + "mimetypes/image-x-generic.png" ));
-    // XXX: load more icons from resources?
-    
+    private static ImageIcon newIcon, openIcon, saveIcon, saveAsIcon, aboutIcon, exitIcon,
+        cleanIcon, replaceIcon, insertIcon, cssIcon, reportIcon, editorsIcon, xformersIcon,
+        prefsIcon, tocIcon, ncxIcon, imageIcon;
+
+    static
+    {
+        ClassLoader cl = EPubEditor.class.getClassLoader();
+        if (null != cl)
+        {
+            URL url = cl.getResource( "images/book-add-icon16a.png" );
+            newIcon = new ImageIcon( url );
+            url = cl.getResource( "images/book-open-icon16a.png" );
+            openIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "actions/document-save.png" );
+            saveIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "actions/document-save-as.png" );
+            saveAsIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "status/dialog-information.png" );
+            aboutIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "actions/dialog-close.png" );
+            exitIcon = new ImageIcon( url );
+            url = cl.getResource( "images/broom16.png" );
+            cleanIcon = new ImageIcon( url );
+            url = cl.getResource( "images/text-replace-icon16.png" );
+            replaceIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "actions/document-import.png" );
+            insertIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "apps/preferences-web-browser-stylesheets.png" );
+            cssIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "apps/keduca.png" );
+            reportIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "actions/document-edit.png" );
+            editorsIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "apps/plasmagik.png" );
+            xformersIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "filesystems/folder_bookmarks.png" );
+            prefsIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "apps/alacarte.png" );
+            tocIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "mimetypes/text-xml.png" );
+            ncxIcon = new ImageIcon( url );
+            url = cl.getResource( _oxygenIconPath + "mimetypes/image-x-generic.png" );
+            imageIcon = new ImageIcon( url );
+        }
+    }
+        // XXX: load more icons from resources?
+
     // class global variables
 
-    private MenuActionListener menuActionListener;
+    private MenuActionListener _menuActionListener;
 
     // private boolean isDirty;
 
@@ -176,7 +191,9 @@ public class EPubEditor extends JFrame implements Observer
     private JMenuItem exportItem;
     private JMenuItem saveAsItem;
     private JMenuItem saveItem;
-    private JMenuItem validateItem;
+    private JMenuItem validateItem2;
+    private JMenuItem validateItem3;
+
     private JMenuItem styleItem;
     private JMenu editMenu;
     private JMenu reportMenu;
@@ -189,7 +206,7 @@ public class EPubEditor extends JFrame implements Observer
     private GuidePanel guidePanel;
     
     // Classes dependent on external jars
-    boolean ePubCheckPresent = false, cssParserPresent = false;
+    private boolean ePubCheckPresent = false, cssParserPresent = false;
     
      // a read only field
     private EPubModel _epubModel;
@@ -210,7 +227,7 @@ public class EPubEditor extends JFrame implements Observer
      * The entry point for this application. Sets the Look and Feel to the
      * System Look and Feel. Creates a new JFrame and makes it visible.
      */
-    static public void main( String args[] )
+    static public void main( String[] args )
     {
         try
         {
@@ -248,7 +265,6 @@ public class EPubEditor extends JFrame implements Observer
                     newOEBFile();
                 }
                 catch( BackingStoreException ignore ) { }
-                finally {}
             }
             else if (event.getActionCommand().equals( openOPF ))
             {
@@ -274,11 +290,18 @@ public class EPubEditor extends JFrame implements Observer
             {
                 generateStyleReport();
             }
-            else if (event.getActionCommand().equals( validate ))
+            else if (event.getActionCommand().equals( validate2 ))
             {
                 if (null != _epubModel)
                 {
-                    ePubCheck();
+                    ePubCheck2();
+                }
+            }
+            else if (event.getActionCommand().equals( validate3 ))
+            {
+                if (null != _epubModel)
+                {
+                    ePubCheck3();
                 }
             }
             else if (event.getActionCommand().equals( buildCover ))
@@ -355,7 +378,7 @@ public class EPubEditor extends JFrame implements Observer
             // Get the MRU list.
             Preferences mru = prefs.node( PREFS_PATHS ).node( PREFS_MRU );
             // put all the key/value pairs into a sorted list
-            TreeMap<String, String> paths = new TreeMap<String, String>();
+            TreeMap<String, String> paths = new TreeMap<>();
             for (String key : mru.keys())
             {
                 String path = mru.get( key, null );
@@ -434,7 +457,7 @@ public class EPubEditor extends JFrame implements Observer
                     // Go through the MRU file list, and add a sub menu for each file listed.
                     JMenuItem recentFileItem = new JMenuItem();
                     recentFileItem.setActionCommand( entry.getKey() );
-                    recentFileItem.addActionListener( menuActionListener );
+                    recentFileItem.addActionListener( _menuActionListener );
                     recentFileItem.setHorizontalTextPosition( SwingConstants.RIGHT );
                     recentFileItem.setHorizontalAlignment( SwingConstants.LEFT );
                     recentFileItem.setText( path );
@@ -449,8 +472,25 @@ public class EPubEditor extends JFrame implements Observer
 
     }
     
-    
-    private JMenuBar createMainMenu( ActionListener lSymAction )
+    private JMenuItem createMenuItem( String text, String actionCommand, KeyStroke accelerator,
+        int mNemonic, ImageIcon icon )
+    {
+        JMenuItem newItem = new JMenuItem();
+        newItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+        newItem.setHorizontalAlignment( SwingConstants.LEFT );
+        newItem.setText( text );
+        newItem.setActionCommand( actionCommand );
+        if (null != accelerator)
+            newItem.setAccelerator( accelerator );
+        if (0 != mNemonic)
+            newItem.setMnemonic( mNemonic );
+        newItem.setIcon( icon );
+        newItem.addActionListener( _menuActionListener );
+
+        return newItem;
+    }
+
+    private JMenuBar createMainMenu()
     {
         JMenuBar mainMenuBar = new JMenuBar();
 
@@ -463,63 +503,49 @@ public class EPubEditor extends JFrame implements Observer
         fileMenu.setMnemonic( (int) 'F' );
         mainMenuBar.add( fileMenu );
 
-        JMenuItem newItem = new JMenuItem();
-        newItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        newItem.setHorizontalAlignment( SwingConstants.LEFT );
-        newItem.setText( "New" );
-        newItem.setActionCommand( newOPF );
-        newItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_N, java.awt.Event.CTRL_MASK ) );
-        newItem.setMnemonic( (int) 'N' );
-        newItem.setIcon( newIcon );
-        newItem.addActionListener( lSymAction );
-        fileMenu.add( newItem );
+        fileMenu.add( createMenuItem( "New", newOPF, KeyStroke.getKeyStroke(
+            KeyEvent.VK_N, InputEvent.CTRL_MASK ), (int) 'N', newIcon ));
 
-        JMenuItem openItem = new JMenuItem();
-        openItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        openItem.setHorizontalAlignment( SwingConstants.LEFT );
-        openItem.setText( "Open..." );
-        openItem.setActionCommand( openOPF );
-        openItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_O, java.awt.Event.CTRL_MASK ) );
-        openItem.setMnemonic( (int) 'O' );
-        openItem.setIcon( openIcon );
-        openItem.addActionListener( lSymAction );
-        fileMenu.add( openItem );
+//        JMenuItem openItem = new JMenuItem();
+//        openItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        openItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        openItem.setText( "Open..." );
+//        openItem.setActionCommand( openOPF );
+//        openItem.setAccelerator(  );
+//        openItem.setMnemonic( (int) 'O' );
+//        openItem.setIcon( openIcon );
+//        openItem.addActionListener( _menuActionListener );
+        fileMenu.add( createMenuItem( "Open...", openOPF, KeyStroke.getKeyStroke(
+            KeyEvent.VK_O, InputEvent.CTRL_MASK ), (int) 'O', openIcon ));
 
-        saveItem = new JMenuItem();
-        saveItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        saveItem.setHorizontalAlignment( SwingConstants.LEFT );
-        saveItem.setText( "Save" );
-        saveItem.setActionCommand( saveOPF );
-        saveItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_S, java.awt.Event.CTRL_MASK ) );
-        saveItem.setMnemonic( (int) 'S' );
-        saveItem.setIcon( saveIcon );
-        saveItem.addActionListener( lSymAction );
+        saveItem = createMenuItem( "Save", saveOPF, KeyStroke.getKeyStroke(
+            KeyEvent.VK_S, InputEvent.CTRL_MASK ), (int) 'S', saveIcon );
+//        saveItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        saveItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        saveItem.setText( "Save" );
+//        saveItem.setActionCommand( saveOPF );
+//        saveItem.setAccelerator( KeyStroke.getKeyStroke(
+//                KeyEvent.VK_S, InputEvent.CTRL_MASK ) );
+//        saveItem.setMnemonic( (int) 'S' );
+//        saveItem.setIcon( saveIcon );
+//        saveItem.addActionListener( _menuActionListener );
         saveItem.setEnabled( false );
         fileMenu.add( saveItem );
 
-        saveAsItem = new JMenuItem();
-        saveAsItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        saveAsItem.setHorizontalAlignment( SwingConstants.LEFT );
-        saveAsItem.setText( "Save As..." );
-        saveAsItem.setActionCommand( saveOPFas );
-        saveAsItem.setMnemonic( (int) 'A' );
-        saveAsItem.setIcon( saveAsIcon );
-        saveAsItem.addActionListener( lSymAction );
+        saveAsItem =createMenuItem( "Save As...", saveOPFas, KeyStroke.getKeyStroke(
+            KeyEvent.VK_A, InputEvent.CTRL_MASK ), (int) 'A', saveAsIcon  );
         saveAsItem.setEnabled( false );
         fileMenu.add( saveAsItem );
 
-        JMenuItem importItem = new JMenuItem();
-        importItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        importItem.setHorizontalAlignment( SwingConstants.LEFT );
-        importItem.setText( "Import from ePub" );
-        importItem.setActionCommand( importEPub );
-//      exportItem.setMnemonic( (int) 'A' );
-        importItem.setIcon( openIcon );
-        importItem.addActionListener( lSymAction );
-        fileMenu.add( importItem );
+//        JMenuItem importItem = new JMenuItem();
+//        importItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        importItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        importItem.setText( "Import from ePub" );
+//        importItem.setActionCommand( importEPub );
+////      exportItem.setMnemonic( (int) 'A' );
+//        importItem.setIcon( openIcon );
+//        importItem.addActionListener( _menuActionListener );
+        fileMenu.add( createMenuItem( "Import from ePub", importEPub, null, 0, openIcon ));
         
         exportItem = new JMenuItem();
         exportItem.setHorizontalTextPosition( SwingConstants.RIGHT );
@@ -528,7 +554,7 @@ public class EPubEditor extends JFrame implements Observer
         exportItem.setActionCommand( compileEPub );
 //        exportItem.setMnemonic( (int) 'A' );
         exportItem.setIcon( saveAsIcon );
-        exportItem.addActionListener( lSymAction );
+        exportItem.addActionListener( _menuActionListener );
         exportItem.setEnabled( false );
         fileMenu.add( exportItem );
         
@@ -551,7 +577,7 @@ public class EPubEditor extends JFrame implements Observer
         exitItem.setActionCommand( exitOPF );
         exitItem.setIcon( exitIcon );
         exitItem.setMnemonic( (int) 'X' );
-        exitItem.addActionListener( lSymAction );
+        exitItem.addActionListener( _menuActionListener );
         fileMenu.add( exitItem );
 
         editMenu = new JMenu();
@@ -570,10 +596,10 @@ public class EPubEditor extends JFrame implements Observer
         cleanItem.setText( "Clean" );
         cleanItem.setActionCommand( cleanOPF );
         cleanItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_C, java.awt.Event.CTRL_MASK ) );
+                KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK ) );
         cleanItem.setMnemonic( (int) 'C' );
         cleanItem.setIcon( cleanIcon  );
-        cleanItem.addActionListener( lSymAction );
+        cleanItem.addActionListener( _menuActionListener );
         editMenu.add( cleanItem );
 
         JMenuItem subItem = new JMenuItem();
@@ -582,10 +608,10 @@ public class EPubEditor extends JFrame implements Observer
         subItem.setText( "Replace" );
         subItem.setActionCommand( replaceTags );
         subItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_R, java.awt.Event.CTRL_MASK ) );
+                KeyEvent.VK_R, InputEvent.CTRL_MASK ) );
         subItem.setMnemonic( (int) 'R' );
         subItem.setIcon( replaceIcon );
-        subItem.addActionListener( lSymAction );
+        subItem.addActionListener( _menuActionListener );
         editMenu.add( subItem );
 
         JMenuItem insItem = new JMenuItem();
@@ -594,49 +620,50 @@ public class EPubEditor extends JFrame implements Observer
         insItem.setText( "Insert" );
         insItem.setActionCommand( insertBefore );
         insItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_I, java.awt.Event.CTRL_MASK ) );
+                KeyEvent.VK_I, InputEvent.CTRL_MASK ) );
         insItem.setMnemonic( (int) 'I' );
         insItem.setIcon( insertIcon );
-        insItem.addActionListener( lSymAction );
+        insItem.addActionListener( _menuActionListener );
         editMenu.add( insItem );
 
         editMenu.add( new JSeparator() );
 
-        JMenuItem tocItem = new JMenuItem();
-        tocItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        tocItem.setHorizontalAlignment( SwingConstants.LEFT );
-        tocItem.setText( "Build TOC" );
-        tocItem.setActionCommand( buildTOC );
-        tocItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_T, java.awt.Event.CTRL_MASK ) );
-        tocItem.setMnemonic( (int) 'T' );
-        tocItem.setIcon( tocIcon );
-        tocItem.addActionListener( lSymAction );
-        editMenu.add( tocItem );
+//        JMenuItem tocItem = new JMenuItem();
+//        tocItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        tocItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        tocItem.setText( "Build TOC" );
+//        tocItem.setActionCommand( buildTOC );
+//        tocItem.setAccelerator( KeyStroke.getKeyStroke(
+//                KeyEvent.VK_T, InputEvent.CTRL_MASK ) );
+//        tocItem.setMnemonic( (int) 'T' );
+//        tocItem.setIcon( tocIcon );
+//        tocItem.addActionListener( _menuActionListener );
+        editMenu.add( createMenuItem( "Build TOC",  buildTOC, KeyStroke.getKeyStroke(
+            KeyEvent.VK_T, InputEvent.CTRL_MASK ), (int) 'T', tocIcon ) );
 
-        JMenuItem ncxItem = new JMenuItem();
-        ncxItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        ncxItem.setHorizontalAlignment( SwingConstants.LEFT );
-        ncxItem.setText( "Build NCX" );
-        ncxItem.setActionCommand( buildNCX );
-        ncxItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_N, java.awt.Event.CTRL_MASK ) );
-        ncxItem.setMnemonic( (int) 'T' );
-        ncxItem.setIcon( ncxIcon );
-        ncxItem.addActionListener( lSymAction );
-        editMenu.add( ncxItem );
+//        JMenuItem ncxItem = new JMenuItem();
+//        ncxItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        ncxItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        ncxItem.setText( );
+//        ncxItem.setActionCommand();
+//        ncxItem.setAccelerator(  );
+//        ncxItem.setMnemonic( );
+//        ncxItem.setIcon( );
+//        ncxItem.addActionListener( _menuActionListener );
+        editMenu.add( createMenuItem( "Build NCX", buildNCX, KeyStroke.getKeyStroke(
+            VK_N, InputEvent.CTRL_MASK ), (int) 'T', ncxIcon ));
 
-        JMenuItem coverItem = new JMenuItem();
-        coverItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        coverItem.setHorizontalAlignment( SwingConstants.LEFT );
-        coverItem.setText( "Build Cover" );
-        coverItem.setActionCommand( buildCover );
-        coverItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_N, java.awt.Event.CTRL_MASK ) );
-        coverItem.setMnemonic( (int) 'C' );
-        coverItem.setIcon( imageIcon );
-        coverItem.addActionListener( lSymAction );
-        editMenu.add( coverItem );
+//        JMenuItem coverItem = new JMenuItem();
+//        coverItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        coverItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        coverItem.setText(  );
+//        coverItem.setActionCommand( );
+//        coverItem.setAccelerator( );
+//        coverItem.setMnemonic(;
+//        coverItem.setIcon( );
+//        coverItem.addActionListener( _menuActionListener );
+        editMenu.add( createMenuItem( "Build Cover", buildCover, KeyStroke.getKeyStroke(
+            VK_N, InputEvent.CTRL_MASK ), (int) 'C', imageIcon ) );
 
         reportMenu = new JMenu();
         reportMenu.setRequestFocusEnabled( false );
@@ -648,29 +675,35 @@ public class EPubEditor extends JFrame implements Observer
         reportMenu.setEnabled( false );
         mainMenuBar.add( reportMenu );
         
-        styleItem = new JMenuItem();
-        styleItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        styleItem.setHorizontalAlignment( SwingConstants.LEFT );
-        styleItem.setText( "Style Report" );
-        styleItem.setActionCommand( styleReport );
-        styleItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_S, java.awt.Event.CTRL_MASK ) );
-        styleItem.setMnemonic( (int) 'S' );
-        styleItem.setIcon( cssIcon );
-        styleItem.addActionListener( lSymAction );
+        styleItem = createMenuItem( "Style Report", styleReport, KeyStroke.getKeyStroke(
+            KeyEvent.VK_S, InputEvent.CTRL_MASK ), (int) 'S', cssIcon );
+//        styleItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        styleItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        styleItem.setText( );
+//        styleItem.setActionCommand( );
+//        styleItem.setAccelerator() );
+//        styleItem.setMnemonic(  );
+//        styleItem.setIcon( );
+//        styleItem.addActionListener( _menuActionListener );
         reportMenu.add( styleItem );
 
-        validateItem = new JMenuItem();
-        validateItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        validateItem.setHorizontalAlignment( SwingConstants.LEFT );
-        validateItem.setText( "ePub Checker" );
-        validateItem.setActionCommand( validate );
-        validateItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_V, java.awt.Event.CTRL_MASK ) );
-        validateItem.setMnemonic( (int) 'V' );
-        validateItem.setIcon( reportIcon );
-        validateItem.addActionListener( lSymAction );
-        reportMenu.add( validateItem );
+        validateItem2 = createMenuItem( "ePub Checker ver 2", validate2,
+            KeyStroke.getKeyStroke( KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK ),
+            (int) '2', reportIcon );
+        reportMenu.add( validateItem2 );
+
+        validateItem3 = createMenuItem( "ePub Checker ver 3", validate3,
+            KeyStroke.getKeyStroke( KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK ),
+            (int) '3', reportIcon );
+//        validateItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        validateItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        validateItem.setText( );
+//        validateItem.setActionCommand( );
+//        validateItem.setAccelerator( );
+//        validateItem.setMnemonic( );
+//        validateItem.setIcon( );
+//        validateItem.addActionListener( _menuActionListener );
+        reportMenu.add(  validateItem3 );
 
         JMenu toolsMenu = new JMenu();
         toolsMenu.setRequestFocusEnabled( false );
@@ -680,41 +713,41 @@ public class EPubEditor extends JFrame implements Observer
         toolsMenu.setMnemonic( (int) 'T' );
         mainMenuBar.add( toolsMenu );
         
-        JMenuItem editorsItem = new JMenuItem();
-        editorsItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        editorsItem.setHorizontalAlignment( SwingConstants.LEFT );
-        editorsItem.setText( "Editors" );
-        editorsItem.setActionCommand( editors );
-        editorsItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_E, java.awt.Event.CTRL_MASK ) );
-        editorsItem.setMnemonic( (int) 'E' );
-        editorsItem.setIcon( editorsIcon );
-        editorsItem.addActionListener( lSymAction );
-        toolsMenu.add( editorsItem );
+//        JMenuItem editorsItem = new JMenuItem();
+//        editorsItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        editorsItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        editorsItem.setText( );
+//        editorsItem.setActionCommand( );
+//        editorsItem.setAccelerator( );
+//        editorsItem.setMnemonic( );
+//        editorsItem.setIcon( );
+//        editorsItem.addActionListener( _menuActionListener );
+        toolsMenu.add( createMenuItem( "Editors", editors, KeyStroke.getKeyStroke(
+            KeyEvent.VK_E, InputEvent.CTRL_MASK ), (int) 'E', editorsIcon ));
 
-        JMenuItem xformersItem = new JMenuItem();
-        xformersItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        xformersItem.setHorizontalAlignment( SwingConstants.LEFT );
-        xformersItem.setText( "Transformers" );
-        xformersItem.setActionCommand( xformer );
-        xformersItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_T, java.awt.Event.CTRL_MASK ) );
-        xformersItem.setMnemonic( (int) 'T' );
-        xformersItem.setIcon( xformersIcon );
-        xformersItem.addActionListener( lSymAction );
-        toolsMenu.add( xformersItem );
+//        JMenuItem xformersItem = new JMenuItem();
+//        xformersItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        xformersItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        xformersItem.setText( );
+//        xformersItem.setActionCommand( );
+//        xformersItem.setAccelerator(  );
+//        xformersItem.setMnemonic( );
+//        xformersItem.setIcon( );
+//        xformersItem.addActionListener( _menuActionListener );
+        toolsMenu.add( createMenuItem( "Transformers", xformer, KeyStroke.getKeyStroke(
+            KeyEvent.VK_T, InputEvent.CTRL_MASK ), (int) 'T', xformersIcon ));
 
-        JMenuItem optionsItem = new JMenuItem();
-        optionsItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        optionsItem.setHorizontalAlignment( SwingConstants.LEFT );
-        optionsItem.setText( "Preferences" );
-        optionsItem.setActionCommand( options );
-        optionsItem.setAccelerator( KeyStroke.getKeyStroke(
-                java.awt.event.KeyEvent.VK_P, java.awt.Event.CTRL_MASK ) );
-        optionsItem.setMnemonic( (int) 'P' );
-        optionsItem.setIcon( prefsIcon );
-        optionsItem.addActionListener( lSymAction );
-        toolsMenu.add( optionsItem );
+//        JMenuItem optionsItem = new JMenuItem();
+//        optionsItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        optionsItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        optionsItem.setText( );
+//        optionsItem.setActionCommand( );
+//        optionsItem.setAccelerator(  );
+//        optionsItem.setMnemonic( );
+//        optionsItem.setIcon( );
+//        optionsItem.addActionListener( _menuActionListener );
+        toolsMenu.add( createMenuItem( "Preferences", options, KeyStroke.getKeyStroke(
+            KeyEvent.VK_P, InputEvent.CTRL_MASK ), (int) 'P', prefsIcon ));
 
         JMenu helpMenu = new JMenu();
         helpMenu.setRequestFocusEnabled( false );
@@ -725,15 +758,15 @@ public class EPubEditor extends JFrame implements Observer
         helpMenu.setMnemonic( (int) 'H' );
         mainMenuBar.add( helpMenu );
 
-        JMenuItem aboutItem = new JMenuItem();
-        aboutItem.setHorizontalTextPosition( SwingConstants.RIGHT );
-        aboutItem.setHorizontalAlignment( SwingConstants.LEFT );
-        aboutItem.setText( "About..." );
-        aboutItem.setActionCommand( aboutOPF );
-        aboutItem.setMnemonic( (int) 'A' );
-        aboutItem.setIcon( aboutIcon );
-        aboutItem.addActionListener( lSymAction );
-        helpMenu.add( aboutItem );
+//        JMenuItem aboutItem = new JMenuItem();
+//        aboutItem.setHorizontalTextPosition( SwingConstants.RIGHT );
+//        aboutItem.setHorizontalAlignment( SwingConstants.LEFT );
+//        aboutItem.setText( );
+//        aboutItem.setActionCommand(  );
+//        aboutItem.setMnemonic( );
+//        aboutItem.setIcon( );
+//        aboutItem.addActionListener( _menuActionListener );
+        helpMenu.add( createMenuItem( "About...", aboutOPF, null, (int) 'A', aboutIcon ));
 
         return mainMenuBar;
     }
@@ -816,10 +849,9 @@ public class EPubEditor extends JFrame implements Observer
      * 
      * @param args
      *            TBD
-     * @throws IOException
-     * @throws SAXException
-     */
-    public EPubEditor( String[] args ) throws IOException, SAXException
+     * @throws IOException when we can't open the log path
+      */
+    public EPubEditor( String[] args ) throws IOException
     {
         String classPath = System.getProperty( "java.class.path" );
         int semiColon = classPath.indexOf( ';' );
@@ -916,12 +948,12 @@ public class EPubEditor extends JFrame implements Observer
         setLayout( new BoxLayout( getContentPane(), BoxLayout.PAGE_AXIS ) );
         setSize( 800, 480 );
 
-        menuActionListener = new MenuActionListener(); // This class handles all action events
+        _menuActionListener = new MenuActionListener(); // This class handles all action events
 
         // Set up the toolbar - maybe
 
         // Setup the menu
-        setJMenuBar( createMainMenu( menuActionListener ) );
+        setJMenuBar( createMainMenu() );
 
         // Setup the tabbed pane which holds the real content
         getContentPane().add( tabbedPane );
@@ -962,6 +994,10 @@ public class EPubEditor extends JFrame implements Observer
         {
             LOGGER.info( "Opening " + f.getCanonicalPath() );
 
+            // TODO: opening an .opf file. walk up the directory tree until we find a folder
+            //  that has a sibling named "META-INF". If we find that folder we know that its
+            //  parent is the ePubRoot. If we can't find that folder, assume that the root
+            //  is the parent of the .opf file.
             _epubModel = new EPubModel( f, null );
             contribPanel.setModelData( _epubModel );
             contentPanel.setModelData( getOpfData() );
@@ -974,7 +1010,10 @@ public class EPubEditor extends JFrame implements Observer
             editMenu.setEnabled( true );
             reportMenu.setEnabled( true );
             if (!ePubCheckPresent)
-                validateItem.setEnabled( false );
+            {
+                validateItem2.setEnabled( false );
+                validateItem3.setEnabled( false );
+            }
             if (!cssParserPresent)
                 styleItem.setEnabled( false );
             // Don't wait to save the properties file if we had a successful open
@@ -1026,7 +1065,7 @@ public class EPubEditor extends JFrame implements Observer
      *            the title for the new frame.
      */
     public EPubEditor( String[] args, String sTitle )
-            throws ParserConfigurationException, IOException, SAXException
+            throws IOException
     {
         this( args );
         setTitle( sTitle );
@@ -1077,12 +1116,12 @@ public class EPubEditor extends JFrame implements Observer
         {
             this.exitApplication();
         }
-        catch( Exception e )
+        catch( Exception ignore )
         {
         }
     }
 
-    public void IOError( IOException t, String when )
+    private void IOError( IOException t, String when )
     {
         String message = "An unknown IO error has occured while " + when;
         LogManager.getLogger( "IOError" ).error( message, t );
@@ -1090,7 +1129,7 @@ public class EPubEditor extends JFrame implements Observer
                 JOptionPane.ERROR_MESSAGE );
     }
 
-    public void transformerError( Exception t )
+    private void transformerError( Exception t )
     {
         String message = "A fatal error has occured while trying to save the OPF file.\nThe file was not saved.";
         LogManager.getLogger( "TransformerError" ).error( message, t );
@@ -1098,7 +1137,7 @@ public class EPubEditor extends JFrame implements Observer
                 JOptionPane.ERROR_MESSAGE );
     }
 
-    void openOEBFile()
+    private void openOEBFile()
     {
         File startPath = null;
     
@@ -1110,7 +1149,9 @@ public class EPubEditor extends JFrame implements Observer
                 startPath = new File( openDir + File.separator + "*.opf" );
         }
         else if (null != _epubModel)
+        {
             startPath = _epubModel.baseFile;
+        }
         JFileChooser fc = new JFileChooser( startPath );
         fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
         fc.setSelectedFile( startPath );
@@ -1130,7 +1171,7 @@ public class EPubEditor extends JFrame implements Observer
     }
 
     
-    void openEPubFile()
+    private void openEPubFile()
     {
         File startPath = null;
         
@@ -1188,10 +1229,10 @@ public class EPubEditor extends JFrame implements Observer
         return null;
     }
 
-    public void newOEBFile() throws BackingStoreException
+    private void newOEBFile() throws BackingStoreException
     {
         // TODO: if opfData is not null, we are already editing a file which may or may not
-        // have been saved. Open a dialog to ask if the existing project should be saved.
+        //  have been saved. Open a dialog to ask if the existing project should be saved.
 
         _epubModel = null;
 
@@ -1279,10 +1320,10 @@ public class EPubEditor extends JFrame implements Observer
             {
                 transformerError( ex );
             }
-            catch( IOException ex )
-            {
-                IOError( ex, "saving the project file" );
-            }
+//            catch( IOException ex )
+//            {
+//                IOError( ex, "saving the project file" );
+//            }
             finally
             {
                 getContentPane().setCursor( cursor );
@@ -1524,7 +1565,7 @@ public class EPubEditor extends JFrame implements Observer
             }
         }
         
-        int titleIdx = getOpfData().getMetadata().getPropIndex( MetadataModel.propNames[1] );
+//        int titleIdx = getOpfData().getMetadata().getPropIndex( MetadataModel.propNames[1] );
         String title = getOpfData().getMetadata().getProperty( MetadataModel.propNames[1] );
         
         File saveFile = new File( new File( saveAsPath ).getParentFile(), rootName + " - " + title );
@@ -1573,7 +1614,7 @@ public class EPubEditor extends JFrame implements Observer
             else
                 selected = JOptionPane.CANCEL_OPTION;
         }
-        if (saveFile != null && 0 == selected)
+        if (0 == selected)
         {
             if (   !saveFile.getName().toLowerCase().endsWith( ".epub" )
                 && !saveFile.getName().toLowerCase().endsWith( ".zip" ))
@@ -1648,6 +1689,7 @@ public class EPubEditor extends JFrame implements Observer
         String cssFileName = prefs.node( PREFS_PATHS ).get( PREFS_USERCSSS, "ebook.css" );
         File newCssFile = null, usercss = new File( cssFileName );
         if (usercss.exists())
+        {
             try
             {
                 // copy this file to the same folder as the .opf file.
@@ -1673,13 +1715,12 @@ public class EPubEditor extends JFrame implements Observer
                 // If some other I/O error occurs
                 ex.printStackTrace();
             }
-        else
-            cssFileName = null;
+        }
         return newCssFile;
     }
 
     
-    public void cleanOEB()
+    private void cleanOEB()
     {
         if (0 < getOpfData().getSpine().getRowCount())
         {
@@ -1787,7 +1828,7 @@ public class EPubEditor extends JFrame implements Observer
         }
     }
 
-    public void ePubCheck()
+    private void ePubCheck2()
     {
         Cursor cursor = getContentPane().getCursor();
         getContentPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
@@ -1795,7 +1836,30 @@ public class EPubEditor extends JFrame implements Observer
         {
             getContentPane().setCursor( cursor );
 
-            EPubChecker ePubChecker = new EPubChecker( this, _epubModel );
+            EPubChecker ePubChecker = new EPubChecker( this, _epubModel, EPUBVersion.VERSION_2 );
+            new ObservingProgressMonitor( this, ePubChecker, "Checking OEB Publication", null, 0, 300 );
+            ePubChecker.execute();
+        }
+        catch (Exception e)
+        {
+            LogAndShowError.logException( "Could not run epubcheck", e );
+        }
+        finally
+        {
+            getContentPane().setCursor( cursor );
+        }
+
+    }
+
+    private void ePubCheck3()
+    {
+        Cursor cursor = getContentPane().getCursor();
+        getContentPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
+        try
+        {
+            getContentPane().setCursor( cursor );
+
+            EPubChecker ePubChecker = new EPubChecker( this, _epubModel, EPUBVersion.VERSION_3 );
             new ObservingProgressMonitor( this, ePubChecker, "Checking OEB Publication", null, 0, 300 );
             ePubChecker.execute();
         }
@@ -1818,38 +1882,38 @@ public class EPubEditor extends JFrame implements Observer
 
     
     private void exitItem_actionPerformed_Interaction1(
-            java.awt.event.ActionEvent event )
+            @SuppressWarnings("unused") java.awt.event.ActionEvent event )
     {
         try
         {
             this.exitApplication();
         }
-        catch( Exception e )
+        catch( Exception ignore )
         {
         }
     }
 
     
-    private void aboutItem_actionPerformed( ActionEvent event )
+    private void aboutItem_actionPerformed( @SuppressWarnings("unused") ActionEvent event )
     {
         JOptionPane.showMessageDialog( this, "ePubEditor ver .01" );
     }
 
     
-    private void editors_actionPerformed( ActionEvent event )
+    private void editors_actionPerformed( @SuppressWarnings("unused") ActionEvent event )
     {
         SetEditorsDialog editor = new SetEditorsDialog( this );
         editor.setVisible( true );
     }
 
     
-    public void xformers_actionPerformed( ActionEvent event )
+    private void xformers_actionPerformed( @SuppressWarnings("unused") ActionEvent event )
     {
         SetTransformersDialog xform = new SetTransformersDialog( this );
         xform.setVisible( true );
     }
 
-    public void pathPrefs()
+    private void pathPrefs()
     {
         SetPathsDialog paths = new SetPathsDialog( this );
         paths.setVisible( true );
@@ -1890,9 +1954,9 @@ public class EPubEditor extends JFrame implements Observer
                     java.lang.Runtime.getRuntime().exec(
                             editor + " " + String.format( cl, fileName ) );
                 }
-                catch( IOException ignore )
+                catch( IOException ex )
                 {
-                    ignore.printStackTrace();
+                    ex.printStackTrace();
                 }
             }
             else if (((ManifestPanel.Watched) actor).command.equals( TableEditButtons.xformCmd ))
