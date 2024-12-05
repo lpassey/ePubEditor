@@ -145,21 +145,40 @@ public class EPubFileCheck extends Observable implements Report
             break;
         case ERROR:
             // spine TOC attribute is deprecated.
-            if (message.getID().equals( MessageId.RSC_005 )
-                | message.getID().equals( MessageId.HTM_004 )   // Irregular DOCTYPE
-            )
+            if (message.getID().equals( MessageId.RSC_005 )) // Cannot parse file
+            {
+                if (0 < args.length)
+                {
+                    String argsstr = args[0].toString();
+                    if (argsstr.contains( "not allowed here" ))
+                        break;
+                    if (argsstr.contains( "not allowed anywhere" ))
+                        break;
+                    if (argsstr.contains( "text not allowed here" ))
+                        break;
+                    if (argsstr.contains( "incomplete; expected element" ))
+                        break;
+                }
+            }
+            else if ( message.getID().equals( MessageId.HTM_004 ))   // Irregular DOCTYPE
                 break;
             errors++;
             _observer.update( this,  errors + warnings );
             errorReport.append( epubLocation.toString()).append(":").append( message.getMessage( args )).append( "\n" );
             break;
         case WARNING:
+            if (message.getID().equals( MessageId.HTM_014a ))
+            {
+                // We don't really care what the file name is...
+                if (message.getMessage().contains( "should have the extension '.xhtml'" ))
+                    break;
+            }
             warnings++;
             warningReport.append( epubLocation.toString()).append(":").append( message.getMessage( args )).append( "\n" );
             _observer.update( this,  errors + warnings );
             break;
         case USAGE:
-            if (message.getID().equals( MessageId.HTM_038 )
+            if (  message.getID().equals( MessageId.HTM_038 )
                 | message.getID().equals( MessageId.ACC_007 )  // epub:type not used
                 )
                 break;
@@ -172,6 +191,21 @@ public class EPubFileCheck extends Observable implements Report
         }
     }
 
+//    @Override
+    public void error(String s, int i, int i1, String s1) {
+
+    }
+
+//    @Override
+    public void warning(String s, int i, int i1, String s1) {
+
+    }
+
+//    @Override
+    public void exception(String s, Exception e) {
+
+    }
+
     @Override
     public int getErrorCount()
     {
@@ -182,6 +216,11 @@ public class EPubFileCheck extends Observable implements Report
     public int getWarningCount()
     {
         return warnings;
+    }
+
+//    @Override
+    public int getExceptionCount() {
+        return 0;
     }
 
     @Override
@@ -215,6 +254,11 @@ public class EPubFileCheck extends Observable implements Report
     {
         info++;
 //        System.out.println( resource + ":" + feature.toString() + "-" + value );
+    }
+
+//    @Override
+    public void hint(String s, int i, int i1, String s1) {
+
     }
 
     /**
