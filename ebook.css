@@ -6,12 +6,12 @@ h1, h2, h3 {text-align:center; font-weight: bold }
 
 .subtitle { font-size:small }
 
-/*  Put a little extra vertical space before chapter breaks  */
-h3.chapter { padding-top: 2em; margin-bottom: 1em; page-break-before: always; font-size: larger }
-
 /* if the chapter title follows a subtitle, don't add the extra space  */
-h3.subtitle h3.chapter { padding-top: 0 }
- 
+h3.subtitle+h3.chapter { padding-top: 0 !important; page-break-before: avoid !important; }
+
+/*  Put a little extra vertical space before chapter breaks  */
+h3.chapter { padding-top: 2em; margin-bottom: 1em; page-break-before: always }
+
 /*  Indent paragraphs, no space between them, ragged-right text  */
 p { text-indent: 2em; text-align: left; margin-top:0; margin-bottom:0 }
 
@@ -30,6 +30,9 @@ p.hanging { margin-left: 2em; text-indent: -2em }
 p.hanging:first-line{ margin-left: -2em; text-indent: 0 }
 
 p.continuation, p.continue { text-indent: 0 }
+
+ol.hanging li { margin-left: 2em; text-indent: -2em }
+ol.hanging:first-line li { margin-left: -2em; text-indent: 0 }
 
 div { margin-bottom: 1em }
 
@@ -129,10 +132,16 @@ div.contents { display: block }
 div.notes { display: block }
 div.acknowledgement { display: block }
 
+/* used for groupings that should not be broken on dynamic page boundaries */
+div.group { page-break-inside: avoid}
+
 h1.title { display:block }
 h3.subtitle { display:block }
 
 /* must be encapsulated in a "notes" division  */
-div.note {}
+.note {}
 
 blockquote.epigraph {}
+
+section { page-break-after: always}
+section h4 { text-align: center; font-size: 110%; margin-bottom: 2em }
