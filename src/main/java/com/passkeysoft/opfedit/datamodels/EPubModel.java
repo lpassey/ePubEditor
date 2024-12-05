@@ -475,7 +475,6 @@ public class EPubModel extends Observable
                     ZipEntry entry = new ZipEntry( zipFilePath.toString() );
                     entry.setSize( 0 );
                     entry.setCrc( 0 );
-                    entry.setCompressedSize( 0 );
                     entry.setTime( new Date().getTime() );
                     entry.setMethod( ZipEntry.DEFLATED );
                     zipFile.putNextEntry( entry );
