@@ -114,9 +114,9 @@ public class XMLUtil
                 String attr = ((Element) child).getAttribute( "id" );
                 if (null != attr && attr.equals( id ))
                     return (Element) child;
-                Node grandChild = getElementById( child, id );
+                Element grandChild = getElementById( child, id );
                 if (null != grandChild)
-                    return (Element) grandChild;
+                    return grandChild;
             }
         }
         return null;
@@ -124,7 +124,6 @@ public class XMLUtil
     /**
      * The only way to rename a node in a non-namespaced DOM is to create a new node, move
      * everything to the new node then replace the old one.
-     * @param owner The document which owns the old Node
      * @param oldNode The Element being renamed
      * @param nodeName The new name of the element
      * @return The new Element which replaces the old Element -- effectively the renamed Node
