@@ -31,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 
+import com.sun.org.apache.xerces.internal.dom.ElementImpl;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -743,12 +744,22 @@ public class XHTMLDocument
         {
             printAttrList( pNode, indent );
         }
-        if (   htmlIsEmpty( nodeName )
-            || (   (   "span".equalsIgnoreCase( nodeName )
-                    || "a".equalsIgnoreCase( nodeName ))
-                && !pNode.hasChildNodes()
-                && pNode.hasAttributes()))
+        if (   (   "span".equalsIgnoreCase( nodeName )
+                || "a".equalsIgnoreCase( nodeName ))
+            && !pNode.hasChildNodes()
+                && pNode.hasAttributes())
         {
+            // an empty span or anchor which has attributes.
+            // close the node then add a closing tag.
+            _out.write( "></" );
+            _out.write( nodeName );
+            _out.write( ">");
+            _gnLineLen+= 4;
+            _gnLineLen += nodeName.length();
+        }
+        else if ( htmlIsEmpty( nodeName ))
+        {
+            // it is a defined empty node.
             _out.write( " />" );
             _gnLineLen += 2;
         }
@@ -1086,12 +1097,7 @@ public class XHTMLDocument
         {
             Node node = iter.next();
             
-            // Sometimes an XSLT transformation will convert a block element to an <li>
-            // without constructing a containing list element. If this node is an <li>,
-            // and its parent is not an <ol> or <ul>, create a new <ul> node and move this
-            // node and all it's siblings to the new list. Then move through the new node
-            // backwards moving children up again until an <li> is encountered.
-            if (Node.ELEMENT_NODE == node.getNodeType()) 
+            if (Node.ELEMENT_NODE == node.getNodeType())
             {
                 // if the node is inline, move leading and trailing spaces out of the node.
                 if (htmlIsInline(node.getNodeName()))
@@ -1123,14 +1129,58 @@ public class XHTMLDocument
                         }
                     }
                 }
+                // If an anchor has an id, but no other attribute, change it to a span.
                 if (   "span".equalsIgnoreCase( node.getNodeName() )
                     || "a".equalsIgnoreCase( node.getNodeName() ))
                 {
+                    Node parent;
                     NamedNodeMap attrs = node.getAttributes();
+                    if (    1 == attrs.getLength()
+                        || (2 == attrs.getLength() && null != attrs.getNamedItem( "xmlns" )))
+                    {
+                        // just one attribute. is it an id? 
+                        Node id = attrs.getNamedItem( "id" );
+                        if (id != null)
+                        {
+                            // Only one attribute, and it's an id. If the node is an anchor, change it to a span.
+                            if ("a".equalsIgnoreCase( node.getNodeName() ))
+                            {
+                                Node xmlns = attrs.getNamedItem( "xmlns" );
+                                _baseDoc.renameNode( node, node.getNamespaceURI(), "span");
+                                if (null != xmlns)
+                                    attrs.removeNamedItem( "xmlns" );
+                            }
+                            // Am I childless?
+                            parent = node.getFirstChild();
+                            if (null == parent)
+                            {
+                                parent = node.getParentNode();
+                                // Yes, see if I can merge my id with the parent.
+                                if (   Node.ELEMENT_NODE == parent.getNodeType()
+                                    && node == parent.getFirstChild())
+                                {
+                                    // I am the first child of my owner node. If it is an element node,
+                                    // and if it does not have an id attribute, move
+                                    // my id attribute to it and delete the span node.
+                                    NamedNodeMap sib_attribs = parent.getAttributes();
+                                    Node parent_id = sib_attribs.getNamedItem( "id" );
+                                    if (null == parent_id)
+                                    {
+                                        Node id_node = attrs.removeNamedItem( "id" );
+                                        parent.getAttributes().setNamedItem( id_node );
+                                        if (null != attrs.getNamedItem( "xmlns" ))
+                                            attrs.removeNamedItem( "xmlns" );
+                                        // empty span or anchor will be removed in the following clause...
+                                    }
+                                }
+                            }
+                        }
+                    }
                     if (0 == attrs.getLength())
                     {
+                        // No attributes, just remove the node
                         iter.previous();
-                        Node parent = node.getParentNode();
+                        parent = node.getParentNode();
                         // spans without attributes need to be killed.
                         while (node.hasChildNodes())
                         {
@@ -1141,6 +1191,11 @@ public class XHTMLDocument
                         parent.removeChild( node );
                     }
                 }
+                // Sometimes an XSLT transformation will convert a block element to an <li>
+                // without constructing a containing list element. If this node is an <li>,
+                // and its parent is not an <ol> or <ul>, create a new <ul> node and move this
+                // node and all it's siblings to the new list. Then move through the new node
+                // backwards moving children up again until an <li> is encountered.
                 else if (   "li".equalsIgnoreCase( node.getNodeName() )
                          && !"ol".equalsIgnoreCase( node.getParentNode().getNodeName() )
                          && !"ul".equalsIgnoreCase( node.getParentNode().getNodeName() )
