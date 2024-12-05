@@ -85,7 +85,6 @@ import com.passkeysoft.opfedit.staticutil.FileUtil;
 import com.passkeysoft.opfedit.staticutil.XMLUtil;
 import com.passkeysoft.opfedit.ui.InsertTagDialog;
 import com.passkeysoft.opfedit.ui.LogAndShowError;
-import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
 
 /**
  * @author W. Lee Passey
@@ -684,7 +683,7 @@ public class EPubUtil
         {
             StreamSource xslStream = new StreamSource( new ByteArrayInputStream( ncxXsl.getBytes() ));
             Transformer t = TransformerFactory.newInstance().newTransformer( xslStream );
-            t.setOutputProperty( OutputPropertiesFactory.S_KEY_INDENT_AMOUNT, "2");
+            t.setOutputProperty( "{http://xml.apache.org/xslt}indent-amount", "2");
             t.setOutputProperty( OutputKeys.STANDALONE, "yes" );
             t.setOutputProperty( OutputKeys.INDENT, "yes" );
             DOMSource xmlSource = new DOMSource( ncx );
