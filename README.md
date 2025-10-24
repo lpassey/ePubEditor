@@ -20,4 +20,4 @@ For instructions on how to create a new ePub, see [https://lpassey.github.io/ePu
 
 For instructions on how to import, edit and clean an existing ePub, see [https://lpassey.github.io/ePubEditor#import](https://lpassey.github.io/ePubEditor#import)
 
-As always, project and source code files can be foud here, at [https://www/github.com/lpassey/ePubEditor]
+As always, project and source code files can be foud [here](https://www.github.com/lpassey/ePubEditor).
