@@ -5,8 +5,8 @@ name: Java CI with Maven
 
 on:
   workflow_dispatch:
-#  push:
-#    branches: [ master ]
+  push:
+    branches: [ master ]
 #  pull_request:
 #    branches: [ master ]
 
@@ -25,3 +25,8 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name:upload JAR artifact
+      uaes: actions/upload-artifact@v4
+      with:
+        name: ePubEditor.jar
+        path: target/*.jar
