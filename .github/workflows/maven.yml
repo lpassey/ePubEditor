@@ -29,7 +29,7 @@ jobs:
     - name:upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ePubEditor.jar
+        name: my-artifact-${{ github.job }}
         path: target/*.jar
     - name: Upload artifact to Release
       uses: softprops/action-gh-release@v1
