@@ -18,15 +18,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 8
-      uses: actions/setup-java@v2
+    - uses: actions/setup-java@v2
       with:
         java-version: '8'
         distribution: 'adopt'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - run: mvn -B package --file pom.xml
     - name:upload JAR artifact
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
         name: ePubEditor.jar
         path: target/*.jar
