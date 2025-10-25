@@ -34,4 +34,5 @@ jobs:
     - name: Upload artifact to Release
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: 'version0'
         files: ePubEditor.jar # Path to your artifact
