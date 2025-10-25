@@ -26,7 +26,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name:upload JAR artifact
-      uaes: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
       with:
         name: ePubEditor.jar
         path: target/*.jar
