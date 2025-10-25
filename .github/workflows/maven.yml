@@ -39,7 +39,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
 #        tag_name: 'version0'
-        files: ePubEditor.jar # Path to your artifact
+        files: target/ePubEditor.jar # Path to your artifact
 #        prerelease: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
