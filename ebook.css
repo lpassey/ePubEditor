@@ -96,7 +96,7 @@ span.linegroup { margin-left:10% }
 
 .permissions { font-size: xx-small }
 
-.acknowledgements, .notes { font-size: small }
+.acknowledgements, .notes { font-size: small; margin-top: 1em }
 
 /*  used for lists of characters  */
 dt.person { margin-top: 1em }
