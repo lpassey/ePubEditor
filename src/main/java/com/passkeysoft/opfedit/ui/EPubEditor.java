@@ -60,20 +60,20 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.xml.transform.TransformerException;
 
-import com.adobe.epubcheck.util.EPUBVersion;
+// import com.adobe.epubcheck.util.EPUBVersion;
 import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import com.passkeysoft.opfedit.Prefs;
 import com.passkeysoft.opfedit.business.CleanInBackground;
-import com.passkeysoft.opfedit.business.EPubChecker;
+// import com.passkeysoft.opfedit.business.EPubChecker;
 import com.passkeysoft.opfedit.business.EPubUtil;
 import com.passkeysoft.opfedit.business.GenerateStyleReport;
 import com.passkeysoft.opfedit.business.XFormFiles;
 import com.passkeysoft.opfedit.datamodels.*;
 import com.passkeysoft.opfedit.staticutil.FileUtil;
-import com.passkeysoft.opfedit.validate.EPubFileCheck;
+// import com.passkeysoft.opfedit.validate.EPubFileCheck;
 import com.steadystate.css.parser.CSSOMParser;
 
 import static java.awt.event.KeyEvent.*;
@@ -123,7 +123,7 @@ public class EPubEditor extends JFrame implements Observer
             saveOPF = "save", saveOPFas = "saveas", exitOPF = "exit",
             aboutOPF = "about", replaceTags = "replace",
             insertBefore = "insert", styleReport = "report", buildTOC = "toc", 
-            buildNCX = "ncx", validate2 = "validate2", validate3 = "validate3", tools = "tools",
+            buildNCX = "ncx", /* validate2 = "validate2", validate3 = "validate3", */ tools = "tools",
             editors = "editors", options = "options", xformer="transformers",
             buildCover = "cover", importEPub = "import", compileEPub = "compile"
                 ;
@@ -191,8 +191,8 @@ public class EPubEditor extends JFrame implements Observer
     private JMenuItem exportItem;
     private JMenuItem saveAsItem;
     private JMenuItem saveItem;
-    private JMenuItem validateItem2;
-    private JMenuItem validateItem3;
+//    private JMenuItem validateItem2;
+//    private JMenuItem validateItem3;
 
     private JMenuItem styleItem;
     private JMenu editMenu;
@@ -290,20 +290,20 @@ public class EPubEditor extends JFrame implements Observer
             {
                 generateStyleReport();
             }
-            else if (event.getActionCommand().equals( validate2 ))
-            {
-                if (null != _epubModel)
-                {
-                    ePubCheck2();
-                }
-            }
-            else if (event.getActionCommand().equals( validate3 ))
-            {
-                if (null != _epubModel)
-                {
-                    ePubCheck3();
-                }
-            }
+//            else if (event.getActionCommand().equals( validate2 ))
+//            {
+//                if (null != _epubModel)
+//                {
+//                    ePubCheck2();
+//                }
+//            }
+//            else if (event.getActionCommand().equals( validate3 ))
+//            {
+//                if (null != _epubModel)
+//                {
+//                    ePubCheck3();
+//                }
+//            }
             else if (event.getActionCommand().equals( buildCover ))
             {
                 Cursor cursor = getContentPane().getCursor();
@@ -687,14 +687,14 @@ public class EPubEditor extends JFrame implements Observer
 //        styleItem.addActionListener( _menuActionListener );
         reportMenu.add( styleItem );
 
-        validateItem2 = createMenuItem( "ePub Checker ver 2", validate2,
-            KeyStroke.getKeyStroke( KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK ),
-            (int) '2', reportIcon );
-        reportMenu.add( validateItem2 );
+//        validateItem2 = createMenuItem( "ePub Checker ver 2", validate2,
+//            KeyStroke.getKeyStroke( KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK ),
+//            (int) '2', reportIcon );
+//        reportMenu.add( validateItem2 );
 
-        validateItem3 = createMenuItem( "ePub Checker ver 3", validate3,
-            KeyStroke.getKeyStroke( KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK ),
-            (int) '3', reportIcon );
+//        validateItem3 = createMenuItem( "ePub Checker ver 3", validate3,
+//            KeyStroke.getKeyStroke( KeyEvent.VK_3, InputEvent.ALT_DOWN_MASK ),
+//            (int) '3', reportIcon );
 //        validateItem.setHorizontalTextPosition( SwingConstants.RIGHT );
 //        validateItem.setHorizontalAlignment( SwingConstants.LEFT );
 //        validateItem.setText( );
@@ -703,7 +703,7 @@ public class EPubEditor extends JFrame implements Observer
 //        validateItem.setMnemonic( );
 //        validateItem.setIcon( );
 //        validateItem.addActionListener( _menuActionListener );
-        reportMenu.add(  validateItem3 );
+//        reportMenu.add(  validateItem3 );
 
         JMenu toolsMenu = new JMenu();
         toolsMenu.setRequestFocusEnabled( false );
@@ -920,8 +920,8 @@ public class EPubEditor extends JFrame implements Observer
 
         try
         {
-            new EPubFileCheck();
-            ePubCheckPresent = true;
+//            new EPubFileCheck();
+            ePubCheckPresent = false;
         }
         catch (NoClassDefFoundError ex)
         {
@@ -1009,11 +1009,11 @@ public class EPubEditor extends JFrame implements Observer
             exportItem.setEnabled( true );
             editMenu.setEnabled( true );
             reportMenu.setEnabled( true );
-            if (!ePubCheckPresent)
-            {
-                validateItem2.setEnabled( false );
-                validateItem3.setEnabled( false );
-            }
+//            if (!ePubCheckPresent)
+//            {
+//                validateItem2.setEnabled( false );
+//                validateItem3.setEnabled( false );
+//            }
             if (!cssParserPresent)
                 styleItem.setEnabled( false );
             // Don't wait to save the properties file if we had a successful open
@@ -1828,51 +1828,49 @@ public class EPubEditor extends JFrame implements Observer
         }
     }
 
-    private void ePubCheck2()
-    {
-        Cursor cursor = getContentPane().getCursor();
-        getContentPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
-        try
-        {
-            getContentPane().setCursor( cursor );
+//    private void ePubCheck2()
+//    {
+//        Cursor cursor = getContentPane().getCursor();
+//        getContentPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
+//        try
+//        {
+//            getContentPane().setCursor( cursor );
+//
+//            EPubChecker ePubChecker = new EPubChecker( this, _epubModel, EPUBVersion.VERSION_2 );
+//            new ObservingProgressMonitor( this, ePubChecker, "Checking OEB Publication", null, 0, 300 );
+//            ePubChecker.execute();
+//        }
+//        catch (Exception e)
+//        {
+//            LogAndShowError.logException( "Could not run epubcheck", e );
+//        }
+//        finally
+//        {
+//            getContentPane().setCursor( cursor );
+//        }
+//    }
 
-            EPubChecker ePubChecker = new EPubChecker( this, _epubModel, EPUBVersion.VERSION_2 );
-            new ObservingProgressMonitor( this, ePubChecker, "Checking OEB Publication", null, 0, 300 );
-            ePubChecker.execute();
-        }
-        catch (Exception e)
-        {
-            LogAndShowError.logException( "Could not run epubcheck", e );
-        }
-        finally
-        {
-            getContentPane().setCursor( cursor );
-        }
-
-    }
-
-    private void ePubCheck3()
-    {
-        Cursor cursor = getContentPane().getCursor();
-        getContentPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
-        try
-        {
-            getContentPane().setCursor( cursor );
-
-            EPubChecker ePubChecker = new EPubChecker( this, _epubModel, EPUBVersion.VERSION_3 );
-            new ObservingProgressMonitor( this, ePubChecker, "Checking OEB Publication", null, 0, 300 );
-            ePubChecker.execute();
-        }
-        catch (Exception e)
-        {
-            LogAndShowError.logException( "Could not run epubcheck", e );
-        }
-        finally
-        {
-            getContentPane().setCursor( cursor );
-        }
-
-    }
+//    private void ePubCheck3()
+//    {
+//        Cursor cursor = getContentPane().getCursor();
+//        getContentPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
+//        try
+//        {
+//            getContentPane().setCursor( cursor );
+//
+//            EPubChecker ePubChecker = new EPubChecker( this, _epubModel, EPUBVersion.VERSION_3 );
+//            new ObservingProgressMonitor( this, ePubChecker, "Checking OEB Publication", null, 0, 300 );
+//            ePubChecker.execute();
+//        }
+//        catch (Exception e)
+//        {
+//            LogAndShowError.logException( "Could not run epubcheck", e );
+//        }
+//        finally
+//        {
+//            getContentPane().setCursor( cursor );
+//        }
+//    }
 
 
     private void exitItem_actionPerformed( ActionEvent event )
