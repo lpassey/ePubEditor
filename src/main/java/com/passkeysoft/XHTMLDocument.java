@@ -30,20 +30,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
-
-import com.sun.org.apache.xerces.internal.dom.ElementImpl;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
-import com.passkeysoft.DOMIterator;
+import org.w3c.dom.*;
 
 /**
  * @author W. Lee Passey
  *
  */
+@SuppressWarnings({"RedundantIfStatement", "WeakerAccess"})
 public class XHTMLDocument
 {
     private boolean _lastWasWhite;
@@ -102,7 +95,7 @@ public class XHTMLDocument
         if (null != nodeName)
         {
             if (   "audio".equalsIgnoreCase( nodeName )
-                || "button".equalsIgnoreCase( nodeName )
+//                || "button".equalsIgnoreCase( nodeName )
                 || "canvas".equalsIgnoreCase( nodeName )
                 || "caption".equalsIgnoreCase( nodeName )
                 || "center".equalsIgnoreCase( nodeName )
@@ -256,9 +249,9 @@ public class XHTMLDocument
      */
     private Node _getTextNode( Node node, boolean first )
     {
-        Node pTemp = null;
+        Node pTemp;
 
-        if (   null == node 
+        if (   null == node
             || node.getNodeType() == Node.TEXT_NODE)
             return node;
 
@@ -440,7 +433,7 @@ public class XHTMLDocument
                 if (0 == ch)
                     return "";
             }
-            if (_asciiOnly || 160 == ch)
+            if (_asciiOnly || 160 == ch || ch > 255)
             {
                 return String.format( "&#%d;", (int) ch );
             }
@@ -639,7 +632,8 @@ public class XHTMLDocument
                 {
                     _writeTracked( text.substring( nStart, wrapPoint ), 0 );
                 }
-                for (nStart = wrapPoint + 1; 
+                //noinspection StatementWithEmptyBody
+                for (nStart = wrapPoint + 1;
                      nStart < text.length() && Character.isWhitespace( text.charAt( nStart )); 
                      nStart++ ) {}
                 if (nStart < text.length())
@@ -774,18 +768,19 @@ public class XHTMLDocument
     /**
      * Pretty print a node, and all it's children, to the buffered writer.
      * 
-     * Note that this code is derived from 'C' code found at http://sourceforge.net/projects/domcapi/
+     * Note that this code is derived from 'C' code found at
+     * http://sourceforge.net/projects/domcapi/
      * 
      * @param pNode The node to write.
      * @param indent The amount of space to indent each new line. This value is
      *               incremented as this method is called recursively.
-     * @param preserveSpace true if text nodes should /not/ be trimmed of whitespace
+     * @param preserveSpace non-zero if text nodes should /not/ be trimmed of whitespace
      *                      before writing.
      * @return true if white space should be added after this node, false otherwise
-     * @throws DOMException
-     * @throws IOException
+     * @throws IOException might be thrown from called methods; noted here so
+     * the caller can be aware of that
      */
-    protected boolean printNode( Node pNode, int indent, int preserveSpace ) 
+    protected boolean printNode( Node pNode, int indent, int preserveSpace )
            throws IOException // , DOMException
     {
         if (null == pNode)
@@ -1092,6 +1087,7 @@ public class XHTMLDocument
      */
     public void tidy()
     {
+        int id_no = 1;
         DOMIterator iter = new DOMIterator( _baseDoc.getDocumentElement() );
         while (iter.hasNext())
         {
@@ -1176,6 +1172,39 @@ public class XHTMLDocument
                             }
                         }
                     }
+                    if ("span".equalsIgnoreCase( node.getNodeName() ))
+                    {
+                        // check to see if my previous sibling is a button element.
+                        Node button = node.getPreviousSibling();
+                        while (null != button && Node.ELEMENT_NODE != button.getNodeType())
+                            button = button.getPreviousSibling();
+                        if (null != button && "button".equalsIgnoreCase( button.getNodeName() ))
+                        {
+                            // this is a button followed by span. get the span number.
+                            Node name = button.getAttributes().getNamedItem( "name" );
+                            if (null != name)
+                            {
+                                String id_str = name.getNodeValue();
+                                if (id_str.endsWith( "3-" ))
+                                {
+                                    // if the name is not numbered, add it.
+                                    int pos = id_str.indexOf( '-' );
+//                                    String id_value = id_str.substring( pos + 1 );
+//                                id_value = name.getNodeValue().substring( 0, name.getNodeValue().length() - 1 );
+//                                id_str = id.getNodeValue().substring( pos + 1 );
+                                    name.setNodeValue( name.getNodeValue().concat( String.valueOf( id_no ) ) );
+                                    // name is now sequentially numbered. Create an id for the <span> of
+                                    // the form "con2-" + the same sequential number.
+                                    id_str = "con3-".concat( String.valueOf( id_no ));
+                                    Attr attr = _baseDoc.createAttribute( "id" );
+                                    attr.setValue( id_str );
+                                    node.getAttributes().setNamedItem( attr );
+                                    id_no++;
+                                }
+                            }
+                        }
+                    }
+
                     if (0 == attrs.getLength())
                     {
                         // No attributes, just remove the node
