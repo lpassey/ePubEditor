@@ -1,5 +1,3 @@
-google-site-verification: google4102aa55abeb38e6.html
-
 # ePubEditor
 
 **ePubEditor** is a Java program designed to create and edit ePub files in their native form.
@@ -21,3 +19,11 @@ For instructions on how to create a new ePub, see [https://lpassey.github.io/ePu
 For instructions on how to import, edit and clean an existing ePub, see [https://lpassey.github.io/ePubEditor#import](https://lpassey.github.io/ePubEditor#import)
 
 As always, project and source code files can be foud [here](https://www.github.com/lpassey/ePubEditor).
+
+**Update:** Changes to the W3C EPUBCheck library has rendered it virtually unusable by 
+programs such as ePubEditor. Given this fact, references to EPUBCheck from inside ePubEditor
+have been removed. It is possible to fork and re-implement the programatic interface, but
+that is a low priority item. For those committed to using EPUBCheck you must compile
+  your ePubs first, then 
+  run the EPUBCheck utility from the command line.
+
