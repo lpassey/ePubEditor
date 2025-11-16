@@ -124,7 +124,7 @@
                             <manifest>
                                 <addClasspath>true</addClasspath>
                                 <classpathPrefix>libs/</classpathPrefix>
-                                <mainClass>com.passkeysoft.opfedit.ui.EPubEditor</mainClass>
+                                <mainClass>com.passkeysoft.opfedit.ui.swing.controller.EPubEditor</mainClass>
                             </manifest>
                         </archive>
                     </configuration>
@@ -164,7 +164,7 @@
                                 <archive>
                                     <manifest>
                                         <mainClass>
-                                            com.passkeysoft.opfedit.ui.EPubEditor
+                                            com.passkeysoft.opfedit.ui.swing.controller.EPubEditor
                                         </mainClass>
                                     </manifest>
                                 </archive>

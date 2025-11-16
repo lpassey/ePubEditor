@@ -1,11 +1,11 @@
 /*-*
    Copyright-Only Dedication (based on United States law)
-  
+
   The person or persons who have associated their work with this
   document (the "Dedicator") hereby dedicate whatever copyright they
   may have in the work of authorship herein (the "Work") to the
   public domain.
-  
+
   Dedicator makes this dedication for the benefit of the public at
   large and to the detriment of Dedicator's heirs and successors.
   Dedicator intends this dedication to be an overt act of
@@ -14,13 +14,13 @@
   Dedicator understands that such relinquishment of all rights
   includes the relinquishment of all rights to enforce (by lawsuit
   or otherwise) those copyrights in the Work.
-  
+
   Dedicator recognizes that, once placed in the public domain, the
   Work may be freely reproduced, distributed, transmitted, used,
   modified, built upon, or otherwise exploited by anyone for any
   purpose, commercial or non-commercial, and in any way, including
   by methods that have not yet been invented or conceived.
-  
+
   $Log: EPubUtil.java,v $
   Revision 1.10  2014/07/29 22:09:09  lpassey
   Add ability to insert an element as a step-parent (all existing children become children
@@ -76,15 +76,15 @@ import org.xml.sax.SAXException;
 import com.passkeysoft.DOMIterator;
 import com.passkeysoft.opfedit.TempFileIOException;
 import com.passkeysoft.opfedit.datamodels.EPubModel;
-import com.passkeysoft.opfedit.datamodels.GuideModel;
-import com.passkeysoft.opfedit.datamodels.OPFFileModel;
+import com.passkeysoft.opfedit.ui.swing.model.GuideModel;
+import com.passkeysoft.opfedit.ui.swing.model.OPFFileModel;
 
-import com.passkeysoft.opfedit.datamodels.SpineModel;
+import com.passkeysoft.opfedit.ui.swing.model.SpineModel;
 import com.passkeysoft.XHTMLDocument;
 import com.passkeysoft.opfedit.staticutil.FileUtil;
 import com.passkeysoft.opfedit.staticutil.XMLUtil;
-import com.passkeysoft.opfedit.ui.InsertTagDialog;
-import com.passkeysoft.opfedit.ui.LogAndShowError;
+import com.passkeysoft.opfedit.ui.swing.view.InsertTagDialog;
+import com.passkeysoft.opfedit.ui.swing.controller.LogAndShowError;
 
 /**
  * @author W. Lee Passey
@@ -112,7 +112,7 @@ public class EPubUtil
 
 
     /**
-     * Builds an XHTML formatted Table of Contents for the publication as a whole using 
+     * Builds an XHTML formatted Table of Contents for the publication as a whole using
      * ordered lists (<ol>). Each header becomes a list item, and each time a header level
      * changes a new, embedded ordered list is started. When the entire list is successfully
      * created, it is saved as an XHTML file and added to the manifest.
@@ -139,7 +139,7 @@ public class EPubUtil
             // Nothing there. Pick a file with the same name as the .opf file
             // + "_toc.html". If it already exists, it will be backed up before
             // being over written when the xhtml file is written.
-            href = ((null == ePubData.getOpfFile()) 
+            href = ((null == ePubData.getOpfFile())
                     ? "" : FileUtil.getFileName( ePubData.getOpfFile() )) + "_toc.html";
 
             ePubData.getOpfData().getGuide().addGuideReference( "toc", "Table of Contents", href );
@@ -229,8 +229,8 @@ public class EPubUtil
                                 {
                                     // No id attribute. If my previous non-white
                                     // sibling has an id, use that one.
-                                    for (Node sib = node.getPreviousSibling(); 
-                                         null != sib; 
+                                    for (Node sib = node.getPreviousSibling();
+                                         null != sib;
                                          sib = sib.getPreviousSibling())
                                     {
                                         if (Node.TEXT_NODE == sib.getNodeType())
@@ -243,7 +243,7 @@ public class EPubUtil
                                         else
                                         {
                                             attr = ((Element) sib).getAttribute( "id" );
-                                            if (   0 != attr.length() 
+                                            if (   0 != attr.length()
                                                 || XHTMLDocument.htmlIsBlock( sib.getNodeName() ))
                                                 break;
                                         }
@@ -383,7 +383,7 @@ public class EPubUtil
             try
             {
                 FileUtil.saveXHTMLDocumentWithBak( new XHTMLDocument( toc, tocFile.getPath() ), tocFile );
-    
+
                 // If the new TOC does not appear in the manifest, add it now.
                 if (!ePubData.getOpfData().getManifest().isManifested( href ))
                     ePubData.getOpfData().getManifest().addManifestItem( "toc", href,
@@ -424,10 +424,10 @@ public class EPubUtil
         return null;
     }
 
-    
+
     static final String daisyNS = "http://www.daisy.org/z3986/2005/ncx/";
-    
-    private static int createNavPoint( Document ncx, Element ncxEl, DOMIterator listIter, 
+
+    private static int createNavPoint( Document ncx, Element ncxEl, DOMIterator listIter,
                                        String tocHref, String classs, int playOrder, int level )
     {
         if (ncxEl == null)
@@ -444,7 +444,7 @@ public class EPubUtil
                 while (liIter.hasNext())
                 {
                     next = liIter.next();
-                    
+
                     if (Node.ELEMENT_NODE == next.getNodeType())
                     {
                         if (next.getNodeName().equalsIgnoreCase( "a" ))
@@ -479,11 +479,11 @@ public class EPubUtil
                                     playOrder++;
                                 Element label = ncx.createElement( "navLabel" );
                                 navPoint.appendChild( label );
-                                
+
                                 Element text = ncx.createElement( "text" );
                                 text.appendChild( ncx.createTextNode( next.getTextContent().trim() ));
                                 label.appendChild( text );
-                                
+
                                 label = ncx.createElement( "content" );
                                 navPoint.appendChild( label );
                                 label.setAttribute( "src", href );
@@ -492,7 +492,7 @@ public class EPubUtil
                         else if (   next.getNodeName().equalsIgnoreCase( "ol" )
                                  || next.getNodeName().equalsIgnoreCase( "ul" ))
                         {
-                            playOrder = createNavPoint( ncx, navPoint, liIter, tocHref, 
+                            playOrder = createNavPoint( ncx, navPoint, liIter, tocHref,
                                     ((Element)next).getAttribute( "class" ), playOrder, level + 1 );
                         }
                     }
@@ -505,25 +505,25 @@ public class EPubUtil
 
     /**
      * Builds a Daisy Navigation control file for the publication as a whole.
-     * 
+     *
      * The <docTitle> and <docAuthor> values, as well as the <meta dtb:uid> value will be derived
      * from the opf data. The <navMap> element will be built from the documents TOC, which must be
      * nested lists. If a toc does not exist (as recorded in the "guide" element) one will be
      * generated before NCX generation occurs.
-     * 
+     *
      * Every "tour" included in the option "tours" element of the .opf file will be added to the
      * .ncx file as part of a <navList> element.
-     * 
+     *
      * This method will ensure that the .ncx file is included in the manifest, and referenced as an
      * attribute on the opf <spine> element.
-     * 
+     *
      * @param ePubData
      *            The model containing all the metadata for this ePub document.
-     * @param userCss 
+     * @param userCss
      *            The user's specified css file. Used to create the Table of Contents. May be null.
      * @param createPageList
      *            if true, create a page list in the .ncx file according to the existence of
-     *            anchors having an id and a class of "page-break." 
+     *            anchors having an id and a class of "page-break."
      *            a template that can be used to build a page list. If this parameter is not null, a
      *            reference to each node that loosely matches this node, and which has an 'id'
      *            attribute, will be included in the <pageList> node.
@@ -531,7 +531,7 @@ public class EPubUtil
     public static void buildNCX( EPubModel ePubData, File userCss, boolean createPageList )
     {
         OPFFileModel _opfData = ePubData.getOpfData();
-        
+
         if (null == _opfData.getSpine())
             return;     // no spine, no TOC, no NCX.
         Document toc = null;
@@ -555,11 +555,11 @@ public class EPubUtil
         if (null == ncxHref)
         {
             tocHref = _opfData.getGuide().getHrefByType( "toc" );  // This had better succeed now!
-            ncxHref = (((null == ePubData.getOpfFile()) 
-                    ? FileUtil.getFileName( new File( tocHref ) ) 
+            ncxHref = (((null == ePubData.getOpfFile())
+                    ? FileUtil.getFileName( new File( tocHref ) )
                     : FileUtil.getFileName( ePubData.getOpfFile() ))) + ".ncx";
         }
-        
+
         // create a new ncx document
         ncx = EPubModel.db.newDocument();
         Element top = ncx.createElement( "ncx" );
@@ -567,22 +567,22 @@ public class EPubUtil
         top.setAttribute( "version", "2005-1" );
         top.setAttribute( "xml:lang", "en-US" );
         ncx.appendChild( top );
-        
+
         // add optional ncx metadata, derived from the .opf metadata
         Element el = ncx.createElement( "head" );
         top.appendChild( el );
-        
+
         Element child = ncx.createElement( "meta" );
         child.setAttribute( "name", "dtb:uid" );
         child.setAttribute( "content", _opfData.getUID() );
         el.appendChild( child );
-        
+
         el = ncx.createElement( "docTitle" );
         top.appendChild( el );
         child = ncx.createElement( "text" );
         el.appendChild( child );
         child.appendChild( ncx.createTextNode( _opfData.getMetadata().getProperty( "title" )));
-        
+
         ArrayList<String> properties = _opfData.getMetadata().getAllProperties( "creator" );
         for (String property : properties)
         {
@@ -592,7 +592,7 @@ public class EPubUtil
             el.appendChild( child );
             child.appendChild( ncx.createTextNode( property ) );
         }
-        
+
         int playOrder = 1;      // For inexplicable reasons, the play order must be sequential, must
                                 // begin at one, must not have gaps, and must differ for the page list
                                 // and chapter list. To avoid collisions, build the page list first.
@@ -623,7 +623,7 @@ public class EPubUtil
                                 break;
                             if (!XMLUtil.nodesMatch( template, anchor, true ))
                                 continue;
-    
+
                             // if we got to this point, we have a page-break anchor.
                             el = ncx.createElement( "pageTarget" );
                             el.setAttribute( "type", "normal" );
@@ -632,15 +632,15 @@ public class EPubUtil
                             pageList.appendChild( el );
                             Element label = ncx.createElement( "navLabel" );
                             el.appendChild( label );
-    
+
                             Element text = ncx.createElement( "text" );
                             text.appendChild( ncx.createTextNode( anchor.getAttribute( "id" )
                                     .trim() ) );
                             label.appendChild( text );
-    
+
                             label = ncx.createElement( "content" );
                             el.appendChild( label );
-    
+
                             label.setAttribute( "src", ePubData.getOpfData().getManifest()
                                     .getHrefById( id )
                                     + "#" + anchor.getAttribute( "id" ) );
@@ -655,12 +655,12 @@ public class EPubUtil
                 pageList = null;
             }
         }
-        // build a navMap based on the document's TOC. If a TOC entry matches a page list 
+        // build a navMap based on the document's TOC. If a TOC entry matches a page list
         // entry, set the playOrder to match the page list entry. The new navMap must
         // appear before the page list in the .ncx file.
         el = ncx.createElement( "navMap" );
         top.insertBefore( el, pageList );
-        
+
         // find the first list element in the toc.
         Element list;
         DOMIterator iter = new DOMIterator( toc.getDocumentElement() );
@@ -672,11 +672,11 @@ public class EPubUtil
                 || list.getNodeName().equalsIgnoreCase( "ul" )
                )
             {
-                playOrder = createNavPoint( ncx, el, iter, tocHref, 
+                playOrder = createNavPoint( ncx, el, iter, tocHref,
                         list.getAttribute( "class" ), playOrder, 0 );
             }
         }
-        
+
         // Just like the TOC, save the NCX file and add it to the manifest.
         FileOutputStream fos = null;
         try
@@ -699,7 +699,7 @@ public class EPubUtil
                 ncxid = "ncx";
                 _opfData.getSpine().setNCXId( ncxid );
             }
-            
+
             // If the NCX file does not appear in the manifest, add it now.
             if (!_opfData.getManifest().isManifested( ncxHref ))
                 _opfData.getManifest().addManifestItem( ncxid, ncxHref, "application/x-dtbncx+xml" );
@@ -708,7 +708,7 @@ public class EPubUtil
         {
             // the specified .ncx file exists but is a directory rather than a regular file,
             // does not exist but cannot be created, or cannot be opened for any other reason
-            LogAndShowError.logAndShowEx( "Unable to create the NCX file " + ncxHref 
+            LogAndShowError.logAndShowEx( "Unable to create the NCX file " + ncxHref
                     + "\nIt does not exist but cannot be created, it is a directory rather than a "
                     + "regular file, or you have insufficient permissions to create the file.", ex );
         }
@@ -763,9 +763,9 @@ public class EPubUtil
             		"with the type of \"cover\"." );
             return false;
         }
-        
+
         // Cover file name should be the same as the .opf file + "_cover".
-        String fileName = ((null == ePubData.getOpfFile()) 
+        String fileName = ((null == ePubData.getOpfFile())
                 ? "" : FileUtil.getFileName( ePubData.getOpfFile() )) + "_cover.html";
         File coverFile = new File( ePubData.getOpfFolder(), fileName );
         int count = 0;
@@ -777,13 +777,13 @@ public class EPubUtil
         try
         {
             FileOutputStream cover = new FileOutputStream( coverFile );
-            String output = String.format( coverHTML, _opfData.getMetadata().getProperty( "title" ), 
+            String output = String.format( coverHTML, _opfData.getMetadata().getProperty( "title" ),
                     imageHref );
             cover.write( output.getBytes(), 0, output.getBytes().length );
             cover.close();
-            
+
             // Now add this file to the manifest, and also as the first entry in the spine.
-            String idFirst, id = _opfData.getManifest().addManifestItem( null, 
+            String idFirst, id = _opfData.getManifest().addManifestItem( null,
                                  ePubData.getPathRelativeToOpf( coverFile ), "application/xhtml+xml" );
             SpineModel spine =  _opfData.getSpine();
             idFirst = (String) spine.getValueAt( 0, 0 );
@@ -806,8 +806,8 @@ public class EPubUtil
         return false;
     }
 
-    
-    public static int replaceTags( EPubModel ePubData, Element findTag, Element replaceTag ) 
+
+    public static int replaceTags( EPubModel ePubData, Element findTag, Element replaceTag )
             throws IOException
     {
         // Traverse the entire spine looking at html files. Find nodes matching
@@ -817,7 +817,7 @@ public class EPubUtil
         // watch out for exact replacements, because they can cause endless loops
         if (null == replaceTag || !XMLUtil.nodesMatch( findTag, replaceTag, false ))
         {
-        
+
         SpineModel.SpineHTMLIterator iter = ePubData.getOpfData().getSpine().new SpineHTMLIterator();
         while (iter.hasNext())
         {
@@ -836,11 +836,11 @@ public class EPubUtil
                             break;
                         if (!XMLUtil.nodesMatch( findTag, el, true ))
                             continue;
-                        
+
                         // watch out for exact replacements, because they can cause endless loops
                         if (null != replaceTag && XMLUtil.nodesMatch( findTag, replaceTag, false ))
                             continue;
-                        
+
                         // if we got to this point, all attributes are present and match
                         ++docCount;
                         if (null == replaceTag)
@@ -876,7 +876,7 @@ public class EPubUtil
                             for (j = 0; j < attrs.getLength(); j++)
                             {
                                 // set the elements from the replacement element template
-                                el.setAttribute( attrs.item( j ).getNodeName(), 
+                                el.setAttribute( attrs.item( j ).getNodeName(),
                                                  attrs.item( j ).getNodeValue() );
                             }
                         }
@@ -893,7 +893,7 @@ public class EPubUtil
                     count += docCount;
                 }
             }
-            catch( FileNotFoundException ignore ) 
+            catch( FileNotFoundException ignore )
             {
                 // if an allegedly manifested file doesn't exist, just skip it.
             }
@@ -906,7 +906,7 @@ public class EPubUtil
             throws IOException
     {
         // Traverse the entire spine looking at html files. Find nodes matching
-        // the referenced node and insert a copy of the new child before them. 
+        // the referenced node and insert a copy of the new child before them.
         // Return a count of the number of insertions made.
         int count = 0;
         SpineModel.SpineHTMLIterator iter = ePubData.getOpfData().getSpine().new SpineHTMLIterator();
@@ -926,7 +926,7 @@ public class EPubUtil
                     Element el = (Element) nodes.item( i );
                     if (!XMLUtil.nodesMatch( refChild, el, true ))
                         continue;
-                   
+
                     // if we got to this point, all attributes are present and match
                     ++docCount;
 
@@ -1011,55 +1011,55 @@ public class EPubUtil
         return count;
     }
 
-    static final String ncxXsl = 
+    static final String ncxXsl =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-    "<xsl:stylesheet version=\"2.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" " + 
+    "<xsl:stylesheet version=\"2.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" " +
     "                                xmlns:ncx=\"http://www.daisy.org/z3986/2005/ncx/\"" +
-    ">\n" + 
-    
-    "  <!-- standard copy template should be first because in cases of ambiguity, last wins -->\n" + 
-    "  <xsl:template match=\"node()\">\n" + 
-    "    <xsl:text>  </xsl:text>\n" +
-    "    <xsl:copy>\n" + 
-    "      <xsl:apply-templates select=\"@*\"/>" + 
-    "      <xsl:apply-templates/>\n" + 
-    "    </xsl:copy>\n" + 
-    "  </xsl:template>\n" + 
-    
-    "   <xsl:template match=\"@*\" >\n" + 
-    "     <xsl:copy>\n" + 
-    "        <!-- xsl:apply-templates select=\"@*\"/ -->\n" + 
-    "     </xsl:copy>\n" + 
-    "  </xsl:template>\n" + 
+    ">\n" +
 
-    "<!--  ncx xmlns='http://www.daisy.org/z3986/2005/ncx/' -->\n" + 
-    "  <xsl:template match=\"ncx|ncx:ncx\">\n" + 
+    "  <!-- standard copy template should be first because in cases of ambiguity, last wins -->\n" +
+    "  <xsl:template match=\"node()\">\n" +
+    "    <xsl:text>  </xsl:text>\n" +
+    "    <xsl:copy>\n" +
+    "      <xsl:apply-templates select=\"@*\"/>" +
+    "      <xsl:apply-templates/>\n" +
+    "    </xsl:copy>\n" +
+    "  </xsl:template>\n" +
+
+    "   <xsl:template match=\"@*\" >\n" +
+    "     <xsl:copy>\n" +
+    "        <!-- xsl:apply-templates select=\"@*\"/ -->\n" +
+    "     </xsl:copy>\n" +
+    "  </xsl:template>\n" +
+
+    "<!--  ncx xmlns='http://www.daisy.org/z3986/2005/ncx/' -->\n" +
+    "  <xsl:template match=\"ncx|ncx:ncx\">\n" +
     "    <xsl:text>\n</xsl:text>\n" +
-    "    <ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\">\n" + 
-    "      <xsl:apply-templates select=\"@*\"/>\n" + 
+    "    <ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\">\n" +
+    "      <xsl:apply-templates select=\"@*\"/>\n" +
     "      <xsl:apply-templates/><xsl:text>\n</xsl:text>\n" +
-    "    </ncx><xsl:text>\n</xsl:text>\n" + 
-    "  </xsl:template>\n" + 
-    
+    "    </ncx><xsl:text>\n</xsl:text>\n" +
+    "  </xsl:template>\n" +
+
     "<xsl:template match=\"text|ncx:text\">\n" +
     "  <text xmlns=\"http://www.daisy.org/z3986/2005/ncx/\"><xsl:apply-templates/></text>\n" +
     "</xsl:template>\n"+
-    
+
     "<xsl:template match=\"content|ncx:content\">\n" +
     "  <content xmlns=\"http://www.daisy.org/z3986/2005/ncx/\">" +
     "<xsl:apply-templates select=\"@*\"/>" +
     "</content>\n" +
     "</xsl:template>\n"+
 
-    
+
     ""+
     ""+
     ""+
-    "  <xsl:template match=\"text()\" priority=\"10\">\n" + 
-    "    <xsl:value-of select='normalize-space(.)'/>" + 
-    "  </xsl:template>\n" + 
-    
+    "  <xsl:template match=\"text()\" priority=\"10\">\n" +
+    "    <xsl:value-of select='normalize-space(.)'/>" +
+    "  </xsl:template>\n" +
+
     "</xsl:stylesheet>";
-    
+
 
 }

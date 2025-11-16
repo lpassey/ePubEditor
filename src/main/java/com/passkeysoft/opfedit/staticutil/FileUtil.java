@@ -1,11 +1,11 @@
 /**
    Copyright-Only Dedication (based on United States law)
-  
+
   The person or persons who have associated their work with this
   document (the "Dedicator") hereby dedicate whatever copyright they
   may have in the work of authorship herein (the "Work") to the
   public domain.
-  
+
   Dedicator makes this dedication for the benefit of the public at
   large and to the detriment of Dedicator's heirs and successors.
   Dedicator intends this dedication to be an overt act of
@@ -14,13 +14,13 @@
   Dedicator understands that such relinquishment of all rights
   includes the relinquishment of all rights to enforce (by lawsuit
   or otherwise) those copyrights in the Work.
-  
+
   Dedicator recognizes that, once placed in the public domain, the
   Work may be freely reproduced, distributed, transmitted, used,
   modified, built upon, or otherwise exploited by anyone for any
   purpose, commercial or non-commercial, and in any way, including
   by methods that have not yet been invented or conceived.
-  
+
   $Log: FileUtil.java,v $
   Revision 1.6  2013/07/03 22:14:14  lpassey
   Fix behavior when base File object does not yet exist.
@@ -41,7 +41,7 @@ import org.w3c.dom.DOMException;
 import com.passkeysoft.XHTMLDocument;
 
 import com.passkeysoft.opfedit.TempFileIOException;
-import com.passkeysoft.opfedit.ui.LogAndShowError;
+import com.passkeysoft.opfedit.ui.swing.controller.LogAndShowError;
 
 public class FileUtil
 {
@@ -97,7 +97,7 @@ public class FileUtil
         return "";
     }
 
-    
+
     public static File getSharedPath( File baseFile, File absFile ) throws IOException
     {
         if (null == baseFile)
@@ -130,15 +130,15 @@ public class FileUtil
         return new File( base.substring( 0, cursor ));
     }
 
-    
+
     /**
      * Save an XHTMLDocument (See XHTMLDocument.java) to the file system.
      * @param htmlDoc The XHTMLDocument instance to be saved
      * @param xhtmlFile An abstract File object representing the file-system name of the output file.
-     * @throws DOMException 
-     * @throws IOException 
+     * @throws DOMException
+     * @throws IOException
      */
-    static void saveXHTMLDocument( XHTMLDocument htmlDoc, File xhtmlFile ) 
+    static void saveXHTMLDocument( XHTMLDocument htmlDoc, File xhtmlFile )
             throws DOMException, FileNotFoundException, IOException
     {
         FileOutputStream os = new FileOutputStream( xhtmlFile );
@@ -149,10 +149,10 @@ public class FileUtil
         }
         catch( IOException ignore ) {}
     }
-    
-    
-    public static boolean saveXHTMLDocumentWithBak( XHTMLDocument htmlDoc, File xhtmlFile ) 
-        throws DOMException, FileNotFoundException, TempFileIOException, IOException 
+
+
+    public static boolean saveXHTMLDocumentWithBak( XHTMLDocument htmlDoc, File xhtmlFile )
+        throws DOMException, FileNotFoundException, TempFileIOException, IOException
     {
         File temp, parent = xhtmlFile.getParentFile();
         try
@@ -189,16 +189,16 @@ public class FileUtil
         return temp.renameTo( xhtmlFile );
     }
 
-    
+
     // Static utility methods
     /**
      * Copies a file to a new destination on the file system. Rumor has it that this
      * functionality may become part of the Java core API in the near future.
-     * 
+     *
      * @param src The source file, which must exist.
      * @param dest The destination abstract file, which must be writable.
      * @throws FileNotFoundException if the source file does not exist or is a directory rather
-     *      than a regular file, or if the destination file is a directory rather than a regular 
+     *      than a regular file, or if the destination file is a directory rather than a regular
      *      file, or does not exist but cannot be created
      * @throws IOException if a read error occurs on the source file, a write error occurs on the
      *      destination file, or the destination file is read-only or locked by another program
@@ -220,9 +220,9 @@ public class FileUtil
         fos.close();
     }
 
-    
+
     /**
-     * 
+     *
      * @param f An abstract file object
      * @return That portion of the file name after the path and before the extension.
      */
@@ -230,13 +230,13 @@ public class FileUtil
     {
         String name = f.getName();
         if (name.contains( "." ))
-            return name.substring( 0, name.lastIndexOf( '.' )); 
+            return name.substring( 0, name.lastIndexOf( '.' ));
         return name;
     }
 
-    
+
     /**
-     * 
+     *
      * @param f An abstract file object
      * @return That portion of a file name beyond the last period in the name,
      *      or an empty string if the file name does not contain a period.

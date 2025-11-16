@@ -1,11 +1,11 @@
 /*-*
    Copyright-Only Dedication (based on United States law)
-  
+
   The person or persons who have associated their work with this
   document (the "Dedicator") hereby dedicate whatever copyright they
   may have in the work of authorship herein (the "Work") to the
   public domain.
-  
+
   Dedicator makes this dedication for the benefit of the public at
   large and to the detriment of Dedicator's heirs and successors.
   Dedicator intends this dedication to be an overt act of
@@ -14,13 +14,13 @@
   Dedicator understands that such relinquishment of all rights
   includes the relinquishment of all rights to enforce (by lawsuit
   or otherwise) those copyrights in the Work.
-  
+
   Dedicator recognizes that, once placed in the public domain, the
   Work may be freely reproduced, distributed, transmitted, used,
   modified, built upon, or otherwise exploited by anyone for any
   purpose, commercial or non-commercial, and in any way, including
   by methods that have not yet been invented or conceived.
-  
+
   $Log: EPubModel.java,v $
   Revision 1.14  2014/07/29 21:42:25  lpassey
   Set up for future path change functionality (not yet implemented).
@@ -34,6 +34,8 @@
 
 package com.passkeysoft.opfedit.datamodels;
 
+import com.passkeysoft.opfedit.ui.swing.model.MediaTypeModel;
+import com.passkeysoft.opfedit.ui.swing.model.OPFFileModel;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -79,14 +81,14 @@ import org.xml.sax.SAXParseException;
 import com.passkeysoft.XHTMLDocument;
 
 import com.passkeysoft.opfedit.staticutil.FileUtil;
-import com.passkeysoft.opfedit.ui.LogAndShowError;
-import com.passkeysoft.opfedit.ui.EPubEditor;
+import com.passkeysoft.opfedit.ui.swing.controller.LogAndShowError;
+import com.passkeysoft.opfedit.ui.swing.controller.EPubEditor;
 
 import org.jsoup.*;
 
 public class EPubModel extends Observable
 {
-    static final String metaEpubRoot = "epubeditor:rootPath";
+    public static final String metaEpubRoot = "epubeditor:rootPath";
     public static DocumentBuilder db = null;
 
     static
@@ -124,12 +126,12 @@ public class EPubModel extends Observable
 
     private File _epubRoot = null; // The publication "root", to which all files are relative.
                                    // perhaps in a temporary directory.
-    
-    public boolean isRooted() 
+
+    public boolean isRooted()
     {
         return (null != _epubRoot );
     }
-    
+
     private EncryptionModel _encrypt = null;  // contents of the encryption.xml file, if any
 
     private Document _opfDom;       // A DOM constructed from the .opf file
@@ -142,7 +144,7 @@ public class EPubModel extends Observable
     private File _opfFile = null;   // The opf file name in the file system,
 
     /**
-     * 
+     *
      * @return The opf file name in the file system perhaps in a temporary directory.
      */
     public File getOpfFile()
@@ -150,7 +152,7 @@ public class EPubModel extends Observable
         return _opfFile;
     }
 
-    
+
     public File getOpfFolder()
     {
         if (null != _opfFile)
@@ -159,8 +161,8 @@ public class EPubModel extends Observable
             return _epubRoot;
         return new File(".");
     }
-    
-    
+
+
     public boolean setOPFFile( File saveFile )
     {
         if (null != saveFile) // Don't bother unless they are different
@@ -174,8 +176,8 @@ public class EPubModel extends Observable
                 {
                     return false;
                 }
-                
-                if (   null != _opfFile 
+
+                if (   null != _opfFile
                     && !saveFile.getParentFile().getAbsolutePath().equals( _opfFile.getParentFile().getAbsolutePath() ))
                 {
                     // TODO: If we are changing the path of the .opf file, go through the manifest and
@@ -193,7 +195,7 @@ public class EPubModel extends Observable
      * Opens an .opf file either from the file system or from within a .zip or .epub archive. If the
      * file exists within an archive, the entire archive will first be extracted to a temporary
      * directory.
-     * 
+     *
      * @param oebFile
      *            the abstract file which is either an .opf file or a .zip archive containing an
      *            .opf file
@@ -342,7 +344,7 @@ public class EPubModel extends Observable
             _opfDom = db.parse( new ByteArrayInputStream( opfSkeleton.getBytes() ) );
         }
         _opfData = new OPFFileModel( this, _opfDom );
-        
+
         if (null != _epubRoot)
         {
             // modify or add a <meta> element containing the absolute value of the root path.
@@ -446,7 +448,7 @@ public class EPubModel extends Observable
     /**
      * Checks to be sure a directory path is in the zip file before adding the new file,
      * adding it if it's not there already.
-     * 
+     *
      * @param filePath
      *            the relative path being saved
      * @param pathList
@@ -513,7 +515,7 @@ public class EPubModel extends Observable
     /**
      * Creates and saves an ePub file based on the current in-memory representation. All manifested
      * files will be saved relative to the path returned by getEpubRootPath().
-     * 
+     *
      * @param saveTo
      *            The file which will be saved to the file system.
      * @throws TransformerException
@@ -655,7 +657,7 @@ public class EPubModel extends Observable
                 }
                 try
                 {
-                    if (   type.startsWith( "image" ) 
+                    if (   type.startsWith( "image" )
                         || (null != _encrypt && _encrypt.isEncrypted( href )))
                     {
                         // Assume images have already been appropriately compressed,
@@ -799,7 +801,7 @@ public class EPubModel extends Observable
         return doc;
     }
 
-    
+
     /**
      * @return the path which will become the root of the epub document. We use a getter, even
      *          inside this file, to guarantee that this value will never be null.
@@ -819,11 +821,11 @@ public class EPubModel extends Observable
         return "";
     }
 
-    
+
     /**
      * Sets a new root for the publication. This method validates that the new root is a parent of
      * the opf file, and changes the paths in the manifest to match the new root, if necessary.
-     * 
+     *
      * @param root
      *            A directory indicating the new publication root.
      */
@@ -834,7 +836,7 @@ public class EPubModel extends Observable
             String relativity = "";
             if (null != _opfFile)
                 relativity = FileUtil.getPathRelativeToBase( _opfFile, root );
-            
+
             // Check to be sure the root is an ancestor of the .opf file
             // if the opf file is not yet specified, any old root will do.
             if (   (0 < relativity.length() && !relativity.startsWith( ".." ))
@@ -858,7 +860,7 @@ public class EPubModel extends Observable
      * Calculate a file path which is relative to the .opf file, or the epub root if
      * the .opf file has not yet been specified. If there is no commonality,
      * returns the canonical file path.
-     * 
+     *
      * @param opfFilePath The path to the opf file
      * @return the relative path of absFile from the .opf file
      */
@@ -888,7 +890,7 @@ public class EPubModel extends Observable
     /**
      * Checks to see if a file exists as a peer to the OPF file. If the OPF file does not yet
      * exists, checks to see if it exists as a child of the publication root.
-     * 
+     *
      * @param fileName
      *            The short name of the file whose existence we need to check.
      * @return a boolean value indicating whether the file exists
@@ -901,7 +903,7 @@ public class EPubModel extends Observable
         return f.exists();
     }
 
-    
+
     public File copyFileToOpf( File file )
     {
 //        if (null != getOpfFile())
@@ -915,7 +917,7 @@ public class EPubModel extends Observable
             catch( IOException ex )
             {
                 // Thrown if the targeted file cannot be saved.
-                LogAndShowError.logAndShowEx( "Unable to write to file: " 
+                LogAndShowError.logAndShowEx( "Unable to write to file: "
                         + dest.getAbsolutePath() + "\nPermission denied", ex );
             }
         }

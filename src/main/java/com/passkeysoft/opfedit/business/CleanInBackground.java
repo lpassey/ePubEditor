@@ -1,11 +1,11 @@
 /*-*
    Copyright-Only Dedication (based on United States law)
-  
+
   The person or persons who have associated their work with this
   document (the "Dedicator") hereby dedicate whatever copyright they
   may have in the work of authorship herein (the "Work") to the
   public domain.
-  
+
   Dedicator makes this dedication for the benefit of the public at
   large and to the detriment of Dedicator's heirs and successors.
   Dedicator intends this dedication to be an overt act of
@@ -14,13 +14,13 @@
   Dedicator understands that such relinquishment of all rights
   includes the relinquishment of all rights to enforce (by lawsuit
   or otherwise) those copyrights in the Work.
-  
+
   Dedicator recognizes that, once placed in the public domain, the
   Work may be freely reproduced, distributed, transmitted, used,
   modified, built upon, or otherwise exploited by anyone for any
   purpose, commercial or non-commercial, and in any way, including
   by methods that have not yet been invented or conceived.
-  
+
   $Log: CleanInBackground.java,v $
 
  If a span has an id, move it to it's parent node if it's the first child
@@ -39,6 +39,7 @@
 
 package com.passkeysoft.opfedit.business;
 
+import com.passkeysoft.opfedit.ui.swing.controller.MonitoredWorker;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -55,13 +56,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.passkeysoft.opfedit.datamodels.EPubModel;
-import com.passkeysoft.opfedit.datamodels.OPFFileModel;
-import com.passkeysoft.opfedit.datamodels.SpineModel;
+import com.passkeysoft.opfedit.ui.swing.model.OPFFileModel;
+import com.passkeysoft.opfedit.ui.swing.model.SpineModel;
 import com.passkeysoft.XHTMLDocument;
 import com.passkeysoft.opfedit.staticutil.FileUtil;
 import com.passkeysoft.opfedit.staticutil.XMLUtil;
-import com.passkeysoft.opfedit.ui.LogAndShowError;
-import com.passkeysoft.opfedit.ui.EPubEditor;
+import com.passkeysoft.opfedit.ui.swing.controller.LogAndShowError;
+import com.passkeysoft.opfedit.ui.swing.controller.EPubEditor;
 
 public class CleanInBackground extends MonitoredWorker<Void,Void>
 {
@@ -95,13 +96,13 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
         cleanFiles( _userCssFile );
         return null;
     }
-    
-    
+
+
     protected void complete() { /* No completion activity for this worker */ }
-    
-    
+
+
     /**
-     * Cleans up all the XHTML documents in a publication, 
+     * Cleans up all the XHTML documents in a publication,
      * and adds a user defined CSS file to the manifest and archive.
      */
     private void cleanFiles( File userCssFile )
@@ -111,14 +112,14 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
 
         String xslURL, xslPath, publisherXSLT = null;
         URL defaultXSLT = null;
-        
+
         // Look for the default file first in the user's path, if any. If this fails it
         // is a non-fatal error; just continue with empty (default) properties
         xslPath = EPubEditor.prefs.node( EPubEditor.PREFS_PATHS ).get( EPubEditor.PREFS_PATHS_XSLT, "xslt" ); // xslPath will never be null
 
         // load up the default XSLT script which will be run first.
         xslURL = xslPath + "/"  + "default.xsl";
-        
+
         // first look for the default script in the directory of the user's choice
         if (new File(xslURL).exists()) try
         {
@@ -141,7 +142,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
             // no default xsl file in the file system, use the default one in the jar.
             defaultXSLT = getClass().getClassLoader().getResource( xslURL );
         }
-        
+
         // find the publisher-specific XSLT script to clean this document.
         String publisher = _opfData.getMetadata().getProperty( "publisher" );
         if (publisher == null || 0 == publisher.length())
@@ -155,7 +156,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
         else
         {
             String[] parts = publisher.split( "[\\t \\r\\n]" );
-        
+
             xslURL = xslPath + "/" + parts[0] + ".xsl";
 
             // first look for the publisher script in the directory of the user's choice
@@ -191,7 +192,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
         else
         {
             SpineModel.SpineHTMLIterator iter = _opfData.getSpine().new SpineHTMLIterator();
-            
+
             Integer progress = 0;
             update( null, progress );
             while (iter.hasNext())
@@ -266,7 +267,7 @@ public class CleanInBackground extends MonitoredWorker<Void,Void>
                             {
                                 LogAndShowError.logException( defaultXSLT.getPath(), e );
                             }
-    
+
                             if (null != userCssFile)
                             {
                                 String relativePathToUserCss =

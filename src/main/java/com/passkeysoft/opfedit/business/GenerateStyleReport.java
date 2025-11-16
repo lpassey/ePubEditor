@@ -1,11 +1,11 @@
 /*-*
    Copyright-Only Dedication (based on United States law)
-  
+
   The person or persons who have associated their work with this
   document (the "Dedicator") hereby dedicate whatever copyright they
   may have in the work of authorship herein (the "Work") to the
   public domain.
-  
+
   Dedicator makes this dedication for the benefit of the public at
   large and to the detriment of Dedicator's heirs and successors.
   Dedicator intends this dedication to be an overt act of
@@ -14,13 +14,13 @@
   Dedicator understands that such relinquishment of all rights
   includes the relinquishment of all rights to enforce (by lawsuit
   or otherwise) those copyrights in the Work.
-  
+
   Dedicator recognizes that, once placed in the public domain, the
   Work may be freely reproduced, distributed, transmitted, used,
   modified, built upon, or otherwise exploited by anyone for any
   purpose, commercial or non-commercial, and in any way, including
   by methods that have not yet been invented or conceived.
-  
+
   $Log: GenerateStyleReport.java,v $
   Revision 1.5  2014/07/29 22:04:54  lpassey
   Look for .css files relative to the .opf file, not in the epub root.
@@ -33,6 +33,7 @@
 
 package com.passkeysoft.opfedit.business;
 
+import com.passkeysoft.opfedit.ui.swing.controller.MonitoredWorker;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -54,9 +55,8 @@ import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
 
 import com.passkeysoft.opfedit.datamodels.EPubModel;
-import com.passkeysoft.opfedit.datamodels.SpineModel;
-import com.passkeysoft.opfedit.datamodels.StyleSheetCascade;
-import com.passkeysoft.opfedit.ui.LogAndShowError;
+import com.passkeysoft.opfedit.ui.swing.model.SpineModel;
+import com.passkeysoft.opfedit.ui.swing.controller.LogAndShowError;
 import com.steadystate.css.parser.CSSOMParser;
 import org.w3c.css.sac.InputSource;
 
@@ -65,7 +65,7 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
     private EPubModel _ePubData;
     private StyleSheetCascade _userStyles;
     private final String[] columnNames = { "Selector", "File Name", "Styles" };
-    
+
     public GenerateStyleReport( File usercss, EPubModel epubData )
     {
         _ePubData = epubData;
@@ -77,7 +77,7 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
             DocumentBuilder db = DOMfactory.newDocumentBuilder();
             Document _styleHolder = db.newDocument();
             _userStyles = new StyleSheetCascade();
-            
+
             if (null != usercss)
             {
                 try
@@ -118,12 +118,12 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
         }
     }
 
-    
+
     @Override
     protected void complete()
     { }
 
-    
+
     @Override
     protected DefaultTableModel doInBackground()
     {
@@ -157,7 +157,7 @@ public class GenerateStyleReport extends MonitoredWorker<DefaultTableModel, Obje
                                     pathName = link.getAttribute( "href" );
                                     CSSOMParser parser = new CSSOMParser();
                                     org.w3c.css.sac.InputSource is;
-                                    File html = new File( _ePubData.getOpfFolder() 
+                                    File html = new File( _ePubData.getOpfFolder()
                                             + File.separator + iter.href );
                                     File css = new File( html.getParent()
                                             + File.separator + pathName);
