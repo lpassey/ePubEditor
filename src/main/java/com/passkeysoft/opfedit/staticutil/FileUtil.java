@@ -142,7 +142,7 @@ public class FileUtil
             throws DOMException, FileNotFoundException, IOException
     {
         FileOutputStream os = new FileOutputStream( xhtmlFile );
-        htmlDoc.print( os, 2, true );
+        htmlDoc.print( os, 2, false );
         try
         {
             os.close();
